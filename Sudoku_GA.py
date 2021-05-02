@@ -11,8 +11,11 @@ from operator import attrgetter
 # pip install matplotlib
 
 # ------------- Parametros del tablero:
-ruta_tablero = 'TableroD2.txt'  # ruta al tablero que se quiere resolver.
-tamano_zona = (3, 2)  # tamaño de las zonas individuales, respectivamente columnas, filas.
+ruta_tablero = "TableroD2.txt"  # ruta al tablero que se quiere resolver.
+tamano_zona = (
+    3,
+    2,
+)  # tamaño de las zonas individuales, respectivamente columnas, filas.
 
 # ------------- Parametros con los que no se puede jugar:
 maximisar_fitness = False
@@ -48,7 +51,7 @@ def fitness_report(individual):
         for columna in range(0, len(individual[fila]), tamano_zona[0]):
             sub = set()
             for i in range(tamano_zona[-1]):
-                sub1 = individual[fila + i][columna:columna + tamano_zona[0]]
+                sub1 = individual[fila + i][columna : columna + tamano_zona[0]]
                 sub.update(set(sub1))
             repeticiones = abs((tamano_zona[0] * tamano_zona[-1]) - len(sub))
             colisioneszon += repeticiones
@@ -73,7 +76,7 @@ def fitness(individual, data):
         for columna in range(0, len(individual[fila]), tamano_zona[0]):
             sub = set()
             for i in range(tamano_zona[-1]):
-                sub1 = individual[fila + i][columna:columna + tamano_zona[0]]
+                sub1 = individual[fila + i][columna : columna + tamano_zona[0]]
                 sub.update(set(sub1))
             repeticiones = abs((tamano_zona[0] * tamano_zona[-1]) - len(sub))
             colisiones += repeticiones
@@ -90,7 +93,9 @@ def create_individual(data):
         for indice in range(len(fila)):
             if fila[indice] == 0:
                 while True:
-                    nuevonumero = random.randrange(1, (tamano_zona[0] * tamano_zona[-1]) + 1)
+                    nuevonumero = random.randrange(
+                        1, (tamano_zona[0] * tamano_zona[-1]) + 1
+                    )
                     if nuevonumero not in fila:
                         break
                 fila[indice] = nuevonumero
@@ -106,7 +111,7 @@ def torneo(population):
     if tournmentsize == 0:
         tournmentsize = 2
     members = random.sample(population, tournmentsize)
-    members.sort(key=attrgetter('fitness'), reverse=False)
+    members.sort(key=attrgetter("fitness"), reverse=False)
     return members[0]
 
 
@@ -149,7 +154,10 @@ def correct(individual, fi1):
     for col1 in range(len(TableroB[fi1])):
         if TableroB[fi1][col1] != 0 and individual[fi1][col1] != TableroB[fi1][col1]:
             col2 = individual[fi1].index(TableroB[fi1][col1])
-            individual[fi1][col1], individual[fi1][col2] = individual[fi1][col2], individual[fi1][col1]
+            individual[fi1][col1], individual[fi1][col2] = (
+                individual[fi1][col2],
+                individual[fi1][col1],
+            )
     return individual
 
 
@@ -163,7 +171,10 @@ def mutate(individual):
     if1 = random.randrange(len(individual))
     ic1 = random.randrange(len(individual[if1]))
     ic2 = random.randrange(len(individual[if1]))
-    individual[if1][ic1], individual[if1][ic2] = individual[if1][ic2], individual[if1][ic1]
+    individual[if1][ic1], individual[if1][ic2] = (
+        individual[if1][ic2],
+        individual[if1][ic1],
+    )
     return correct(individual, if1)
 
 
@@ -202,7 +213,7 @@ def average_fitness():
 # --------------------------------------------------------------------------------------------------------
 def leer_tablero_incial(ruta_tablero):
     TableroA = []
-    archivo = open(ruta_tablero, 'r')
+    archivo = open(ruta_tablero, "r")
     lineas = list(archivo)
     for linea in lineas:
         linea = linea.split(" ")
@@ -229,7 +240,7 @@ ga = pyeasyga.GeneticAlgorithm(
     crossover_probability=probablilidad_de_cruce,
     mutation_probability=probabilidad_de_mutacion,
     elitism=elitimso,
-    maximise_fitness=maximisar_fitness
+    maximise_fitness=maximisar_fitness,
 )
 
 # --------------------------------------------------------------------------------------------------------
@@ -269,10 +280,10 @@ imprimirsudoku(ga.best_individual()[1])
 print("")
 fitness_report(ga.best_individual()[1])
 
-plt.plot(ejex0, ejey1, '-', linewidth=0.4, color='b', label='Traza fitness promedio')
-plt.plot(ejex0, ejey0, '-', linewidth=0.8, color='r', label='Traza mejor fitness')
-plt.xlabel('Generacion')
-plt.ylabel('Fitness')
+plt.plot(ejex0, ejey1, "-", linewidth=0.4, color="b", label="Traza fitness promedio")
+plt.plot(ejex0, ejey0, "-", linewidth=0.8, color="r", label="Traza mejor fitness")
+plt.xlabel("Generacion")
+plt.ylabel("Fitness")
 plt.legend()
 plt.grid()
-plt.show()
+plt.savefig('./imagenes/ga_performance.png')

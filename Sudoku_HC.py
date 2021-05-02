@@ -5,8 +5,11 @@ from copy import deepcopy
 import matplotlib.pyplot as plt
 
 # ------------- Parametros del tablero:
-ruta_tablero = 'TableroD2.txt'  # ruta al tablero que se quiere resolver.
-tamano_zona = (3, 2)  # tamaño de las zonas individuales, respectivamente columnas, filas.
+ruta_tablero = "TableroD2.txt"  # ruta al tablero que se quiere resolver.
+tamano_zona = (
+    3,
+    2,
+)  # tamaño de las zonas individuales, respectivamente columnas, filas.
 
 # ------------- Parametros Hill Climbing:
 numero_reinicios = 4  # numero de veces que se reinicia el tablero en random restart, solo afecta si la configuracion es 3.
@@ -36,7 +39,7 @@ def fitness_report(individual):
         for columna in range(0, len(individual[fila]), tamano_zona[0]):
             sub = set()
             for i in range(tamano_zona[-1]):
-                sub1 = individual[fila + i][columna:columna + tamano_zona[0]]
+                sub1 = individual[fila + i][columna : columna + tamano_zona[0]]
                 sub.update(set(sub1))
             repeticiones = abs((tamano_zona[0] * tamano_zona[-1]) - len(sub))
             colisioneszon += repeticiones
@@ -61,7 +64,7 @@ def fitness(individual):
         for columna in range(0, len(individual[fila]), tamano_zona[0]):
             sub = set()
             for i in range(tamano_zona[-1]):
-                sub1 = individual[fila + i][columna:columna + tamano_zona[0]]
+                sub1 = individual[fila + i][columna : columna + tamano_zona[0]]
                 sub.update(set(sub1))
             repeticiones = abs((tamano_zona[0] * tamano_zona[-1]) - len(sub))
             colisiones += repeticiones
@@ -77,7 +80,10 @@ def corregir_fila(individual, fi1):
     for col1 in range(len(TableroB[fi1])):
         if TableroB[fi1][col1] != 0 and individual[fi1][col1] != TableroB[fi1][col1]:
             col2 = individual[fi1].index(TableroB[fi1][col1])
-            individual[fi1][col1], individual[fi1][col2] = individual[fi1][col2], individual[fi1][col1]
+            individual[fi1][col1], individual[fi1][col2] = (
+                individual[fi1][col2],
+                individual[fi1][col1],
+            )
     return individual
 
 
@@ -88,11 +94,15 @@ def corregir_fila(individual, fi1):
 def generar_estados(individual, fila):
     if1 = fila
     estados = []
-    numeros_moviles = list(filter(
-        lambda x: x not in TableroB[if1],
-        [n for n in range(1, (tamano_zona[0] * tamano_zona[-1]) + 1)]
-    ))
-    variaciones_numeros_moviles = list(itertools.permutations(numeros_moviles, len(numeros_moviles)))
+    numeros_moviles = list(
+        filter(
+            lambda x: x not in TableroB[if1],
+            [n for n in range(1, (tamano_zona[0] * tamano_zona[-1]) + 1)],
+        )
+    )
+    variaciones_numeros_moviles = list(
+        itertools.permutations(numeros_moviles, len(numeros_moviles))
+    )
     for variacion_fila in variaciones_numeros_moviles:
         Fila = [n for n in TableroB[if1]]
         variacion_fila = list(variacion_fila)
@@ -115,7 +125,10 @@ def mejorar_1(individual):
     if1 = random.randrange(len(individual))
     ic1 = random.randrange(len(individual[if1]))
     ic2 = random.randrange(len(individual[if1]))
-    individual[if1][ic1], individual[if1][ic2] = individual[if1][ic2], individual[if1][ic1]
+    individual[if1][ic1], individual[if1][ic2] = (
+        individual[if1][ic2],
+        individual[if1][ic1],
+    )
     individual = corregir_fila(individual, if1)
     if fitness(individual) <= fitness(individuali):
         return individual
@@ -209,7 +222,7 @@ def imprimirsudoku(sudoku):
 # --------------------------------------------------------------------------------------------------------
 def leer_tablero_incial(ruta_tablero):
     TableroA = []
-    archivo = open(ruta_tablero, 'r')
+    archivo = open(ruta_tablero, "r")
     lineas = list(archivo)
     for linea in lineas:
         linea = linea.split(" ")
@@ -230,7 +243,9 @@ def iniciar_tablero(TableroA):
         for indice in range(len(fila)):
             if fila[indice] == 0:
                 while True:
-                    nuevonumero = random.randrange(1, (tamano_zona[0] * tamano_zona[-1]) + 1)
+                    nuevonumero = random.randrange(
+                        1, (tamano_zona[0] * tamano_zona[-1]) + 1
+                    )
                     if nuevonumero not in fila:
                         break
                 fila[indice] = nuevonumero
@@ -254,8 +269,9 @@ imprimirsudoku(TableroA)
 print("")
 fitness_report(TableroA)
 
-plt.plot(puntuaciones, '-', linewidth=0.8, color='r')
-plt.xlabel('Iteracion')
-plt.ylabel('Numero de errores')
+plt.plot(puntuaciones, "-", linewidth=0.8, color="r")
+plt.xlabel("Iteracion")
+plt.ylabel("Numero de errores")
 plt.grid()
 plt.show()
+plt.savefig("./imagenes/hc_performance.png")
