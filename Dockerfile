@@ -1,5 +1,13 @@
 FROM python:3.7.10
-COPY ["requirements.txt","/usr/src/"]
-WORKDIR /usr/src
+
+ARG USERNAME=development
+RUN useradd -ms /bin/bash $USERNAME
+USER $USERNAME
+
+ENV PATH="/home/$USERNAME/.local/bin:${PATH}"
+
+COPY ["requirements.txt","/home/$USERNAME"]
+WORKDIR /home/$USERNAME
+
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
