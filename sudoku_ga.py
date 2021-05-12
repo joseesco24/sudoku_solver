@@ -32,6 +32,10 @@ if len(sys.argv) > 1:
                 generations = int(arguments[argument_index + 1])
             if argument_value == "--population":
                 population = int(arguments[argument_index + 1])
+            if argument_value == "--restarts":
+                restarts = int(arguments[argument_index + 1])
+            if argument_value == "--searchs":
+                searchs = int(arguments[argument_index + 1])
 
 
 def get_file_name(board_path):
@@ -205,7 +209,6 @@ for file_name in txt_files_list:
     y_axis_1 = list()
     x_axis_0 = list()
 
-    start_time = time()
     generations_counter = 0
 
     print(f"board name: {board_name}")
@@ -233,6 +236,7 @@ for file_name in txt_files_list:
 
     print("starting to solve the board")
 
+    start_time = time()
     for i in range(generations + 1):
         generations_counter = i
         ga.create_next_generation()

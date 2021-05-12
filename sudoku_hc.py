@@ -2,93 +2,98 @@ import matplotlib.pyplot as plt
 from copy import deepcopy
 from time import time
 from os import path
+from os import walk
 import itertools
 import random
 import sys
+import os
 
-board_path = "./default_boards/tablero_d2.txt"
+directory_path = os.getcwd()
+
+boards_path = path.join(directory_path, "boards")
+results_path = path.join(directory_path, "results")
+
+restarts = 4
+searchs = 400
+
+zone_dimensions = (3, 3)
 
 if len(sys.argv) > 1:
     arguments = sys.argv[1:]
     for argument_index in range(len(arguments)):
-        argument_value = arguments[argument_index]
-        if argument_value == "--path" or argument_value == "-p":
-            board_path = arguments[argument_index + 1]
-
-tamano_zona = (3, 2)
-
-numero_reinicios = 4  # numero de veces que se reinicia el tablero en random restart, solo afecta si la configuracion es 3.
-numero_de_busquedas = 400
-configuracion_HC = 3  # 0, 1, 2 o 3, steep, stochastic, first-choice o random restart.
+        if argument_index < (len(arguments) - 1):
+            argument_value = arguments[argument_index]
+            if argument_value == "--generations":
+                generations = int(arguments[argument_index + 1])
+            if argument_value == "--population":
+                population = int(arguments[argument_index + 1])
+            if argument_value == "--restarts":
+                restarts = int(arguments[argument_index + 1])
+            if argument_value == "--searchs":
+                searchs = int(arguments[argument_index + 1])
 
 
 def get_file_name(board_path):
     return path.basename(board_path).split(".")[0]
 
 
-# --------------------------------------------------------------------------------------------------------
-# Funcion de reporte de fitness, calcula las colisiones en las filas, las columnas las zonas y las imprime.
-# Solo de usa al final del programa para comprobar los resultados e imprimirlos
-# --------------------------------------------------------------------------------------------------------
-def fitness_report(individual):
-    colisionesfil, colisionescol, colisioneszon = 0, 0, 0
-    for fila in range(len(individual)):
-        numeros = set()
-        for columna in range(len(individual[fila])):
-            numeros.add(individual[fila][columna])
-        repeticiones = abs(len(individual[fila]) - len(numeros))
-        colisionesfil += repeticiones
-    for fila in range(len(individual)):
-        numeros = set()
-        for columna in range(len(individual[fila])):
-            numeros.add(individual[columna][fila])
-        repeticiones = abs(len(individual[fila]) - len(numeros))
-        colisionescol += repeticiones
-    for fila in range(0, len(individual), tamano_zona[-1]):
-        for columna in range(0, len(individual[fila]), tamano_zona[0]):
+def custom_fitness_report(individual):
+    row_collisions, column_collisions, zone_collisions = 0, 0, 0
+
+    for row in range(len(individual)):
+        numbers_set = set()
+        for column in range(len(individual[row])):
+            numbers_set.add(individual[row][column])
+        repetitions = abs(len(individual[row]) - len(numbers_set))
+        row_collisions += repetitions
+
+    for row in range(len(individual)):
+        numbers_set = set()
+        for column in range(len(individual[row])):
+            numbers_set.add(individual[column][row])
+        repetitions = abs(len(individual[row]) - len(numbers_set))
+        column_collisions += repetitions
+
+    for row in range(0, len(individual), zone_dimensions[-1]):
+        for column in range(0, len(individual[row]), zone_dimensions[0]):
             sub = set()
-            for i in range(tamano_zona[-1]):
-                sub1 = individual[fila + i][columna : columna + tamano_zona[0]]
+            for i in range(zone_dimensions[-1]):
+                sub1 = individual[row + i][column : column + zone_dimensions[0]]
                 sub.update(set(sub1))
-            repeticiones = abs((tamano_zona[0] * tamano_zona[-1]) - len(sub))
-            colisioneszon += repeticiones
-    print("Errores en las zonas: " + str(colisioneszon))
-    print("Errores en las filas: " + str(colisionesfil))
-    print("Errores en las columnas: " + str(colisionescol))
+            repetitions = abs((zone_dimensions[0] * zone_dimensions[-1]) - len(sub))
+            zone_collisions += repetitions
+
+    print("errors in zones: " + str(zone_collisions))
+    print("errors in rows: " + str(row_collisions))
+    print("erros in columns: " + str(column_collisions))
 
 
-# --------------------------------------------------------------------------------------------------------
-# Funcion de fitness, calcula las colisiones en las filas, las columnas y las zonas, esta funcion se usa
-# Para calificar el desempeño de cada indivuo de la poblacion.
-# --------------------------------------------------------------------------------------------------------
-def fitness(individual):
+def custom_fitness(individual):
     colisiones = 0
-    for fila in range(len(individual)):
-        numeros = set()
-        for columna in range(len(individual[fila])):
-            numeros.add(individual[columna][fila])
-        repeticiones = abs(len(individual[fila]) - len(numeros))
-        colisiones += repeticiones
-    for fila in range(0, len(individual), tamano_zona[-1]):
-        for columna in range(0, len(individual[fila]), tamano_zona[0]):
+
+    for row in range(len(individual)):
+        numbers_set = set()
+        for column in range(len(individual[row])):
+            numbers_set.add(individual[column][row])
+        repetitions = abs(len(individual[row]) - len(numbers_set))
+        colisiones += repetitions
+
+    for row in range(0, len(individual), zone_dimensions[-1]):
+        for column in range(0, len(individual[row]), zone_dimensions[0]):
             sub = set()
-            for i in range(tamano_zona[-1]):
-                sub1 = individual[fila + i][columna : columna + tamano_zona[0]]
+            for i in range(zone_dimensions[-1]):
+                sub1 = individual[row + i][column : column + zone_dimensions[0]]
                 sub.update(set(sub1))
-            repeticiones = abs((tamano_zona[0] * tamano_zona[-1]) - len(sub))
-            colisiones += repeticiones
+            repetitions = abs((zone_dimensions[0] * zone_dimensions[-1]) - len(sub))
+            colisiones += repetitions
+
     return colisiones
 
 
-# --------------------------------------------------------------------------------------------------------
-# Funcion de correccion de filas, se usa luego de cada mutacion o cruce para corregir la fila en caso de
-# al mutar o cruzar los numeros fijos hayan sido movios de su posicion original, para esto se usa el
-# TableroB, que es una copia del TableroA antes de ser inciado.
-# --------------------------------------------------------------------------------------------------------
-def corregir_fila(individual, fi1):
-    for col1 in range(len(TableroB[fi1])):
-        if TableroB[fi1][col1] != 0 and individual[fi1][col1] != TableroB[fi1][col1]:
-            col2 = individual[fi1].index(TableroB[fi1][col1])
+def correct_row(individual, fi1):
+    for col1 in range(len(board_b[fi1])):
+        if board_b[fi1][col1] != 0 and individual[fi1][col1] != board_b[fi1][col1]:
+            col2 = individual[fi1].index(board_b[fi1][col1])
             individual[fi1][col1], individual[fi1][col2] = (
                 individual[fi1][col2],
                 individual[fi1][col1],
@@ -96,39 +101,29 @@ def corregir_fila(individual, fi1):
     return individual
 
 
-# --------------------------------------------------------------------------------------------------------
-# Genera todos los posibles estados del tablero variando solo una fila seleccionado al asar en el metodo
-# mejorar_n.
-# --------------------------------------------------------------------------------------------------------
 def generar_estados(individual, fila):
     if1 = fila
     estados = []
     numeros_moviles = list(
         filter(
-            lambda x: x not in TableroB[if1],
-            [n for n in range(1, (tamano_zona[0] * tamano_zona[-1]) + 1)],
+            lambda x: x not in board_b[if1],
+            [n for n in range(1, (zone_dimensions[0] * zone_dimensions[-1]) + 1)],
         )
     )
     variaciones_numeros_moviles = list(
         itertools.permutations(numeros_moviles, len(numeros_moviles))
     )
     for variacion_fila in variaciones_numeros_moviles:
-        Fila = [n for n in TableroB[if1]]
+        Fila = [n for n in board_b[if1]]
         variacion_fila = list(variacion_fila)
-        for i in range(len(TableroB[if1])):
+        for i in range(len(board_b[if1])):
             if Fila[i] == 0:
                 Fila[i] = variacion_fila[0]
                 variacion_fila.remove(variacion_fila[0])
-        estados.append((fitness(individual), Fila))
+        estados.append((custom_fitness(individual), Fila))
     return estados
 
 
-# --------------------------------------------------------------------------------------------------------
-# Esto realmente es una mutacion, es bastante simple, se toma una fila al asar, de la fila se seleccionan
-# dos posiciones tambien al asar y se intercambian, luego se aplica la funcion de correccion al individo
-# en la fila seleccionada, asi se asegura que no se muevan los numeros fijos, tambien hay un condicional
-# que evita que el individuo pueda mutar a un tablero con un fitness mejor al inicial.
-# --------------------------------------------------------------------------------------------------------
 def mejorar_1(individual):
     individuali = deepcopy(individual)
     if1 = random.randrange(len(individual))
@@ -138,99 +133,38 @@ def mejorar_1(individual):
         individual[if1][ic2],
         individual[if1][ic1],
     )
-    individual = corregir_fila(individual, if1)
-    if fitness(individual) <= fitness(individuali):
+    individual = correct_row(individual, if1)
+    if custom_fitness(individual) <= custom_fitness(individuali):
         return individual
     else:
         return individuali
 
 
-# --------------------------------------------------------------------------------------------------------
-# Es probablemente el peor criterio que hay, genera todas las posibles variaciones de una fila y incorpora
-# una de las variaciones finales a la solucion, la seleccion de la fila que se incorporara es al asar.
-# --------------------------------------------------------------------------------------------------------
-def mejorar_2(individual):
-    fila_a_mejorar = random.randrange(len(individual))
-    estados = generar_estados(individual, fila_a_mejorar)
-    nueva_fila = random.choice(estados)
-    individual[fila_a_mejorar] = nueva_fila[-1]
-    return individual
-
-
-# --------------------------------------------------------------------------------------------------------
-# Es practicamente igual que el hill climbien normal en terminos de desempeño, pero deberia ser mas
-# costoso computacionalmente hablando, la ventaja es que es mas rapido, pero es mas propenso a caer en
-# minimos locales que la mutacion del hill climbing normal.
-# --------------------------------------------------------------------------------------------------------
-def mejorar_3(individual):
-    individuali = deepcopy(individual)
-    fila_a_mejorar = random.randrange(len(individual))
-    estados = generar_estados(individual, fila_a_mejorar)
-    nueva_fila = random.choice(estados)
-    individual[fila_a_mejorar] = nueva_fila[-1]
-    if fitness(individual) < fitness(individuali):
-        return individual
-    else:
-        return individuali
-
-
-# --------------------------------------------------------------------------------------------------------
-# Ciclo de mejora, dependiendo del criterio de busqueda.
-# --------------------------------------------------------------------------------------------------------
 def mejorar_n(individual, n):
     puntuaciones = []
     tableros = []
 
-    if configuracion_HC == 0:
+    for i in range(restarts + 1):
+        individual = start_board(read_initial_board(board_path))
         for i in range(n + 1):
             individual = mejorar_1(individual)
-            puntuaciones.append(fitness(individual))
-        return individual, puntuaciones
+            tableros.append(individual)
+            puntuaciones.append(custom_fitness(individual))
+    for i in tableros:
+        if custom_fitness(i) < custom_fitness(individual):
+            individual = i
 
-    if configuracion_HC == 1:
-        for i in range(n + 1):
-            individual = mejorar_2(individual)
-            tableros.append(deepcopy(individual))
-            puntuaciones.append(fitness(individual))
-        for i in tableros:
-            if fitness(i) < fitness(individual):
-                individual = i
-        return individual, puntuaciones
-
-    if configuracion_HC == 2:
-        for i in range(n + 1):
-            individual = mejorar_3(individual)
-            puntuaciones.append(fitness(individual))
-        return individual, puntuaciones
-
-    if configuracion_HC == 3:
-        for i in range(numero_reinicios + 1):
-            individual = iniciar_tablero(leer_tablero_incial(board_path))
-            for i in range(n + 1):
-                individual = mejorar_1(individual)
-                tableros.append(individual)
-                puntuaciones.append(fitness(individual))
-        for i in tableros:
-            if fitness(i) < fitness(individual):
-                individual = i
-        return individual, puntuaciones
+    return individual, puntuaciones
 
 
-# --------------------------------------------------------------------------------------------------------
-# Imprime el tablero.
-# --------------------------------------------------------------------------------------------------------
 def imprimirsudoku(sudoku):
     for fila in sudoku:
         for numero in fila:
             print(numero, end=" ")
-        print("")
 
 
-# --------------------------------------------------------------------------------------------------------
-# Lee el tablero inicial de un archivo .txt especificado como board_path.
-# --------------------------------------------------------------------------------------------------------
-def leer_tablero_incial(board_path):
-    TableroA = []
+def read_initial_board(board_path):
+    board_a = []
     archivo = open(board_path, "r")
     lineas = list(archivo)
     for linea in lineas:
@@ -238,54 +172,78 @@ def leer_tablero_incial(board_path):
         linea = [x for x in filter(lambda x: x != "\n", linea)]
         for i in range(len(linea)):
             linea[i] = int(linea[i])
-        TableroA.append(linea)
+        board_a.append(linea)
     archivo.close()
-    return TableroA
+    return board_a
 
 
-# --------------------------------------------------------------------------------------------------------
-# Inicia el tablero, llena las posiciones de las filas iniciadas como 0 con numeros al asar que no esten
-# presentes en la fila, asi desde el principio se evitan las colisions en las filas.
-# --------------------------------------------------------------------------------------------------------
-def iniciar_tablero(TableroA):
-    for fila in TableroA:
+def start_board(board_a):
+    for fila in board_a:
         for indice in range(len(fila)):
             if fila[indice] == 0:
                 while True:
                     nuevonumero = random.randrange(
-                        1, (tamano_zona[0] * tamano_zona[-1]) + 1
+                        1, (zone_dimensions[0] * zone_dimensions[-1]) + 1
                     )
                     if nuevonumero not in fila:
                         break
                 fila[indice] = nuevonumero
-    return TableroA
+    return board_a
 
 
-# --------------------------------------------------------------------------------------------------------
-# Ejecucion del programa.
-# --------------------------------------------------------------------------------------------------------
-TableroA = leer_tablero_incial(board_path)
-TableroB = deepcopy(TableroA)
-TableroA = iniciar_tablero(TableroA)
+all_files_list = [file_name for _, _, file_name in walk(boards_path)][0]
+txt_files_list = [
+    file_name
+    for file_name in filter(
+        lambda file_name: file_name.split(".")[-1] == "txt", all_files_list
+    )
+]
 
-start_time = time()
-TableroA, puntuaciones = mejorar_n(TableroA, numero_de_busquedas)
-elapsed_time = time() - start_time
+for file_name in txt_files_list:
 
-print("")
-print("Execution time: %0.10f seconds" % elapsed_time)
-print(f"Board name: {str(get_file_name(board_path))}")
-print(f"Errors: {str(fitness(TableroA))}")
-print("")
-imprimirsudoku(TableroA)
-print("")
-fitness_report(TableroA)
-print("")
+    board_path = path.join(boards_path, file_name)
+    board_name = get_file_name(board_path)
+    board_a = read_initial_board(board_path)
+    board_b = deepcopy(board_a)
 
-plt.figure(figsize=(16, 9))
-plt.plot(puntuaciones, "-", linewidth=0.8, color="r")
-plt.xlabel("Iteracion")
-plt.ylabel("Numero de errores")
-plt.grid()
-plt.show()
-plt.savefig("./images/hc_performance.png")
+    y_axis_0 = list()
+    y_axis_1 = list()
+    x_axis_0 = list()
+
+    print(f"board name: {board_name}")
+    print(f"board path: {board_path}")
+
+    print("starting to solve the board")
+
+    start_time = time()
+    board_a, puntuaciones = mejorar_n(board_a, searchs)
+    elapsed_time = time() - start_time
+
+    print("board solved")
+
+    print("execution time: %0.2f seconds" % elapsed_time)
+    print(f"errors: {custom_fitness(board_a)}")
+
+    # imprimirsudoku(board_a)
+
+    custom_fitness_report(board_a)
+    print("saving algorithm performance trace")
+
+    plt.figure(figsize=(16, 9))
+
+    plt.plot(
+        puntuaciones,
+        "-",
+        linewidth=0.8,
+        color="r",
+        label=f"performance trace [errors: {custom_fitness(board_a)}]",
+    )
+
+    plt.xlabel("iterations")
+    plt.ylabel("errors")
+    plt.legend()
+    plt.grid()
+    plt.savefig(path.join(results_path, f"{board_name}_hc_performance.png"))
+    plt.clf()
+
+    print("algorithm performance trace saved")
