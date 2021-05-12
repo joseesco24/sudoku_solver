@@ -13,8 +13,8 @@ directory_path = os.getcwd()
 boards_path = path.join(directory_path, "boards")
 results_path = path.join(directory_path, "results")
 
-restarts = 4
-searchs = 400
+restarts = 1
+searchs = 10
 
 zone_dimensions = (3, 3)
 
@@ -95,6 +95,7 @@ def custom_fitness(individual):
 
 
 def correct_row(individual, fi1):
+    global board_b
     for col1 in range(len(board_b[fi1])):
         if board_b[fi1][col1] != 0 and individual[fi1][col1] != board_b[fi1][col1]:
             col2 = individual[fi1].index(board_b[fi1][col1])
@@ -106,6 +107,7 @@ def correct_row(individual, fi1):
 
 
 def generar_estados(individual, fila):
+    global board_b
     if1 = fila
     estados = []
     numeros_moviles = list(

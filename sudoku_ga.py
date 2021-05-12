@@ -16,12 +16,13 @@ results_path = path.join(directory_path, "results")
 
 zone_dimensions = (3, 3)
 
-generations = 100
+generations = 10
 population = 100
+
+parents_selection_option = 1
 crossover_probability = 0.8
 mutation_probability = 0.2
 elitism_setup = True
-parents_selection_option = 1
 
 if len(sys.argv) > 1:
     arguments = sys.argv[1:]
@@ -140,6 +141,7 @@ def random_selection(population):
 
 
 def correct_row(individual, fi1):
+    global board_b
     for col1 in range(len(board_b[fi1])):
         if board_b[fi1][col1] != 0 and individual[fi1][col1] != board_b[fi1][col1]:
             col2 = individual[fi1].index(board_b[fi1][col1])
