@@ -1,3 +1,4 @@
+from sudoku_ga import save_board
 import matplotlib.pyplot as plt
 from copy import deepcopy
 from time import time
@@ -146,10 +147,16 @@ def mejorar_1(individual):
         return individuali
 
 
-def imprimirsudoku(sudoku):
-    for fila in sudoku:
-        for numero in fila:
-            print(numero, end=" ")
+def save_board(board, output_file_path):
+
+    if os.path.exists(output_file_path):
+        os.remove(output_file_path)
+
+    for row in board:
+        with open(output_file_path, "a") as output_file:
+            for number in row:
+                output_file.write(f"{number} ")
+            output_file.write("\n")
 
 
 def read_initial_board(board_path):
@@ -188,6 +195,7 @@ txt_files_list = [
     )
 ]
 
+print("")
 for file_name in txt_files_list:
 
     board_path = path.join(boards_path, file_name)
@@ -237,7 +245,7 @@ for file_name in txt_files_list:
     print(f"total searches: {searchs * (restarts + 1)}")
     print(f"errors: {custom_fitness(board_a)}")
 
-    # imprimirsudoku(board_a)
+    save_board(board_a, path.join(results_path, f"{board_name}_hc_result.txt"))
 
     custom_fitness_report(board_a)
     print("saving algorithm performance trace")
@@ -261,3 +269,4 @@ for file_name in txt_files_list:
 
     del board_a
     print("algorithm performance trace saved")
+    print("")

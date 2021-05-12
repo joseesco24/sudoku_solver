@@ -163,10 +163,16 @@ def custom_mutation(individual):
     return correct_row(individual, if1)
 
 
-def imprimirsudoku(sudoku):
-    for row in sudoku:
-        for numero in row:
-            print(numero, end=" ")
+def save_board(board, output_file_path):
+
+    if os.path.exists(output_file_path):
+        os.remove(output_file_path)
+
+    for row in board:
+        with open(output_file_path, "a") as output_file:
+            for number in row:
+                output_file.write(f"{number} ")
+            output_file.write("\n")
 
 
 def custom_crossover(parent_1, parent_2):
@@ -204,6 +210,7 @@ txt_files_list = [
     )
 ]
 
+print("")
 for file_name in txt_files_list:
 
     board_path = path.join(boards_path, file_name)
@@ -261,7 +268,9 @@ for file_name in txt_files_list:
     print(f"elapsed generations: {generations}")
     print(f"population: {population}")
 
-    # imprimirsudoku(ga.best_individual()[1])
+    save_board(
+        ga.best_individual()[1], path.join(results_path, f"{board_name}_ga_result.txt")
+    )
 
     custom_fitness_report(ga.best_individual()[1])
     print("saving algorithm performance trace")
@@ -295,3 +304,4 @@ for file_name in txt_files_list:
 
     del board_a
     print("algorithm performance trace saved")
+    print("")
