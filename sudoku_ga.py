@@ -16,12 +16,12 @@ results_path = path.join(directory_path, "results")
 
 zone_dimensions = (3, 3)
 
-generations = 40
-population = 40
+generations = 100
+population = 100
 crossover_probability = 0.8
 mutation_probability = 0.2
 elitism_setup = True
-metodo_seleccion_padres = 1
+parents_selection_option = 1
 
 if len(sys.argv) > 1:
     arguments = sys.argv[1:]
@@ -38,53 +38,60 @@ def get_file_name(board_path):
     return path.basename(board_path).split(".")[0]
 
 
-def fitness_report(individual):
-    colisionesfil, colisionescol, colisioneszon = 0, 0, 0
-    for fila in range(len(individual)):
-        numeros = set()
-        for columna in range(len(individual[fila])):
-            numeros.add(individual[fila][columna])
-        repeticiones = abs(len(individual[fila]) - len(numeros))
-        colisionesfil += repeticiones
-    for fila in range(len(individual)):
-        numeros = set()
-        for columna in range(len(individual[fila])):
-            numeros.add(individual[columna][fila])
-        repeticiones = abs(len(individual[fila]) - len(numeros))
-        colisionescol += repeticiones
-    for fila in range(0, len(individual), zone_dimensions[-1]):
-        for columna in range(0, len(individual[fila]), zone_dimensions[0]):
+def custom_fitness_report(individual):
+    row_collisions, column_collisions, zone_collisions = 0, 0, 0
+
+    for row in range(len(individual)):
+        numbers_set = set()
+        for column in range(len(individual[row])):
+            numbers_set.add(individual[row][column])
+        repetitions = abs(len(individual[row]) - len(numbers_set))
+        row_collisions += repetitions
+
+    for row in range(len(individual)):
+        numbers_set = set()
+        for column in range(len(individual[row])):
+            numbers_set.add(individual[column][row])
+        repetitions = abs(len(individual[row]) - len(numbers_set))
+        column_collisions += repetitions
+
+    for row in range(0, len(individual), zone_dimensions[-1]):
+        for column in range(0, len(individual[row]), zone_dimensions[0]):
             sub = set()
             for i in range(zone_dimensions[-1]):
-                sub1 = individual[fila + i][columna : columna + zone_dimensions[0]]
+                sub1 = individual[row + i][column : column + zone_dimensions[0]]
                 sub.update(set(sub1))
-            repeticiones = abs((zone_dimensions[0] * zone_dimensions[-1]) - len(sub))
-            colisioneszon += repeticiones
-    print("errors in zones: " + str(colisioneszon))
-    print("errors in rows: " + str(colisionesfil))
-    print("erros in columns: " + str(colisionescol))
+            repetitions = abs((zone_dimensions[0] * zone_dimensions[-1]) - len(sub))
+            zone_collisions += repetitions
+
+    print("errors in zones: " + str(zone_collisions))
+    print("errors in rows: " + str(row_collisions))
+    print("erros in columns: " + str(column_collisions))
 
 
-def fitness(individual, _):
+def custom_fitness(individual, _):
     colisiones = 0
-    for fila in range(len(individual)):
-        numeros = set()
-        for columna in range(len(individual[fila])):
-            numeros.add(individual[columna][fila])
-        repeticiones = abs(len(individual[fila]) - len(numeros))
-        colisiones += repeticiones
-    for fila in range(0, len(individual), zone_dimensions[-1]):
-        for columna in range(0, len(individual[fila]), zone_dimensions[0]):
+
+    for row in range(len(individual)):
+        numbers_set = set()
+        for column in range(len(individual[row])):
+            numbers_set.add(individual[column][row])
+        repetitions = abs(len(individual[row]) - len(numbers_set))
+        colisiones += repetitions
+
+    for row in range(0, len(individual), zone_dimensions[-1]):
+        for column in range(0, len(individual[row]), zone_dimensions[0]):
             sub = set()
             for i in range(zone_dimensions[-1]):
-                sub1 = individual[fila + i][columna : columna + zone_dimensions[0]]
+                sub1 = individual[row + i][column : column + zone_dimensions[0]]
                 sub.update(set(sub1))
-            repeticiones = abs((zone_dimensions[0] * zone_dimensions[-1]) - len(sub))
-            colisiones += repeticiones
+            repetitions = abs((zone_dimensions[0] * zone_dimensions[-1]) - len(sub))
+            colisiones += repetitions
+
     return colisiones
 
 
-def create(data):
+def custom_creation(data):
     for row in data:
         for index in range(len(row)):
             if row[index] == 0:
@@ -124,7 +131,7 @@ def random_selection(population):
     return random.choice(population)
 
 
-def correct(individual, fi1):
+def correct_row(individual, fi1):
     for col1 in range(len(board_b[fi1])):
         if board_b[fi1][col1] != 0 and individual[fi1][col1] != board_b[fi1][col1]:
             col2 = individual[fi1].index(board_b[fi1][col1])
@@ -135,7 +142,7 @@ def correct(individual, fi1):
     return individual
 
 
-def mutate(individual):
+def custom_mutation(individual):
     if1 = random.randrange(len(individual))
     ic1 = random.randrange(len(individual[if1]))
     ic2 = random.randrange(len(individual[if1]))
@@ -143,29 +150,29 @@ def mutate(individual):
         individual[if1][ic2],
         individual[if1][ic1],
     )
-    return correct(individual, if1)
+    return correct_row(individual, if1)
 
 
 def imprimirsudoku(sudoku):
-    for fila in sudoku:
-        for numero in fila:
+    for row in sudoku:
+        for numero in row:
             print(numero, end=" ")
 
 
-def crossover(parent_1, parent_2):
+def custom_crossover(parent_1, parent_2):
     if1 = random.randrange(len(parent_1))
     if2 = random.randrange(len(parent_1))
     parent_1[if1], parent_2[if2] = parent_2[if2], parent_1[if1]
-    return correct(parent_1, if1), correct(parent_2, if2)
+    return correct_row(parent_1, if1), correct_row(parent_2, if2)
 
 
-def average_fitness(ga):
+def get_average_fitness(ga):
     fitness_po = [i.fitness for i in ga.current_generation]
     average = sum(fitness_po) / len(fitness_po)
     return format(average)
 
 
-def leer_tablero_incial(board_path):
+def read_initial_board(board_path):
     board_a = []
     archivo = open(board_path, "r")
     lineas = list(archivo)
@@ -191,12 +198,12 @@ for file_name in txt_files_list:
 
     board_path = path.join(boards_path, file_name)
     board_name = get_file_name(board_path)
-    board_a = leer_tablero_incial(board_path)
+    board_a = read_initial_board(board_path)
     board_b = deepcopy(board_a)
 
-    ejey0 = list()
-    ejey1 = list()
-    ejex0 = list()
+    y_axis_0 = list()
+    y_axis_1 = list()
+    x_axis_0 = list()
 
     start_time = time()
     generations_counter = 0
@@ -213,15 +220,15 @@ for file_name in txt_files_list:
         maximise_fitness=False,
     )
 
-    ga.create_individual = create
-    ga.crossover_function = crossover
-    ga.mutate_function = mutate
+    ga.create_individual = custom_creation
+    ga.crossover_function = custom_crossover
+    ga.mutate_function = custom_mutation
     ga.selection_function = [
         tournament_selection,
         roulette_selection,
         random_selection,
-    ][metodo_seleccion_padres]
-    ga.fitness_function = fitness
+    ][parents_selection_option]
+    ga.fitness_function = custom_fitness
     ga.create_first_generation()
 
     print("starting to solve the board")
@@ -230,13 +237,13 @@ for file_name in txt_files_list:
         generations_counter = i
         ga.create_next_generation()
         fitness = ga.best_individual()[0]
-        ejey0.append(float(fitness))
-        ejey1.append(float(average_fitness(ga)))
-        ejex0.append(float(format(i)))
+        y_axis_0.append(float(fitness))
+        y_axis_1.append(float(get_average_fitness(ga)))
+        x_axis_0.append(float(format(i)))
     elapsed_time = time() - start_time
 
     print("board solved")
-    print(f"selection method used: {metodo_seleccion_padres}")
+    print(f"selection method used: {parents_selection_option}")
     print("execution time: %0.2f seconds" % elapsed_time)
     print(f"errors: {ga.best_individual()[0]}")
     print(f"elapsed generations: {generations_counter}")
@@ -244,19 +251,29 @@ for file_name in txt_files_list:
 
     # imprimirsudoku(ga.best_individual()[1])
 
-    fitness_report(ga.best_individual()[1])
+    custom_fitness_report(ga.best_individual()[1])
     print("saving algorithm performance trace")
 
     plt.figure(figsize=(16, 9))
-    plt.plot(ejex0, ejey0, "-", linewidth=0.8, color="r", label="best fitness trace")
+
     plt.plot(
-        ejex0,
-        ejey1,
+        x_axis_0,
+        y_axis_1,
         "-",
         linewidth=0.4,
         color="b",
-        label=f"average fitness trace (population={population})",
+        label=f"average fitness trace [population: {population}]",
     )
+
+    plt.plot(
+        x_axis_0,
+        y_axis_0,
+        "-",
+        linewidth=0.8,
+        color="r",
+        label=f"best fitness trace [errors: {ga.best_individual()[0]}]",
+    )
+
     plt.xlabel("generation")
     plt.ylabel("fitness")
     plt.legend()
