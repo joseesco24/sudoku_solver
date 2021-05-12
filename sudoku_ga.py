@@ -1,32 +1,43 @@
-import random
-from time import time
-from copy import deepcopy
-from pyeasyga import pyeasyga
 import matplotlib.pyplot as plt
 from operator import attrgetter
+from pyeasyga import pyeasyga
+from copy import deepcopy
+from time import time
+from os import path
+import random
+import sys
+import os
 
-# ------------- Nota:
-# antes hay que instalar pyeasyga y matplotlib.
-# pip install pyeasyga
-# pip install matplotlib
+script_path = path.realpath(__file__)
+directory_path = os.getcwd()
 
-# ------------- Parametros del tablero:
-ruta_tablero = "TableroD2.txt"  # ruta al tablero que se quiere resolver.
-tamano_zona = (
-    3,
-    2,
-)  # tamaño de las zonas individuales, respectivamente columnas, filas.
+#board_path = path.join(directory_path, "boards")
+board_path = "./boards/tablero_d2.txt"
+images_path = path.join(directory_path, "images")
 
-# ------------- Parametros con los que no se puede jugar:
-maximisar_fitness = False
+if len(sys.argv) > 1:
+    arguments = sys.argv[1:]
+    for argument_index in range(len(arguments)):
 
-# ------------- Parametros con los que se puede jugar:
-numero_de_generaciones = 100
-tamano_poblacion = 100
+        argument_value = arguments[argument_index]
+
+        if argument_value == "--path" or argument_value == "-p":
+            board_path = arguments[argument_index + 1]
+
+tamano_zona = (3, 2)
+
+numero_de_generaciones = 60
+tamano_poblacion = 40
 probablilidad_de_cruce = 0.8
 probabilidad_de_mutacion = 0.2
 elitimso = True
-metodo_seleccion_padres = 1  # <---- 0, 1 o 2, torneo, ruleta o aleatorio.
+metodo_seleccion_padres = (
+    1  # 0, 1 o 2, tournament_selection, ruleta o random_selection.
+)
+
+
+def get_file_name(board_path):
+    return path.basename(board_path).split(".")[0]
 
 
 # --------------------------------------------------------------------------------------------------------
@@ -88,61 +99,51 @@ def fitness(individual, data):
 # presentes en la fila, asi desde el principio se evitan las colisions en las filas, se usa solo para
 # iniciar la primera generacion.
 # --------------------------------------------------------------------------------------------------------
-def create_individual(data):
-    for fila in data:
-        for indice in range(len(fila)):
-            if fila[indice] == 0:
+def create(data):
+    for row in data:
+        for index in range(len(row)):
+            if row[index] == 0:
                 while True:
-                    nuevonumero = random.randrange(
+                    new_number = random.randrange(
                         1, (tamano_zona[0] * tamano_zona[-1]) + 1
                     )
-                    if nuevonumero not in fila:
+                    if new_number not in row:
                         break
-                fila[indice] = nuevonumero
+                row[index] = new_number
     return data
 
 
-# --------------------------------------------------------------------------------------------------------
-# Metodo de seleccion por torneo, es el mas simple, pero el mejor, toma a la mitad de los individuos de la
-# la poblacion al asar y selecciona al mejor de los individuos presente en la mustra.
-# --------------------------------------------------------------------------------------------------------
-def torneo(population):
-    tournmentsize = len(population) // 2
-    if tournmentsize == 0:
-        tournmentsize = 2
-    members = random.sample(population, tournmentsize)
-    members.sort(key=attrgetter("fitness"), reverse=False)
-    return members[0]
+def tournament_selection(population):
+    tournment_size = len(population) // 2
+    if tournment_size == 0:
+        tournment_size = 2
+    participant_members = random.sample(population, tournment_size)
+    participant_members.sort(key=attrgetter("fitness"), reverse=False)
+    return participant_members[0]
 
 
-# --------------------------------------------------------------------------------------------------------
-# Metodo de seleccion de ruleta, reduce exponencialmente la probabilida de un individo entre mayor sea su
-# fitness, dependiendo de su probabilidad el individo se pone cierto numero de veces en la ruleta, de esta
-# forma entre menor el fitness mas apariciones del individuo en la ruleta y mas probabilidades de ser
-# seleccionado, este es el metodo de seleccion mas lento, al usarlo la ejecucion puede tomar mucho mas
-# tiempo que por torneo o aleatorio, lo mejor es usarlo con elitismo y una poblacion reducida.
-# --------------------------------------------------------------------------------------------------------
-def ruleta(population):
-    ruleta = []
-    for dude in population:
-        fitnes = int(dude.fitness)
-        if fitnes == 0:
+def roulette_selection(population):
+    roulette = list()
+    for individual in population:
+        fitness = int(individual.fitness)
+        if fitness == 0:
             prob = 100
-        if fitnes != 0:
-            prob = int(100 / fitnes)
-        for n in range(prob + 1):
-            ruleta.append(dude)
-    return random.choice(ruleta)
+        if fitness != 0:
+            prob = int(100 / fitness)
+        roulette.extend([individual] * prob)
+    random.shuffle(roulette)
+    return random.choice(roulette)
 
 
-# --------------------------------------------------------------------------------------------------------
-# Metodo de seleccion aleatorio, toma un individuo cualquiera de la poblacion para realizar los cruces.
-# --------------------------------------------------------------------------------------------------------
-def aleatorio(population):
+def random_selection(population):
     return random.choice(population)
 
 
-metodos_seleccion = [torneo, ruleta, aleatorio]  # Vector de metodos de seleccion.
+metodos_seleccion = [
+    tournament_selection,
+    roulette_selection,
+    random_selection,
+]
 
 
 # --------------------------------------------------------------------------------------------------------
@@ -189,7 +190,7 @@ def imprimirsudoku(sudoku):
 
 
 # --------------------------------------------------------------------------------------------------------
-# Funcion de cruce, toma dos filas aleatorias de los padres y las intercambia, luego las corrige con la
+# Funcion de cruce, toma dos filas aleatorias de los padres         for n in range(prob + 1):y las intercambia, luego las corrige con la
 # funcion de correccion para evitar mover los numeros que deben permanecer fijos.
 # --------------------------------------------------------------------------------------------------------
 def crossover(parent_1, parent_2):
@@ -209,11 +210,11 @@ def average_fitness():
 
 
 # --------------------------------------------------------------------------------------------------------
-# Lee el tablero inicial de un archivo .txt especificado como ruta_tablero.
+# Lee el tablero inicial de un archivo .txt especificado como board_path.
 # --------------------------------------------------------------------------------------------------------
-def leer_tablero_incial(ruta_tablero):
+def leer_tablero_incial(board_path):
     TableroA = []
-    archivo = open(ruta_tablero, "r")
+    archivo = open(board_path, "r")
     lineas = list(archivo)
     for linea in lineas:
         linea = linea.split(" ")
@@ -228,7 +229,7 @@ def leer_tablero_incial(ruta_tablero):
 # --------------------------------------------------------------------------------------------------------
 # Ejecucion del programa.
 # --------------------------------------------------------------------------------------------------------
-TableroA = leer_tablero_incial(ruta_tablero)
+TableroA = leer_tablero_incial(board_path)
 TableroB = deepcopy(TableroA)
 
 # --------------------------------------------------------------------------------------------------------
@@ -240,14 +241,14 @@ ga = pyeasyga.GeneticAlgorithm(
     crossover_probability=probablilidad_de_cruce,
     mutation_probability=probabilidad_de_mutacion,
     elitism=elitimso,
-    maximise_fitness=maximisar_fitness,
+    maximise_fitness=False,
 )
 
 # --------------------------------------------------------------------------------------------------------
 # Se sobreescriven los metodos de mutacion, curce, creacion de individuo, seleccion, fitness y finalmente
 # se inicia la primera generacion.
 # --------------------------------------------------------------------------------------------------------
-ga.create_individual = create_individual
+ga.create_individual = create
 ga.crossover_function = crossover
 ga.mutate_function = mutate
 ga.selection_function = metodos_seleccion[metodo_seleccion_padres]
@@ -273,9 +274,12 @@ for i in range(numero_de_generaciones + 1):
     ejex0.append(float(format(i)))
 elapsed_time = time() - start_time
 
-print("\nTiempo de ejecucion: %0.10f segundos" % elapsed_time)
-print("Numero de errores mejor solucion: " + str(ga.best_individual()[0]))
-print("Numero de la generacion: " + str(it) + "\n")
+print("")
+print("Execution time: %0.10f seconds" % elapsed_time)
+print(f"Board name: {str(get_file_name(board_path))}")
+print(f"Errors: {str(ga.best_individual()[0])}")
+print(f"Generations: {str(it)}")
+print("")
 imprimirsudoku(ga.best_individual()[1])
 print("")
 fitness_report(ga.best_individual()[1])
@@ -288,4 +292,4 @@ plt.xlabel("Generacion")
 plt.ylabel("Fitness")
 plt.legend()
 plt.grid()
-plt.savefig("./imagenes/ga_performance.png")
+plt.savefig("./images/ga_performance.png")

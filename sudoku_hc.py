@@ -1,20 +1,26 @@
-import random
-import itertools
-from time import time
-from copy import deepcopy
 import matplotlib.pyplot as plt
+from copy import deepcopy
+from time import time
+from os import path
+import itertools
+import random
+import sys
 
-# ------------- Parametros del tablero:
-ruta_tablero = "TableroD2.txt"  # ruta al tablero que se quiere resolver.
-tamano_zona = (
-    3,
-    2,
-)  # tamaño de las zonas individuales, respectivamente columnas, filas.
+board_path = "./boards/tablero_d2.txt"
 
-# ------------- Parametros Hill Climbing:
+if len(sys.argv) > 1:
+    arguments = sys.argv[1:]
+    board_path = arguments[0]
+
+tamano_zona = (3, 2)
+
 numero_reinicios = 4  # numero de veces que se reinicia el tablero en random restart, solo afecta si la configuracion es 3.
-numero_de_busquedas = 400  # numero de veces que se generaran estados y se buscara el mejor segin el criterio.
-configuracion_HC = 3  # <---- 0, 1, 2 o 3, steep, stochastic, first-choice o random restart, este es el criterio de busqueda del mejor.
+numero_de_busquedas = 400
+configuracion_HC = 3  # 0, 1, 2 o 3, steep, stochastic, first-choice o random restart.
+
+
+def get_file_name(board_path):
+    return path.basename(board_path).split(".")[0]
 
 
 # --------------------------------------------------------------------------------------------------------
@@ -196,7 +202,7 @@ def mejorar_n(individual, n):
 
     if configuracion_HC == 3:
         for i in range(numero_reinicios + 1):
-            individual = iniciar_tablero(leer_tablero_incial(ruta_tablero))
+            individual = iniciar_tablero(leer_tablero_incial(board_path))
             for i in range(n + 1):
                 individual = mejorar_1(individual)
                 tableros.append(individual)
@@ -218,11 +224,11 @@ def imprimirsudoku(sudoku):
 
 
 # --------------------------------------------------------------------------------------------------------
-# Lee el tablero inicial de un archivo .txt especificado como ruta_tablero.
+# Lee el tablero inicial de un archivo .txt especificado como board_path.
 # --------------------------------------------------------------------------------------------------------
-def leer_tablero_incial(ruta_tablero):
+def leer_tablero_incial(board_path):
     TableroA = []
-    archivo = open(ruta_tablero, "r")
+    archivo = open(board_path, "r")
     lineas = list(archivo)
     for linea in lineas:
         linea = linea.split(" ")
@@ -255,7 +261,7 @@ def iniciar_tablero(TableroA):
 # --------------------------------------------------------------------------------------------------------
 # Ejecucion del programa.
 # --------------------------------------------------------------------------------------------------------
-TableroA = leer_tablero_incial(ruta_tablero)
+TableroA = leer_tablero_incial(board_path)
 TableroB = deepcopy(TableroA)
 TableroA = iniciar_tablero(TableroA)
 
@@ -263,8 +269,11 @@ start_time = time()
 TableroA, puntuaciones = mejorar_n(TableroA, numero_de_busquedas)
 elapsed_time = time() - start_time
 
-print("\nTiempo de ejecucion: %0.10f segundos" % elapsed_time)
-print("Numero de errores mejor solucion: " + str(fitness(TableroA)) + "\n")
+print("")
+print("Execution time: %0.10f seconds" % elapsed_time)
+print(f"Board name: {str(get_file_name(board_path))}")
+print(f"Errors: {str(fitness(TableroA))}")
+print("")
 imprimirsudoku(TableroA)
 print("")
 fitness_report(TableroA)
@@ -276,4 +285,4 @@ plt.xlabel("Iteracion")
 plt.ylabel("Numero de errores")
 plt.grid()
 plt.show()
-plt.savefig("./imagenes/hc_performance.png")
+plt.savefig("./images/hc_performance.png")
