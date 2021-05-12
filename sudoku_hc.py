@@ -144,23 +144,6 @@ def mejorar_1(individual):
         return individuali
 
 
-def mejorar_n(individual, n):
-    puntuaciones = []
-    tableros = []
-
-    for i in range(restarts + 1):
-        individual = start_board(read_initial_board(board_path))
-        for i in range(n + 1):
-            individual = mejorar_1(individual)
-            tableros.append(individual)
-            puntuaciones.append(custom_fitness(individual))
-    for i in tableros:
-        if custom_fitness(i) < custom_fitness(individual):
-            individual = i
-
-    return individual, puntuaciones
-
-
 def imprimirsudoku(sudoku):
     for fila in sudoku:
         for numero in fila:
@@ -210,6 +193,11 @@ for file_name in txt_files_list:
     board_a = read_initial_board(board_path)
     board_b = deepcopy(board_a)
 
+    puntuaciones = list()
+    tableros = list()
+
+    searchs_counter = 0
+
     y_axis_0 = list()
     y_axis_1 = list()
     x_axis_0 = list()
@@ -220,12 +208,31 @@ for file_name in txt_files_list:
     print("starting to solve the board")
 
     start_time = time()
-    board_a, puntuaciones = mejorar_n(board_a, searchs)
+
+    for i in range(restarts + 1):
+        individual = start_board(read_initial_board(board_path))
+        for i in range(searchs):
+            searchs_counter += 1
+            print(
+                f"elapsed searches: {searchs_counter}/{searchs * (restarts + 1)}",
+                end="\r",
+            )
+            individual = mejorar_1(individual)
+            tableros.append(individual)
+            puntuaciones.append(custom_fitness(individual))
+
     elapsed_time = time() - start_time
 
-    print("board solved")
+    for i in tableros:
+        if custom_fitness(i) < custom_fitness(individual):
+            board_a = i
 
+    print("")
+    print("board solved")
     print("execution time: %0.2f seconds" % elapsed_time)
+    print(f"restarts: {restarts}")
+    print(f"searches per restart: {searchs}")
+    print(f"total searches: {searchs * (restarts + 1)}")
     print(f"errors: {custom_fitness(board_a)}")
 
     # imprimirsudoku(board_a)
@@ -250,4 +257,5 @@ for file_name in txt_files_list:
     plt.savefig(path.join(results_path, f"{board_name}_hc_performance.png"))
     plt.clf()
 
+    del board_a
     print("algorithm performance trace saved")

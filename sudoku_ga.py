@@ -75,7 +75,7 @@ def custom_fitness_report(individual):
     print("erros in columns: " + str(column_collisions))
 
 
-def custom_fitness(individual):
+def custom_fitness(individual, _):
     collisions = 0
 
     for row in range(len(individual)):
@@ -239,22 +239,24 @@ for file_name in txt_files_list:
     ga.create_first_generation()
 
     print("starting to solve the board")
-
     start_time = time()
+
     for i in range(generations + 1):
-        generations_counter = i
+        print(f"elapsed generations: {i}/{generations}", end="\r")
         ga.create_next_generation()
         fitness = ga.best_individual()[0]
         y_axis_0.append(float(fitness))
         y_axis_1.append(float(get_average_fitness(ga)))
         x_axis_0.append(float(format(i)))
+
     elapsed_time = time() - start_time
 
+    print("")
     print("board solved")
     print(f"selection method used: {parents_selection_option}")
     print("execution time: %0.2f seconds" % elapsed_time)
     print(f"errors: {ga.best_individual()[0]}")
-    print(f"elapsed generations: {generations_counter}")
+    print(f"elapsed generations: {generations}")
     print(f"population: {population}")
 
     # imprimirsudoku(ga.best_individual()[1])
@@ -289,4 +291,5 @@ for file_name in txt_files_list:
     plt.savefig(path.join(results_path, f"{board_name}_ga_performance.png"))
     plt.clf()
 
+    del board_a
     print("algorithm performance trace saved")
