@@ -6,11 +6,14 @@ import itertools
 import random
 import sys
 
-board_path = "./boards/tablero_d2.txt"
+board_path = "./default_boards/tablero_d2.txt"
 
 if len(sys.argv) > 1:
     arguments = sys.argv[1:]
-    board_path = arguments[0]
+    for argument_index in range(len(arguments)):
+        argument_value = arguments[argument_index]
+        if argument_value == "--path" or argument_value == "-p":
+            board_path = arguments[argument_index + 1]
 
 tamano_zona = (3, 2)
 
