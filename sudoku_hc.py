@@ -12,7 +12,15 @@ import os
 directory_path = os.getcwd()
 
 boards_path = path.join(directory_path, "boards")
-results_path = path.join(directory_path, "results")
+results_path_images = path.join(directory_path, "results", "images")
+results_path_boards = path.join(directory_path, "results", "boards")
+
+if not os.path.exists(boards_path):
+    os.makedirs(boards_path)
+if not os.path.exists(results_path_images):
+    os.makedirs(results_path_images)
+if not os.path.exists(results_path_boards):
+    os.makedirs(results_path_boards)
 
 restarts = 1
 searchs = 10
@@ -245,7 +253,7 @@ for file_name in txt_files_list:
     print(f"total searches: {searchs * (restarts + 1)}")
     print(f"errors: {custom_fitness(board_a)}")
 
-    save_board(board_a, path.join(results_path, f"{board_name}_hc_result.txt"))
+    save_board(board_a, path.join(results_path_boards, f"{board_name}_hc_result.txt"))
 
     custom_fitness_report(board_a)
     print("saving algorithm performance trace")
@@ -264,7 +272,7 @@ for file_name in txt_files_list:
     plt.ylabel("errors")
     plt.legend()
     plt.grid()
-    plt.savefig(path.join(results_path, f"{board_name}_hc_performance.png"))
+    plt.savefig(path.join(results_path_images, f"{board_name}_hc_performance.png"))
     plt.clf()
 
     del board_a

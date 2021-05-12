@@ -12,7 +12,15 @@ import os
 directory_path = os.getcwd()
 
 boards_path = path.join(directory_path, "boards")
-results_path = path.join(directory_path, "results")
+results_path_images = path.join(directory_path, "results", "images")
+results_path_boards = path.join(directory_path, "results", "boards")
+
+if not os.path.exists(boards_path):
+    os.makedirs(boards_path)
+if not os.path.exists(results_path_images):
+    os.makedirs(results_path_images)
+if not os.path.exists(results_path_boards):
+    os.makedirs(results_path_boards)
 
 zone_dimensions = (3, 3)
 
@@ -269,7 +277,8 @@ for file_name in txt_files_list:
     print(f"population: {population}")
 
     save_board(
-        ga.best_individual()[1], path.join(results_path, f"{board_name}_ga_result.txt")
+        ga.best_individual()[1],
+        path.join(results_path_boards, f"{board_name}_ga_result.txt"),
     )
 
     custom_fitness_report(ga.best_individual()[1])
@@ -299,7 +308,7 @@ for file_name in txt_files_list:
     plt.ylabel("fitness")
     plt.legend()
     plt.grid()
-    plt.savefig(path.join(results_path, f"{board_name}_ga_performance.png"))
+    plt.savefig(path.join(results_path_images, f"{board_name}_ga_performance.png"))
     plt.clf()
 
     del board_a

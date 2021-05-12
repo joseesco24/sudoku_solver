@@ -1,5 +1,9 @@
-*.vscode
+results
+boards
+
 *.devcontainer
+*.vscode
 *.png
 *.jpg
+
 __pycache__
