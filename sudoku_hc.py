@@ -41,27 +41,29 @@ def custom_fitness_report(individual):
     row_collisions, column_collisions, zone_collisions = 0, 0, 0
 
     for row in range(len(individual)):
-        numbers_set = set()
+        row_set = set()
         for column in range(len(individual[row])):
-            numbers_set.add(individual[row][column])
-        repetitions = abs(len(individual[row]) - len(numbers_set))
+            row_set.add(individual[row][column])
+        repetitions = abs(len(individual[row]) - len(row_set))
         row_collisions += repetitions
 
     for row in range(len(individual)):
-        numbers_set = set()
+        column_set = set()
         for column in range(len(individual[row])):
-            numbers_set.add(individual[column][row])
-        repetitions = abs(len(individual[row]) - len(numbers_set))
-        column_collisions += repetitions
+            column_set.add(individual[column][row])
+        column_repetitions = abs(len(individual[row]) - len(column_set))
+        column_collisions += column_repetitions
 
     for row in range(0, len(individual), zone_dimensions[-1]):
         for column in range(0, len(individual[row]), zone_dimensions[0]):
-            sub = set()
+            zone_set = set()
             for i in range(zone_dimensions[-1]):
                 sub1 = individual[row + i][column : column + zone_dimensions[0]]
-                sub.update(set(sub1))
-            repetitions = abs((zone_dimensions[0] * zone_dimensions[-1]) - len(sub))
-            zone_collisions += repetitions
+                zone_set.update(set(sub1))
+            zone_repetitions = abs(
+                (zone_dimensions[0] * zone_dimensions[-1]) - len(zone_set)
+            )
+            zone_collisions += zone_repetitions
 
     print("errors in zones: " + str(zone_collisions))
     print("errors in rows: " + str(row_collisions))
@@ -69,25 +71,27 @@ def custom_fitness_report(individual):
 
 
 def custom_fitness(individual):
-    colisiones = 0
+    collisions = 0
 
     for row in range(len(individual)):
-        numbers_set = set()
+        column_set = set()
         for column in range(len(individual[row])):
-            numbers_set.add(individual[column][row])
-        repetitions = abs(len(individual[row]) - len(numbers_set))
-        colisiones += repetitions
+            column_set.add(individual[column][row])
+        column_repetitions = abs(len(individual[row]) - len(column_set))
+        collisions += column_repetitions
 
     for row in range(0, len(individual), zone_dimensions[-1]):
         for column in range(0, len(individual[row]), zone_dimensions[0]):
-            sub = set()
+            zone_set = set()
             for i in range(zone_dimensions[-1]):
                 sub1 = individual[row + i][column : column + zone_dimensions[0]]
-                sub.update(set(sub1))
-            repetitions = abs((zone_dimensions[0] * zone_dimensions[-1]) - len(sub))
-            colisiones += repetitions
+                zone_set.update(set(sub1))
+            zone_repetitions = abs(
+                (zone_dimensions[0] * zone_dimensions[-1]) - len(zone_set)
+            )
+            collisions += zone_repetitions
 
-    return colisiones
+    return collisions
 
 
 def correct_row(individual, fi1):
