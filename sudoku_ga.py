@@ -8,7 +8,6 @@ from os import walk
 import random
 import sys
 import os
-import gc
 
 directory_path = os.getcwd()
 
@@ -160,7 +159,7 @@ def crossover(parent_1, parent_2):
     return correct(parent_1, if1), correct(parent_2, if2)
 
 
-def average_fitness():
+def average_fitness(ga):
     fitness_po = [i.fitness for i in ga.current_generation]
     average = sum(fitness_po) / len(fitness_po)
     return format(average)
@@ -191,6 +190,7 @@ txt_files_list = [
 for file_name in txt_files_list:
 
     board_path = path.join(boards_path, file_name)
+    board_name = get_file_name(board_path)
     board_a = leer_tablero_incial(board_path)
     board_b = deepcopy(board_a)
 
@@ -201,7 +201,7 @@ for file_name in txt_files_list:
     start_time = time()
     generations_counter = 0
 
-    print(f"board name: {get_file_name(board_path)}")
+    print(f"board name: {board_name}")
     print(f"board path: {board_path}")
 
     ga = pyeasyga.GeneticAlgorithm(
@@ -231,7 +231,7 @@ for file_name in txt_files_list:
         ga.create_next_generation()
         fitness = ga.best_individual()[0]
         ejey0.append(float(fitness))
-        ejey1.append(float(average_fitness()))
+        ejey1.append(float(average_fitness(ga)))
         ejex0.append(float(format(i)))
     elapsed_time = time() - start_time
 
@@ -239,21 +239,29 @@ for file_name in txt_files_list:
     print(f"selection method used: {metodo_seleccion_padres}")
     print("execution time: %0.2f seconds" % elapsed_time)
     print(f"errors: {ga.best_individual()[0]}")
-    print(f"generations: {generations_counter}")
+    print(f"elapsed generations: {generations_counter}")
     print(f"population: {population}")
 
     # imprimirsudoku(ga.best_individual()[1])
 
     fitness_report(ga.best_individual()[1])
+    print("saving algorithm performance trace")
 
     plt.figure(figsize=(16, 9))
-    plt.plot(ejex0, ejey1, "-", linewidth=0.4, color="b", label="average fitness trace")
     plt.plot(ejex0, ejey0, "-", linewidth=0.8, color="r", label="best fitness trace")
+    plt.plot(
+        ejex0,
+        ejey1,
+        "-",
+        linewidth=0.4,
+        color="b",
+        label=f"average fitness trace (population={population})",
+    )
     plt.xlabel("generation")
     plt.ylabel("fitness")
     plt.legend()
     plt.grid()
-    plt.savefig("./results/ga_performance.png")
+    plt.savefig(path.join(results_path, f"{board_name}_ga_performance.png"))
+    plt.clf()
 
-    del ga, board_a, board_b
-    gc.collect()
+    print("algorithm performance trace saved")
