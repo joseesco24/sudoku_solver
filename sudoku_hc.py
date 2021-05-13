@@ -1,4 +1,3 @@
-from sudoku_ga import save_board
 import matplotlib.pyplot as plt
 from copy import deepcopy
 from time import time
@@ -9,6 +8,7 @@ import random
 import sys
 import os
 
+script_path = os.path.basename(__file__)
 directory_path = os.getcwd()
 
 boards_path = path.join(directory_path, "boards")
@@ -220,6 +220,7 @@ for file_name in txt_files_list:
     y_axis_1 = list()
     x_axis_0 = list()
 
+    print(f"solving with: {get_file_name(script_path)}")
     print(f"board name: {board_name}")
     print(f"board path: {board_path}")
 
@@ -275,6 +276,6 @@ for file_name in txt_files_list:
     plt.savefig(path.join(results_path_images, f"{board_name}_hc_performance.png"))
     plt.clf()
 
-    del board_a
+    del board_a, board_b
     print("algorithm performance trace saved")
     print("")
