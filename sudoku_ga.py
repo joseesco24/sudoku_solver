@@ -9,18 +9,18 @@ import random
 import sys
 import os
 
-script_path = os.path.basename(__file__)
+script_path = path.basename(__file__)
 directory_path = os.getcwd()
 
 boards_path = path.join(directory_path, "boards")
 results_path_images = path.join(directory_path, "results", "images")
 results_path_boards = path.join(directory_path, "results", "boards")
 
-if not os.path.exists(boards_path):
+if not path.exists(boards_path):
     os.makedirs(boards_path)
-if not os.path.exists(results_path_images):
+if not path.exists(results_path_images):
     os.makedirs(results_path_images)
-if not os.path.exists(results_path_boards):
+if not path.exists(results_path_boards):
     os.makedirs(results_path_boards)
 
 zone_dimensions = (3, 3)
@@ -174,7 +174,7 @@ def custom_mutation(individual):
 
 def save_board(board, output_file_path):
 
-    if os.path.exists(output_file_path):
+    if path.exists(output_file_path):
         os.remove(output_file_path)
 
     for row in board:
