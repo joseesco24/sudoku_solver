@@ -244,7 +244,9 @@ for file_name in txt_files_list:
 
     for i in tableros:
         if custom_fitness(i) < custom_fitness(individual):
-            board_a = i
+            individual = i
+
+    board_a = individual
 
     print("")
     print("board solved")
