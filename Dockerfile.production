@@ -1,0 +1,14 @@
+FROM python:3.7.10
+
+ARG USERNAME=production
+RUN useradd -ms /bin/bash $USERNAME
+USER $USERNAME
+
+ENV PATH="/home/$USERNAME/.local/bin:${PATH}"
+
+COPY ["requirements/commons.txt","requirements/production.txt","/home/$USERNAME"]
+WORKDIR /home/$USERNAME
+
+RUN pip install --upgrade pip
+RUN pip install -r ./requirements/commons.txt
+RUN pip install -r ./requirements/production.txt

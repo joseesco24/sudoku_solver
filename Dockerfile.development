@@ -6,8 +6,9 @@ USER $USERNAME
 
 ENV PATH="/home/$USERNAME/.local/bin:${PATH}"
 
-COPY ["requirements.txt","/home/$USERNAME"]
+COPY ["requirements/commons.txt","requirements/development.txt","/home/$USERNAME"]
 WORKDIR /home/$USERNAME
 
 RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN pip install -r ./requirements/commons.txt
+RUN pip install -r ./requirements/development.txt
