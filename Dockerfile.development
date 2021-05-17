@@ -5,7 +5,7 @@ ARG WORKDIR=/home/$USERNAME
 
 RUN useradd -ms /bin/bash $USERNAME
 
-RUN mkdir -p $$WORKDIR/requirements
+RUN mkdir -p $WORKDIR/requirements
 
 COPY ["requirements/commons.txt","requirements/development.txt","$WORKDIR/requirements/"]
 COPY ["install_dependencies.sh","$WORKDIR/"]
