@@ -1,14 +1,24 @@
 FROM python:3.7.10
 
 ARG USERNAME=production
+ARG WORKDIR=/home/$USERNAME
+
 RUN useradd -ms /bin/bash $USERNAME
+RUN chown -R $USERNAME $WORKDIR
+RUN chmod 755 $WORKDIR
+
+ENV PATH="$WORKDIR/.local/bin:${PATH}"
+
+RUN mkdir -p $$WORKDIR/requirements
+
+COPY ["requirements/commons.txt","requirements/production.txt","$WORKDIR/requirements/"]
+COPY ["install_dependencies.sh","$WORKDIR/"]
+WORKDIR $WORKDIR
+
+RUN find "$WORKDIR/" -type d -exec chmod 755 {} \;
+RUN find "$WORKDIR/" -type f -exec chmod 755 {} \;
+
 USER $USERNAME
 
-ENV PATH="/home/$USERNAME/.local/bin:${PATH}"
-
-COPY ["requirements/commons.txt","requirements/production.txt","/home/$USERNAME"]
-WORKDIR /home/$USERNAME
-
 RUN pip install --upgrade pip
-RUN pip install -r ./requirements/commons.txt
-RUN pip install -r ./requirements/production.txt
+RUN ./install_dependencies.sh
