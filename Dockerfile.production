@@ -23,3 +23,5 @@ USER $USERNAME
 
 RUN pip install --upgrade pip
 RUN ./install_dependencies.sh
+
+EXPOSE 3000

@@ -2,6 +2,9 @@
 	"name": "Existing Dockerfile",
 	"context": "..",
 	"dockerFile": "../Dockerfile.development",
+	"forwardPorts": [
+		3000
+	],
 	"extensions": [
 		"ms-python.python",
 		"ms-python.vscode-pylance",
