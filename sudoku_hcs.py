@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 from copy import deepcopy
 from time import time
 from os import path
@@ -7,6 +6,8 @@ import itertools
 import random
 import sys
 import os
+
+script_firm = "HCS"
 
 script_path = path.basename(__file__)
 directory_path = os.getcwd()
@@ -260,23 +261,6 @@ for file_name in txt_files_list:
 
     custom_fitness_report(board_a)
     print("saving algorithm performance trace")
-
-    plt.figure(figsize=(16, 9))
-
-    plt.plot(
-        puntuaciones,
-        "-",
-        linewidth=0.8,
-        color="r",
-        label=f"performance trace [errors: {custom_fitness(board_a)}]",
-    )
-
-    plt.xlabel("iterations")
-    plt.ylabel("errors")
-    plt.legend()
-    plt.grid()
-    plt.savefig(path.join(results_path_images, f"{board_name}_hc_performance.png"))
-    plt.clf()
 
     del board_a, board_b
     print("algorithm performance trace saved")
