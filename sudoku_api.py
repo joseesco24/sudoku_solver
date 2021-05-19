@@ -15,8 +15,32 @@ api = web.Application()
 
 
 def check_request_body(request_body: dict) -> bool:
-    request_body_keys = [key for key in request_body.keys()]
-    return True
+
+    requiered_keys = ["board", "area"]
+    the_request_body_is_correct = True
+
+    if the_request_body_is_correct is True:
+        if not type(request_body) is dict:
+            the_request_body_is_correct = False
+
+    if the_request_body_is_correct is True:
+        request_body_keys = [key for key in request_body.keys()]
+        if not all(key in request_body_keys for key in requiered_keys):
+            the_request_body_is_correct = False
+
+    if the_request_body_is_correct is True:
+        if not type(request_body["board"]) is list:
+            the_request_body_is_correct = False
+
+    if the_request_body_is_correct is True:
+        if not type(request_body["area"]) is list:
+            the_request_body_is_correct = False
+
+    if the_request_body_is_correct is True:
+        if not len(request_body["area"]) == 2:
+            the_request_body_is_correct = False
+
+    return the_request_body_is_correct
 
 
 @api_routes.get("/solver")
