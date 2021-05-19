@@ -2,3 +2,4 @@ hm_001: "Your request was successfully, see the results in the body section of t
 hm_002: "There was problem reading your request body, please check it before sending again the request."
 hm_003: "The authorization header is not valid, please check it before sending again the request."
 hm_004: "The authorization header could not be found, please check it and include the authorization header before sending again the request."
+hm_005: "The request body is not correct"

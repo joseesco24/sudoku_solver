@@ -1,3 +1,4 @@
+from logging import error
 from yaml_reader import load_http_response_messages_dict
 from yaml_reader import load_log_messages_dict
 from logs_printer import print_log
@@ -17,49 +18,65 @@ api_routes = web.RouteTableDef()
 api = web.Application()
 
 
+def check_if_request_body_is_correct(request_body: dict) -> bool:
+    request_body_keys = [key for key in request_body.keys()]
+    return True
+
+
 @api_routes.get("/solver")
 async def solver(request: Request):
+
+    request_body = await request.json()
 
     request_headers = request.headers
     request_header_keys = [key for key in request_headers.keys()]
 
-    if "Authorization" in request_header_keys:
-        print_log(log_messages["lm_001"], script_firm)
+    error_message_key = None
+    continue_process = True
 
-        if api_key == str(request_headers["Authorization"]):
+    if continue_process is True:
+        if "Authorization" in request_header_keys:
+            print_log(log_messages["lm_001"], script_firm)
+        else:
+            print_log(log_messages["lm_006"], script_firm)
+            error_message_key = "hm_004"
+            continue_process = False
+
+    if continue_process is True:
+        if api_key == request_headers["Authorization"]:
             print_log(log_messages["lm_002"], script_firm)
-
-            if request.body_exists and request.can_read_body:
-                print_log(log_messages["lm_003"], script_firm)
-
-                request_body = await request.json()
-                request_body_keys = [key for key in request_body.keys()]
-
-                return web.Response(
-                    reason=http_messages["hm_001"],
-                    body=json.dumps(obj=request_body, indent=None),
-                    status=200,
-                )
-
-            else:
-                print_log(log_messages["lm_004"], script_firm)
-                return web.Response(
-                    reason=http_messages["hm_002"],
-                    status=400,
-                )
-
         else:
             print_log(log_messages["lm_005"], script_firm)
-            return web.Response(
-                reason=http_messages["hm_003"],
-                status=401,
-            )
+            error_message_key = "hm_003"
+            continue_process = False
 
-    else:
-        print_log(log_messages["lm_006"], script_firm)
+    if continue_process is True:
+        if request.body_exists:
+            print_log(log_messages["lm_003"], script_firm)
+        else:
+            print_log(log_messages["lm_004"], script_firm)
+            error_message_key = "hm_002"
+            continue_process = False
+
+    if continue_process is True:
+        if check_if_request_body_is_correct(request_body):
+            print_log(log_messages["lm_008"], script_firm)
+        else:
+            print_log(log_messages["lm_007"], script_firm)
+            error_message_key = "hm_005"
+            continue_process = False
+
+    if continue_process is True and error_message_key is None:
         return web.Response(
-            reason=http_messages["hm_004"],
-            status=401,
+            reason=http_messages["hm_001"],
+            body=json.dumps(obj=request_body, indent=None),
+            status=200,
+        )
+
+    elif continue_process is False and error_message_key is not None:
+        return web.Response(
+            reason=http_messages[error_message_key],
+            status=400,
         )
 
 
