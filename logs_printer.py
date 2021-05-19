@@ -7,6 +7,7 @@ def print_log(message: str, script_firm: str = None) -> None:
     message = str(message).capitalize()
 
     if script_firm is not None:
+        script_firm = script_firm.upper()
         print(f"[{date_time}][{script_firm}] - {message}")
 
     else:

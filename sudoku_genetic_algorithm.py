@@ -1,3 +1,5 @@
+from sudoku_common_operations import print_board_collisions_report
+
 from operator import attrgetter
 from pyeasyga import pyeasyga
 from copy import deepcopy
@@ -8,7 +10,7 @@ import random
 import sys
 import os
 
-script_firm = "GAS"
+script_firm = "ga"
 
 script_path = path.basename(__file__)
 directory_path = os.getcwd()
@@ -51,39 +53,6 @@ if len(sys.argv) > 1:
 
 def get_file_name(board_path):
     return path.basename(board_path).split(".")[0]
-
-
-def custom_fitness_report(individual):
-    row_collisions, column_collisions, zone_collisions = 0, 0, 0
-
-    for row in range(len(individual)):
-        row_set = set()
-        for column in range(len(individual[row])):
-            row_set.add(individual[row][column])
-        repetitions = abs(len(individual[row]) - len(row_set))
-        row_collisions += repetitions
-
-    for row in range(len(individual)):
-        column_set = set()
-        for column in range(len(individual[row])):
-            column_set.add(individual[column][row])
-        column_repetitions = abs(len(individual[row]) - len(column_set))
-        column_collisions += column_repetitions
-
-    for row in range(0, len(individual), zone_dimensions[-1]):
-        for column in range(0, len(individual[row]), zone_dimensions[0]):
-            zone_set = set()
-            for i in range(zone_dimensions[-1]):
-                sub1 = individual[row + i][column : column + zone_dimensions[0]]
-                zone_set.update(set(sub1))
-            zone_repetitions = abs(
-                (zone_dimensions[0] * zone_dimensions[-1]) - len(zone_set)
-            )
-            zone_collisions += zone_repetitions
-
-    print("errors in zones: " + str(zone_collisions))
-    print("errors in rows: " + str(row_collisions))
-    print("erros in columns: " + str(column_collisions))
 
 
 def custom_fitness(individual, _):
@@ -284,7 +253,7 @@ for file_name in txt_files_list:
         path.join(results_path_boards, f"{board_name}_ga_result.txt"),
     )
 
-    custom_fitness_report(ga.best_individual()[1])
+    print_board_collisions_report(ga.best_individual()[1], zone_dimensions, script_firm)
     print("saving algorithm performance trace")
 
     del board_a, board_b

@@ -11,10 +11,8 @@ with open(r"./static_messages_files/static_log_messages.yaml") as yaml_file:
 
 
 def load_http_response_messages_dict() -> dict:
-    global http_response_messages_dict
     return http_response_messages_dict
 
 
 def load_log_messages_dict() -> dict:
-    global log_messages_dict
     return log_messages_dict
