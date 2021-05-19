@@ -11,5 +11,3 @@ def print_log(message: str, script_firm: str = None) -> None:
 
     else:
         print(f"[{date_time}] - {message}")
-
-    del date_time, message, script_firm
