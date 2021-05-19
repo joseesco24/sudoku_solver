@@ -3,5 +3,6 @@ black==21.4b2
 pip-upgrader==1.4.15
 pipdeptree==2.0.0
 pyeasyga==0.3.1
+PyYAML==5.4.1
 setuptools==56.2.0
 wheel==0.36.2

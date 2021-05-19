@@ -1,0 +1,20 @@
+import yaml
+
+http_response_messages_dict = dict()
+log_messages_dict = dict()
+
+with open(r"./static_messages_files/static_http_response_messages.yaml") as yaml_file:
+    http_response_messages_dict = yaml.load(stream=yaml_file, Loader=yaml.FullLoader)
+
+with open(r"./static_messages_files/static_log_messages.yaml") as yaml_file:
+    log_messages_dict = yaml.load(stream=yaml_file, Loader=yaml.FullLoader)
+
+
+def get_http_response_messages_dict() -> dict:
+    global http_response_messages_dict
+    return http_response_messages_dict
+
+
+def get_log_messages_dict() -> dict:
+    global log_messages_dict
+    return log_messages_dict
