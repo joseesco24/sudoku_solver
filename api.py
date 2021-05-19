@@ -16,13 +16,13 @@ api = web.Application()
 
 async def check_request_requirements(request: Request):
 
+    necessary_fields_in_request = ["board_array", "zone_length", "zone_height"]
+
     request_body = await request.json()
     request_body_keys = [key for key in request_body.keys()]
 
     request_headers = request.headers
     request_header_keys = [key for key in request_headers.keys()]
-
-    necessary_fields_in_request = ["board", "area"]
 
     message_key = "hm_001"
     continue_process = True
