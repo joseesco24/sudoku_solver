@@ -7,16 +7,18 @@ from aiohttp import web
 import json
 import os
 
-api_key = "7bC47Aa517f3eC4BF7F29ee84dc0D5E3"
-script_firm = "api"
-
 api_routes = web.RouteTableDef()
 api = web.Application()
+
+script_firm = "api"
 
 
 async def check_request_requirements(request: Request):
 
+    global script_firm
+
     necessary_fields_in_request = ["board_array", "zone_length", "zone_height"]
+    api_key = "7bC47Aa517f3eC4BF7F29ee84dc0D5E3"
 
     request_body = await request.json()
     request_body_keys = [key for key in request_body.keys()]
@@ -24,8 +26,8 @@ async def check_request_requirements(request: Request):
     request_headers = request.headers
     request_header_keys = [key for key in request_headers.keys()]
 
-    message_key = "hm_001"
     continue_process = True
+    message_key = "hm_001"
 
     if continue_process is True:
         if request.body_exists:
@@ -55,6 +57,7 @@ async def check_request_requirements(request: Request):
         if type(request_body) is dict:
             print_log(load_log_message("lm_008"), script_firm)
         else:
+            print_log(load_log_message("lm_008"), script_firm)
             message_key = "hm_005"
             continue_process = False
 
@@ -65,20 +68,19 @@ async def check_request_requirements(request: Request):
             continue_process = False
 
     if continue_process is True:
-        if type(request_body["board"]) is list:
+        if type(request_body["board_array"]) is list:
             pass
         else:
             continue_process = False
 
     if continue_process is True:
-
-        if type(request_body["area"]) is list:
+        if type(request_body["zone_length"]) is int:
             pass
         else:
             continue_process = False
 
     if continue_process is True:
-        if len(request_body["area"]) == 2:
+        if type(request_body["zone_height"]) is int:
             pass
         else:
             continue_process = False
@@ -86,7 +88,28 @@ async def check_request_requirements(request: Request):
     return continue_process, message_key
 
 
-@api_routes.get("/solver")
+@api_routes.get("/solver/ga")
+async def solver(request: Request):
+
+    continue_process, message_key = await check_request_requirements(request)
+    reason_message = load_http_response_message(message_key)
+
+    if continue_process is True:
+        request_body = await request.json()
+        return web.Response(
+            body=json.dumps(obj=request_body, indent=None),
+            reason=reason_message,
+            status=200,
+        )
+
+    else:
+        return web.Response(
+            reason=reason_message,
+            status=400,
+        )
+
+
+@api_routes.get("/solver/hc")
 async def solver(request: Request):
 
     continue_process, message_key = await check_request_requirements(request)
