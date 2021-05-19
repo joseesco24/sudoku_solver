@@ -1,5 +1,6 @@
 aiohttp==3.7.4.post0
 black==21.4b2
+numpy==1.20.3
 pip-upgrader==1.4.15
 pipdeptree==2.0.0
 pyeasyga==0.3.1

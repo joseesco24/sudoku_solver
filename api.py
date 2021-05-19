@@ -4,6 +4,7 @@ from logs_printer import print_log
 
 from aiohttp.web_request import Request
 from aiohttp import web
+import numpy as np
 import json
 import os
 
@@ -30,14 +31,6 @@ async def check_request_requirements(request: Request):
     message_key = "hm_001"
 
     if continue_process is True:
-        if request.body_exists:
-            print_log(load_log_message("lm_003"), script_firm)
-        else:
-            print_log(load_log_message("lm_004"), script_firm)
-            message_key = "hm_002"
-            continue_process = False
-
-    if continue_process is True:
         if "Authorization" in request_header_keys:
             print_log(load_log_message("lm_001"), script_firm)
         else:
@@ -54,10 +47,18 @@ async def check_request_requirements(request: Request):
             continue_process = False
 
     if continue_process is True:
+        if request.body_exists:
+            print_log(load_log_message("lm_003"), script_firm)
+        else:
+            print_log(load_log_message("lm_004"), script_firm)
+            message_key = "hm_002"
+            continue_process = False
+
+    if continue_process is True:
         if type(request_body) is dict:
             print_log(load_log_message("lm_008"), script_firm)
         else:
-            print_log(load_log_message("lm_008"), script_firm)
+            print_log(load_log_message("lm_007"), script_firm)
             message_key = "hm_005"
             continue_process = False
 
@@ -65,6 +66,7 @@ async def check_request_requirements(request: Request):
         if all(key in request_body_keys for key in necessary_fields_in_request):
             pass
         else:
+            missing_keys = np.setdiff1d(necessary_fields_in_request, request_body_keys)
             continue_process = False
 
     if continue_process is True:
