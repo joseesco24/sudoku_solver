@@ -20,29 +20,25 @@ async def solver(request: Request):
     request_header_keys = [key for key in request_headers.keys()]
 
     if "Authorization" in request_header_keys:
-        print_log(message="The authorization exists", script_firm=script_firm)
+        print_log("lm_001", script_firm)
 
         if api_key == str(request_headers["Authorization"]):
-            print_log(message="The authorization is valid", script_firm=script_firm)
+            print_log("lm_002", script_firm)
 
             if request.body_exists and request.can_read_body:
-                print_log(
-                    message="The request body is readable", script_firm=script_firm
-                )
+                print_log("lm_003", script_firm)
 
                 request_body = await request.json()
                 return web.Response(
-                    reason="Your request was successfully, see the results in the body section of this response.",
+                    reason="hm_001",
                     body=json.dumps(obj=request_body, indent=None),
                     status=200,
                 )
 
             else:
-                print_log(
-                    message="The request body is not readable", script_firm=script_firm
-                )
+                print_log("lm_004", script_firm)
                 return web.Response(
-                    reason="There was problem reading your request body, please check it before sending again the request.",
+                    reason="hm_002",
                     status=400,
                 )
 

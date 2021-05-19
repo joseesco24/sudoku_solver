@@ -1,0 +1,4 @@
+lm_001: "The authorization exists"
+lm_002: "The authorization is valid"
+lm_003: "The request body is readable"
+lm_004: "The request body is not readable"
