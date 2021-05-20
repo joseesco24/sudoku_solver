@@ -5,23 +5,21 @@ import random
 
 
 def exchange_two_numbers_from_a_current_board_row(
-    current_board: list, initial_board: list
+    current_board: list, fixed_numbers_board: list
 ) -> list:
 
     row_index = random.randrange(len(current_board))
-    column_index_1, column_index_2 = 0, 0
-    number_1, number_2 = 0, 0
 
     while True:
         column_index_1 = random.randrange(len(current_board[row_index]))
-        number_1 = initial_board[row_index][column_index_1]
-        if number_1 == 0:
+        if fixed_numbers_board[row_index][column_index_1] == 0:
+            number_1 = deepcopy(current_board[row_index][column_index_1])
             break
 
     while True:
         column_index_2 = random.randrange(len(current_board[row_index]))
-        number_2 = initial_board[row_index][column_index_2]
-        if number_2 == 0:
+        if fixed_numbers_board[row_index][column_index_2] == 0:
+            number_2 = deepcopy(current_board[row_index][column_index_2])
             break
 
     current_board[row_index][column_index_1] = number_2
@@ -31,10 +29,10 @@ def exchange_two_numbers_from_a_current_board_row(
 
 
 def randomly_start_the_board(
-    initial_board: list, zone_height: int, zone_length: int
+    fixed_numbers_board: list, zone_height: int, zone_length: int
 ) -> list:
 
-    board = deepcopy(initial_board)
+    board = deepcopy(fixed_numbers_board)
 
     for row_index in range(len(board)):
         for column_index in range(len(board[row_index])):
