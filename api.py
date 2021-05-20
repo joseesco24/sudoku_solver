@@ -1,3 +1,5 @@
+from sudoku_hill_climbing import solve_sudoku_using_hill_climbing_algorithm
+
 from yaml_reader import load_http_response_message
 from yaml_reader import load_log_message
 from logs_printer import print_log
@@ -134,7 +136,12 @@ async def solver(request: Request):
     reason_message = load_http_response_message(message_key)
 
     if continue_process is True:
+
         request_body = await request.json()
+        sudoku_initial_board = request_body["board_array"]
+        sudoku_zone_height = request_body["zone_height"]
+        sudoku_zone_length = request_body["zone_length"]
+
         return web.Response(
             body=json.dumps(obj=request_body, indent=None),
             reason=reason_message,
@@ -155,7 +162,18 @@ async def solver(request: Request):
     reason_message = load_http_response_message(message_key)
 
     if continue_process is True:
+
         request_body = await request.json()
+        sudoku_initial_board = request_body["board_array"]
+        sudoku_zone_height = request_body["zone_height"]
+        sudoku_zone_length = request_body["zone_length"]
+
+        solve_sudoku_using_hill_climbing_algorithm(
+            sudoku_initial_board=sudoku_initial_board,
+            sudoku_zone_height=sudoku_zone_height,
+            sudoku_zone_length=sudoku_zone_length,
+        )
+
         return web.Response(
             body=json.dumps(obj=request_body, indent=None),
             reason=reason_message,
