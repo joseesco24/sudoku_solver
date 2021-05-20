@@ -10,7 +10,7 @@ from time import time
 import itertools
 import random
 
-script_firm = "hcs"
+script_firm = "grs"
 
 
 def exchange_if_sudoku_board_improves(
@@ -74,9 +74,10 @@ def solve_sudoku_using_hill_climbing_algorithm(
     end_time = time()
     elapsed_time = end_time - start_time
 
+    print_log("finishing to solve with hill climbing algorithm", script_firm)
     print_log(f"total restarts: {restarts_counter}", script_firm)
     print_log(f"total searches: {searches_counter}", script_firm)
-    print_log("finishing to solve with hill climbing algorithm", script_firm)
+
     print_log(
         f"time spent searching a solution: {normalize_decimal(elapsed_time)} seconds",
         script_firm,
