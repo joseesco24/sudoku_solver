@@ -1,34 +1,29 @@
-from sudoku_common_functions import check_and_correct_one_sudoku_board_row
+from sudoku_common_functions import exchange_two_numbers_from_a_current_board_row
+from sudoku_common_functions import print_sudoku_board_collisions_report
 from sudoku_common_functions import calculate_sudoku_board_fitness_score
-from sudoku_common_functions import randomly_start_sudoku_board
+from sudoku_common_functions import randomly_start_the_board
+
+from logs_printer import print_log
 
 from copy import deepcopy
 from time import time
 import random
 
-script_firm = "hc"
+script_firm = "hcs"
 
 
-def mutate_if_sudoku_board_improves(
-    sudoku_board: int, sudoku_zone_height, sudoku_zone_length
-):
-
-    current_board = deepcopy(sudoku_board)
-    initial_board = deepcopy(sudoku_board)
-
-    row_index = random.randrange(len(initial_board))
-
-    column_index_1 = random.randrange(len(initial_board[row_index]))
-    column_index_2 = random.randrange(len(initial_board[row_index]))
-
-    current_board[row_index][column_index_1] = initial_board[row_index][column_index_2]
-    current_board[row_index][column_index_2] = initial_board[row_index][column_index_1]
-
-    current_board = check_and_correct_one_sudoku_board_row(current_board, row_index)
-
-    current_board_fitness = calculate_sudoku_board_fitness_score(current_board)
-    initial_board_fitness = calculate_sudoku_board_fitness_score(initial_board)
-
+def exchange_if_sudoku_board_improves(
+    current_board: list, initial_board: list, zone_height: int, zone_length: int
+) -> list:
+    current_board = exchange_two_numbers_from_a_current_board_row(
+        current_board=current_board, initial_board=initial_board
+    )
+    current_board_fitness = calculate_sudoku_board_fitness_score(
+        board=current_board, zone_height=zone_height, zone_length=zone_length
+    )
+    initial_board_fitness = calculate_sudoku_board_fitness_score(
+        board=initial_board, zone_height=zone_height, zone_length=zone_length
+    )
     if current_board_fitness > initial_board_fitness:
         return current_board
     else:
@@ -36,38 +31,63 @@ def mutate_if_sudoku_board_improves(
 
 
 def solve_sudoku_using_hill_climbing_algorithm(
-    sudoku_initial_board: list,
-    sudoku_zone_height: int,
-    sudoku_zone_length: int,
+    board: list,
+    zone_height: int,
+    zone_length: int,
     hill_climbing_restarts: int = 1,
     hill_climbing_searchs: int = 10,
-):
+) -> list:
 
-    initial_board = deepcopy(sudoku_initial_board)
-    current_board = deepcopy(sudoku_initial_board)
+    initial_board_l1 = deepcopy(board)
+    current_board_l1 = deepcopy(board)
+
+    print_log("starting to solve with hill climbing algorithm", script_firm)
 
     boards_list = list()
-
     start_time = time()
 
     for _ in range(hill_climbing_restarts + 1):
-        current_board = randomly_start_sudoku_board(
-            initial_board, sudoku_zone_height, sudoku_zone_length
+
+        current_board_l1 = randomly_start_the_board(
+            initial_board=initial_board_l1,
+            zone_height=zone_height,
+            zone_length=zone_length,
         )
 
         for _ in range(hill_climbing_searchs + 1):
-            current_board = mutate_if_sudoku_board_improves(
-                current_board, sudoku_zone_height, sudoku_zone_length
+
+            current_board_l1 = exchange_if_sudoku_board_improves(
+                current_board=current_board_l1,
+                initial_board=initial_board_l1,
+                zone_height=zone_height,
+                zone_length=zone_length,
             )
-            boards_list.append(current_board)
+
+            boards_list.append(current_board_l1)
 
     end_time = time()
     elapsed_time = end_time - start_time
 
+    print_log("finishing to solve with hill climbing algorithm", script_firm)
+    print_log(f"time spent searching a solution: {elapsed_time} seconds", script_firm)
+
     best_board = random.choice(boards_list)
 
     for board in boards_list:
-        if calculate_sudoku_board_fitness_score(
-            board
-        ) < calculate_sudoku_board_fitness_score(best_board):
+        best_board_fitness = calculate_sudoku_board_fitness_score(
+            board=best_board, zone_height=zone_height, zone_length=zone_length
+        )
+        board_fitness = calculate_sudoku_board_fitness_score(
+            board=board, zone_height=zone_height, zone_length=zone_length
+        )
+        if board_fitness < best_board_fitness:
             best_board = board
+
+    print_sudoku_board_collisions_report(
+        zone_height=zone_height,
+        zone_length=zone_length,
+        script_firm=script_firm,
+        board=best_board,
+    )
+
+    return best_board

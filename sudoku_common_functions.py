@@ -1,26 +1,51 @@
 from logs_printer import print_log
+
+from copy import deepcopy
 import random
 
 
-def exchange_two_numbers_from_a_board_row():
-    pass
-
-
-def randomly_start_sudoku_board(
-    initial_board: list, sudoku_zone_height: int, sudoku_zone_length: int
+def exchange_two_numbers_from_a_current_board_row(
+    current_board: list, initial_board: list
 ) -> list:
 
-    for row in initial_board:
-        for column_index in range(len(row)):
-            if row[column_index] == 0:
+    row_index = random.randrange(len(current_board))
+    column_index_1, column_index_2 = 0, 0
+    number_1, number_2 = 0, 0
+
+    while True:
+        column_index_1 = random.randrange(len(current_board[row_index]))
+        number_1 = initial_board[row_index][column_index_1]
+        if number_1 == 0:
+            break
+
+    while True:
+        column_index_2 = random.randrange(len(current_board[row_index]))
+        number_2 = initial_board[row_index][column_index_2]
+        if number_2 == 0:
+            break
+
+    current_board[row_index][column_index_1] = number_2
+    current_board[row_index][column_index_2] = number_1
+
+    return current_board
+
+
+def randomly_start_the_board(
+    initial_board: list, zone_height: int, zone_length: int
+) -> list:
+
+    board = deepcopy(initial_board)
+
+    for row_index in range(len(board)):
+        for column_index in range(len(board[row_index])):
+            if board[row_index][column_index] == 0:
                 while True:
-                    new_number = random.randrange(
-                        1, (sudoku_zone_height * sudoku_zone_length) + 1
-                    )
-                    if new_number not in row:
-                        row[column_index] = new_number
+                    new_number = random.randrange(1, (zone_height * zone_length) + 1)
+                    if new_number not in board[row_index]:
+                        board[row_index][column_index] = new_number
                         break
-    return initial_board
+
+    return board
 
 
 def calculate_sudoku_board_fitness_score(
@@ -87,6 +112,6 @@ def print_sudoku_board_collisions_report(
     total_collisions = zone_collisions + row_collisions + column_collisions
 
     print_log(f"Errors in board: {total_collisions}", script_firm)
-    print_log(f"Errors in zones: {zone_collisions}", script_firm)
     print_log(f"Errors in rows: {row_collisions}", script_firm)
+    print_log(f"Errors in zones: {zone_collisions}", script_firm)
     print_log(f"Errors in columns: {column_collisions}", script_firm)

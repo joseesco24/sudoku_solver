@@ -129,32 +129,6 @@ async def check_request_requirements(request: Request):
     return continue_process, message_key
 
 
-@api_routes.get("/solver/ga")
-async def solver(request: Request):
-
-    continue_process, message_key = await check_request_requirements(request)
-    reason_message = load_http_response_message(message_key)
-
-    if continue_process is True:
-
-        request_body = await request.json()
-        sudoku_initial_board = request_body["board_array"]
-        sudoku_zone_height = request_body["zone_height"]
-        sudoku_zone_length = request_body["zone_length"]
-
-        return web.Response(
-            body=json.dumps(obj=request_body, indent=None),
-            reason=reason_message,
-            status=200,
-        )
-
-    else:
-        return web.Response(
-            reason=reason_message,
-            status=400,
-        )
-
-
 @api_routes.get("/solver/hc")
 async def solver(request: Request):
 
@@ -164,18 +138,21 @@ async def solver(request: Request):
     if continue_process is True:
 
         request_body = await request.json()
+
         sudoku_initial_board = request_body["board_array"]
         sudoku_zone_height = request_body["zone_height"]
         sudoku_zone_length = request_body["zone_length"]
 
-        solve_sudoku_using_hill_climbing_algorithm(
-            sudoku_initial_board=sudoku_initial_board,
-            sudoku_zone_height=sudoku_zone_height,
-            sudoku_zone_length=sudoku_zone_length,
+        solution_board = solve_sudoku_using_hill_climbing_algorithm(
+            board=sudoku_initial_board,
+            zone_height=sudoku_zone_height,
+            zone_length=sudoku_zone_length,
         )
 
+        response_dict = {"board_array": solution_board}
+
         return web.Response(
-            body=json.dumps(obj=request_body, indent=None),
+            body=json.dumps(obj=response_dict, indent=None),
             reason=reason_message,
             status=200,
         )
