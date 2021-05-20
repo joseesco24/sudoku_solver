@@ -1,5 +1,5 @@
-from greedy_solver import solve_sudoku_using_hill_climbing_algorithm
-from general_solvers_functions import calculate_sudoku_board_fitness_score
+from general_solvers_functions import calculate_board_fitness_score
+from greedy_solver import solve_using_hill_climbing_algorithm
 from general_utility_functions import print_log
 
 from aiohttp.web_request import Request
@@ -13,7 +13,7 @@ api = web.Application()
 script_firm = "api"
 
 
-async def check_request_requirements(request: Request):
+async def check_request_mandatory_requirements(request: Request):
 
     global script_firm
 
@@ -145,7 +145,9 @@ async def check_request_requirements(request: Request):
 @api_routes.get("/solver/hc")
 async def solver(request: Request):
 
-    continue_process, reason_message = await check_request_requirements(request)
+    continue_process, reason_message = await check_request_mandatory_requirements(
+        request
+    )
 
     if continue_process is True:
 
@@ -163,7 +165,7 @@ async def solver(request: Request):
         if "searchs" in request_body_keys:
             searchs = request_body["searchs"]
 
-        solution_board = solve_sudoku_using_hill_climbing_algorithm(
+        solution_board = solve_using_hill_climbing_algorithm(
             hill_climbing_restarts=restarts,
             hill_climbing_searchs=searchs,
             zone_height=sudoku_zone_height,
@@ -171,7 +173,7 @@ async def solver(request: Request):
             board=sudoku_initial_board,
         )
 
-        solution_board_fitness = calculate_sudoku_board_fitness_score(
+        solution_board_fitness = calculate_board_fitness_score(
             zone_height=sudoku_zone_height,
             zone_length=sudoku_zone_length,
             board=solution_board,

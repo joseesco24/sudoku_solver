@@ -1,6 +1,6 @@
 from general_solvers_functions import exchange_two_numbers_from_a_current_board_row
-from general_solvers_functions import print_sudoku_board_collisions_report
-from general_solvers_functions import calculate_sudoku_board_fitness_score
+from general_solvers_functions import print_board_collisions_report
+from general_solvers_functions import calculate_board_fitness_score
 from general_solvers_functions import randomly_start_the_board
 from general_utility_functions import normalize_decimal
 from general_utility_functions import print_log
@@ -24,10 +24,10 @@ def exchange_if_sudoku_board_improves(
         filled_board=current_board, fixed_numbers_board=fixed_numbers_board
     )
 
-    current_board_fitness = calculate_sudoku_board_fitness_score(
+    current_board_fitness = calculate_board_fitness_score(
         board=current_board, zone_height=zone_height, zone_length=zone_length
     )
-    initial_board_fitness = calculate_sudoku_board_fitness_score(
+    initial_board_fitness = calculate_board_fitness_score(
         board=initial_board, zone_height=zone_height, zone_length=zone_length
     )
 
@@ -37,7 +37,7 @@ def exchange_if_sudoku_board_improves(
         return initial_board
 
 
-def solve_sudoku_using_hill_climbing_algorithm(
+def solve_using_hill_climbing_algorithm(
     hill_climbing_restarts: int,
     hill_climbing_searchs: int,
     zone_height: int,
@@ -86,16 +86,16 @@ def solve_sudoku_using_hill_climbing_algorithm(
     best_board = random.choice(boards_list)
 
     for current_board in boards_list:
-        best_board_fitness = calculate_sudoku_board_fitness_score(
+        best_board_fitness = calculate_board_fitness_score(
             board=best_board, zone_height=zone_height, zone_length=zone_length
         )
-        current_board_fitness = calculate_sudoku_board_fitness_score(
+        current_board_fitness = calculate_board_fitness_score(
             board=current_board, zone_height=zone_height, zone_length=zone_length
         )
         if current_board_fitness < best_board_fitness:
             best_board = current_board
 
-    print_sudoku_board_collisions_report(
+    print_board_collisions_report(
         zone_height=zone_height,
         zone_length=zone_length,
         script_firm=script_firm,

@@ -46,7 +46,7 @@ def randomly_start_the_board(
     return filled_board
 
 
-def calculate_sudoku_board_fitness_score(
+def calculate_board_fitness_score(
     board: list, zone_height: int, zone_length: int
 ) -> int:
 
@@ -78,7 +78,7 @@ def calculate_sudoku_board_fitness_score(
     return collisions
 
 
-def print_sudoku_board_collisions_report(
+def print_board_collisions_report(
     board: list, zone_height: int, zone_length: int, script_firm: str
 ) -> None:
 
