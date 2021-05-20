@@ -139,22 +139,33 @@ async def solver(request: Request):
 
     if continue_process is True:
 
+        restarts, searchs = 10, 10
+
         request_body = await request.json()
+        request_body_keys = [key for key in request_body.keys()]
 
         sudoku_initial_board = request_body["board_array"]
         sudoku_zone_height = request_body["zone_height"]
         sudoku_zone_length = request_body["zone_length"]
 
+        if "restarts" in request_body_keys:
+            restarts = request_body["restarts"]
+        if "searchs" in request_body_keys:
+            searchs = request_body["searchs"]
+
+
         solution_board = solve_sudoku_using_hill_climbing_algorithm(
-            board=sudoku_initial_board,
+            hill_climbing_restarts=restarts,
+            hill_climbing_searchs=searchs,
             zone_height=sudoku_zone_height,
             zone_length=sudoku_zone_length,
+            board=sudoku_initial_board,
         )
 
         solution_board_fitness = calculate_sudoku_board_fitness_score(
-            board=solution_board,
             zone_height=sudoku_zone_height,
             zone_length=sudoku_zone_length,
+            board=solution_board,
         )
 
         response_dict = {

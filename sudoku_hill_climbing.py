@@ -38,21 +38,23 @@ def exchange_if_sudoku_board_improves(
 
 
 def solve_sudoku_using_hill_climbing_algorithm(
-    board: list,
+    hill_climbing_restarts: int,
+    hill_climbing_searchs: int,
     zone_height: int,
     zone_length: int,
-    hill_climbing_restarts: int = 1,
-    hill_climbing_searchs: int = 20,
+    board: list,
 ) -> list:
 
     fixed_numbers_board = deepcopy(board)
 
     print_log("starting to solve with hill climbing algorithm", script_firm)
 
+    restarts_counter, searches_counter = 0, 0
     boards_list = list()
     start_time = time()
 
-    for _ in itertools.repeat(None, hill_climbing_restarts + 1):
+    for _ in itertools.repeat(None, hill_climbing_restarts):
+        restarts_counter += 1
         filled_board = randomly_start_the_board(
             fixed_numbers_board=fixed_numbers_board,
             zone_height=zone_height,
@@ -60,6 +62,7 @@ def solve_sudoku_using_hill_climbing_algorithm(
         )
 
         for _ in itertools.repeat(None, hill_climbing_searchs):
+            searches_counter += 1
             filled_board = exchange_if_sudoku_board_improves(
                 fixed_numbers_board=fixed_numbers_board,
                 filled_board=filled_board,
@@ -71,6 +74,8 @@ def solve_sudoku_using_hill_climbing_algorithm(
     end_time = time()
     elapsed_time = end_time - start_time
 
+    print_log(f"total restarts: {restarts_counter}", script_firm)
+    print_log(f"total searches: {searches_counter}", script_firm)
     print_log("finishing to solve with hill climbing algorithm", script_firm)
     print_log(f"time spent searching a solution: {elapsed_time} seconds", script_firm)
 
