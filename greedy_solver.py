@@ -47,7 +47,7 @@ def solve_using_hill_climbing_algorithm(
 
     fixed_numbers_board = deepcopy(board)
 
-    print_log("starting to solve with hill climbing algorithm", script_firm)
+    print_log(r"starting to solve with hill climbing algorithm", script_firm)
 
     restarts_counter, searches_counter = 0, 0
     boards_list = list()
@@ -74,12 +74,13 @@ def solve_using_hill_climbing_algorithm(
     end_time = time()
     elapsed_time = end_time - start_time
 
-    print_log("finishing to solve with hill climbing algorithm", script_firm)
+    print_log(r"finishing to solve with hill climbing algorithm", script_firm)
+
     print_log(f"total restarts: {restarts_counter}", script_firm)
     print_log(f"total searches: {searches_counter}", script_firm)
 
     print_log(
-        f"time spent searching a solution: {normalize_decimal(elapsed_time)} seconds",
+        f"time spent searching a solution: {normalize_decimal(elapsed_time)}s",
         script_firm,
     )
 

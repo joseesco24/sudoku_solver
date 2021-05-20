@@ -21,20 +21,16 @@ async def check_request_mandatory_requirements(request: Request):
 
     try:
         request_body = await request.json()
-        print_log("the request body is readable", script_firm)
-        continue_process = True
-        reason_message = "your request was successfully"
-    except:
-        print_log("the request body isn't readable", script_firm)
-        continue_process = False
-        reason_message = "there was problem reading your request body"
 
-    if continue_process is True:
         necessary_fields_in_request = ["board_array", "zone_length", "zone_height"]
         request_header_keys = [key for key in request.headers.keys()]
         request_body_keys = [key for key in request_body.keys()]
-        api_key = "7bC47Aa517f3eC4BF7F29ee84dc0D5E3"
+        api_key = r"7bC47Aa517f3eC4BF7F29ee84dc0D5E3"
         request_headers = request.headers
+        continue_process = True
+
+    except:
+        continue_process = False
 
     # Authorization header validations.
 
@@ -43,7 +39,6 @@ async def check_request_mandatory_requirements(request: Request):
             print_log("the authorization header exists", script_firm)
         else:
             print_log("the authorization header dosn't exists", script_firm)
-            reason_message = "the authorization header could not be found, please check it and include the authorization header before sending again the request"
             continue_process = False
 
     if continue_process is True:
@@ -51,7 +46,6 @@ async def check_request_mandatory_requirements(request: Request):
             print_log("the authorization header is valid", script_firm)
         else:
             print_log("the authorization header isn't valid", script_firm)
-            reason_message = "the authorization header is not valid"
             continue_process = False
 
     # Body general validations.
@@ -61,7 +55,6 @@ async def check_request_mandatory_requirements(request: Request):
             print_log("the request body is correct", script_firm)
         else:
             print_log("the request body is not correct", script_firm)
-            reason_message = "the request body is not correct"
             continue_process = False
 
     # Mandatory parameters existanse validations.
@@ -71,7 +64,6 @@ async def check_request_mandatory_requirements(request: Request):
             print_log("the request body have all necesary labels", script_firm)
         else:
             print_log("the request body dosn't have all necessary labels", script_firm)
-            reason_message = "the request body does not have all necesary labels"
             continue_process = False
 
     # Mandatory parameters type validations.
@@ -83,7 +75,6 @@ async def check_request_mandatory_requirements(request: Request):
             print_log(
                 "the variable board_array hasn't the correct data type", script_firm
             )
-            reason_message = "the board in your request body is not a list, check it before send it again"
             continue_process = False
 
     if continue_process is True:
@@ -93,7 +84,6 @@ async def check_request_mandatory_requirements(request: Request):
             print_log(
                 "the variable zone_length hasn't the correct data type", script_firm
             )
-            reason_message = "the zone length in your request body is not a int, check it before send it again"
             continue_process = False
 
     if continue_process is True:
@@ -103,7 +93,6 @@ async def check_request_mandatory_requirements(request: Request):
             print_log(
                 "the variable zone_height hasn't the correct data type", script_firm
             )
-            reason_message = "the zone height in your request body is not a int, check it before send it again"
             continue_process = False
 
     # Board dimensions validations.
@@ -117,7 +106,6 @@ async def check_request_mandatory_requirements(request: Request):
             print_log("the board columns dimensions are correct", script_firm)
         else:
             print_log("the board columns dimensions aren't correct", script_firm)
-            reason_message = "the board columns dimensions of your request are not correct, please check it before send your request again"
             continue_process = False
 
     if continue_process is True:
@@ -131,7 +119,6 @@ async def check_request_mandatory_requirements(request: Request):
             print_log("the board rows dimensions are correct", script_firm)
         else:
             print_log("the board rows dimensions aren't correct", script_firm)
-            reason_message = "the board rows dimensions of your request are not correct, please check it before send your request again"
             continue_process = False
 
     if continue_process is True:
@@ -139,15 +126,13 @@ async def check_request_mandatory_requirements(request: Request):
     else:
         print_log("request body validation dosn't end successfully", script_firm)
 
-    return continue_process, reason_message
+    return continue_process
 
 
-@api_routes.get("/solver/hc")
+@api_routes.get(r"/solver/hc")
 async def solver(request: Request):
 
-    continue_process, reason_message = await check_request_mandatory_requirements(
-        request
-    )
+    continue_process = await check_request_mandatory_requirements(request)
 
     if continue_process is True:
 
@@ -186,13 +171,13 @@ async def solver(request: Request):
 
         return web.Response(
             body=json.dumps(obj=response_dict, indent=None),
-            reason=reason_message,
+            reason=r"your request was successfully, check the results in the body of this response",
             status=200,
         )
 
     else:
         return web.Response(
-            reason=reason_message,
+            reason=r"your request wasn't successfully, check if your request body is correct",
             status=400,
         )
 
