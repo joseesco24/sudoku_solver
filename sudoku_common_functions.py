@@ -66,13 +66,13 @@ def calculate_sudoku_board_fitness_score(
         column_repetitions = abs(len(board[row]) - len(column_set))
         collisions += column_repetitions
 
-    for row in range(0, len(board), zone_length):
-        for column in range(0, len(board[row]), zone_height):
+    for row in range(0, len(board), zone_height):
+        for column in range(0, len(board[row]), zone_length):
             zone_set = set()
-            for i in range(zone_length):
-                sub1 = board[row + i][column : column + zone_height]
+            for i in range(zone_height):
+                sub1 = board[row + i][column : column + zone_length]
                 zone_set.update(set(sub1))
-            zone_repetitions = abs((zone_height * zone_length) - len(zone_set))
+            zone_repetitions = abs((zone_length * zone_height) - len(zone_set))
             collisions += zone_repetitions
 
     return collisions
@@ -98,13 +98,13 @@ def print_sudoku_board_collisions_report(
         column_repetitions = abs(len(board[row]) - len(column_set))
         column_collisions += column_repetitions
 
-    for row in range(0, len(board), zone_length):
-        for column in range(0, len(board[row]), zone_height):
+    for row in range(0, len(board), zone_height):
+        for column in range(0, len(board[row]), zone_length):
             zone_set = set()
-            for i in range(zone_length):
-                row_subset = board[row + i][column : column + zone_height]
-                zone_set.update(set(row_subset))
-            zone_repetitions = abs((zone_height * zone_length) - len(zone_set))
+            for i in range(zone_height):
+                sub1 = board[row + i][column : column + zone_length]
+                zone_set.update(set(sub1))
+            zone_repetitions = abs((zone_length * zone_height) - len(zone_set))
             zone_collisions += zone_repetitions
 
     total_collisions = zone_collisions + row_collisions + column_collisions
