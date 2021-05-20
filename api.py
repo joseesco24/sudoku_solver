@@ -22,7 +22,6 @@ async def check_request_requirements(request: Request):
 
     try:
         request_body = await request.json()
-
         print_log(load_log_message("lm_003"), script_firm)
         continue_process = True
         message_key = "hm_001"
@@ -96,6 +95,28 @@ async def check_request_requirements(request: Request):
         else:
             print_log(load_log_message("lm_015").format("zone_height"), script_firm)
             message_key = "hm_009"
+            continue_process = False
+
+    if continue_process is True:
+        board_dimensions = request_body["zone_height"] * request_body["zone_length"]
+        board_height = len(request_body["board_array"])
+        if board_dimensions == board_height:
+            print_log(load_log_message("lm_016").format("columns"), script_firm)
+        else:
+            print_log(load_log_message("lm_017").format("columns"), script_firm)
+            message_key = "hm_010"
+            continue_process = False
+
+    if continue_process is True:
+        board_dimensions = request_body["zone_height"] * request_body["zone_length"]
+        board_lenght_summation = 0
+        for board_row in request_body["board_array"]:
+            board_lenght_summation += len(board_row)
+        if board_dimensions == board_lenght_summation / board_dimensions:
+            print_log(load_log_message("lm_016").format("rows"), script_firm)
+        else:
+            print_log(load_log_message("lm_017").format("rows"), script_firm)
+            message_key = "hm_011"
             continue_process = False
 
     if continue_process is True:
