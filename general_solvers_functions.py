@@ -1,4 +1,4 @@
-from logs_printer import print_log
+from general_utility_functions import print_log
 
 from copy import deepcopy
 import random

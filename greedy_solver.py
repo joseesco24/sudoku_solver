@@ -1,9 +1,9 @@
-from sudoku_common_functions import exchange_two_numbers_from_a_current_board_row
-from sudoku_common_functions import print_sudoku_board_collisions_report
-from sudoku_common_functions import calculate_sudoku_board_fitness_score
-from sudoku_common_functions import randomly_start_the_board
-
-from logs_printer import print_log
+from general_solvers_functions import exchange_two_numbers_from_a_current_board_row
+from general_solvers_functions import print_sudoku_board_collisions_report
+from general_solvers_functions import calculate_sudoku_board_fitness_score
+from general_solvers_functions import randomly_start_the_board
+from general_utility_functions import normalize_decimal
+from general_utility_functions import print_log
 
 from copy import deepcopy
 from time import time
@@ -77,7 +77,10 @@ def solve_sudoku_using_hill_climbing_algorithm(
     print_log(f"total restarts: {restarts_counter}", script_firm)
     print_log(f"total searches: {searches_counter}", script_firm)
     print_log("finishing to solve with hill climbing algorithm", script_firm)
-    print_log(f"time spent searching a solution: {elapsed_time} seconds", script_firm)
+    print_log(
+        f"time spent searching a solution: {normalize_decimal(elapsed_time)} seconds",
+        script_firm,
+    )
 
     best_board = random.choice(boards_list)
 

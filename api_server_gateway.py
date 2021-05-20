@@ -1,14 +1,9 @@
-from sudoku_hill_climbing import solve_sudoku_using_hill_climbing_algorithm
-
-from sudoku_common_functions import calculate_sudoku_board_fitness_score
-
-from yaml_reader import load_http_response_message
-from yaml_reader import load_log_message
-from logs_printer import print_log
+from greedy_solver import solve_sudoku_using_hill_climbing_algorithm
+from general_solvers_functions import calculate_sudoku_board_fitness_score
+from general_utility_functions import print_log
 
 from aiohttp.web_request import Request
 from aiohttp import web
-import numpy as np
 import json
 import os
 
@@ -22,17 +17,17 @@ async def check_request_requirements(request: Request):
 
     global script_firm
 
-    print_log(load_log_message("lm_009"), script_firm)
+    print_log("starting request body validations", script_firm)
 
     try:
         request_body = await request.json()
-        print_log(load_log_message("lm_003"), script_firm)
+        print_log("the request body is readable", script_firm)
         continue_process = True
-        message_key = "hm_001"
+        reason_message = "your request was successfully"
     except:
-        print_log(load_log_message("lm_004"), script_firm)
+        print_log("the request body isn't readable", script_firm)
         continue_process = False
-        message_key = "hm_002"
+        reason_message = "there was problem reading your request body"
 
     if continue_process is True:
         necessary_fields_in_request = ["board_array", "zone_length", "zone_height"]
@@ -41,101 +36,116 @@ async def check_request_requirements(request: Request):
         api_key = "7bC47Aa517f3eC4BF7F29ee84dc0D5E3"
         request_headers = request.headers
 
+    # Authorization header validations.
+
     if continue_process is True:
         if "Authorization" in request_header_keys:
-            print_log(load_log_message("lm_001"), script_firm)
+            print_log("the authorization header exists", script_firm)
         else:
-            print_log(load_log_message("lm_006"), script_firm)
-            message_key = "hm_004"
+            print_log("the authorization header dosn't exists", script_firm)
+            reason_message = "the authorization header could not be found, please check it and include the authorization header before sending again the request"
             continue_process = False
 
     if continue_process is True:
         if api_key == request_headers["Authorization"]:
-            print_log(load_log_message("lm_002"), script_firm)
+            print_log("the authorization header is valid", script_firm)
         else:
-            print_log(load_log_message("lm_005"), script_firm)
-            message_key = "hm_003"
+            print_log("the authorization header isn't valid", script_firm)
+            reason_message = "the authorization header is not valid"
             continue_process = False
+
+    # Body general validations.
 
     if continue_process is True:
         if type(request_body) is dict:
-            print_log(load_log_message("lm_008"), script_firm)
+            print_log("the request body is correct", script_firm)
         else:
-            print_log(load_log_message("lm_007"), script_firm)
-            message_key = "hm_005"
+            print_log("the request body is not correct", script_firm)
+            reason_message = "the request body is not correct"
             continue_process = False
+
+    # Mandatory parameters existanse validations.
 
     if continue_process is True:
         if all(key in request_body_keys for key in necessary_fields_in_request):
-            print_log(load_log_message("lm_012"), script_firm)
+            print_log("the request body have all necesary labels", script_firm)
         else:
-            missing_keys = np.setdiff1d(necessary_fields_in_request, request_body_keys)
-            missing_keys_str = ""
-            for missing_key in missing_keys:
-                missing_keys_str += missing_key + ","
-            print_log(load_log_message("lm_013").format(missing_keys_str), script_firm)
-            message_key = "hm_006"
+            print_log("the request body dosn't have all necessary labels", script_firm)
+            reason_message = "the request body does not have all necesary labels"
             continue_process = False
+
+    # Mandatory parameters type validations.
 
     if continue_process is True:
         if type(request_body["board_array"]) is list:
-            print_log(load_log_message("lm_014").format("board_array"), script_firm)
+            print_log("the variable board_array has the correct data type", script_firm)
         else:
-            print_log(load_log_message("lm_015").format("board_array"), script_firm)
-            message_key = "hm_007"
+            print_log(
+                "the variable board_array hasn't the correct data type", script_firm
+            )
+            reason_message = "the board in your request body is not a list, check it before send it again"
             continue_process = False
 
     if continue_process is True:
         if type(request_body["zone_length"]) is int:
-            print_log(load_log_message("lm_014").format("zone_length"), script_firm)
+            print_log("the variable zone_length has the correct data type", script_firm)
         else:
-            print_log(load_log_message("lm_015").format("zone_length"), script_firm)
-            message_key = "hm_008"
+            print_log(
+                "the variable zone_length hasn't the correct data type", script_firm
+            )
+            reason_message = "the zone length in your request body is not a int, check it before send it again"
             continue_process = False
 
     if continue_process is True:
         if type(request_body["zone_height"]) is int:
-            print_log(load_log_message("lm_014").format("zone_height"), script_firm)
+            print_log("the variable zone_height has the correct data type", script_firm)
         else:
-            print_log(load_log_message("lm_015").format("zone_height"), script_firm)
-            message_key = "hm_009"
+            print_log(
+                "the variable zone_height hasn't the correct data type", script_firm
+            )
+            reason_message = "the zone height in your request body is not a int, check it before send it again"
             continue_process = False
 
+    # Board dimensions validations.
+
     if continue_process is True:
+
         board_dimensions = request_body["zone_height"] * request_body["zone_length"]
         board_height = len(request_body["board_array"])
+
         if board_dimensions == board_height:
-            print_log(load_log_message("lm_016").format("columns"), script_firm)
+            print_log("the board columns dimensions are correct", script_firm)
         else:
-            print_log(load_log_message("lm_017").format("columns"), script_firm)
-            message_key = "hm_010"
+            print_log("the board columns dimensions aren't correct", script_firm)
+            reason_message = "the board columns dimensions of your request are not correct, please check it before send your request again"
             continue_process = False
 
     if continue_process is True:
+
         board_dimensions = request_body["zone_height"] * request_body["zone_length"]
         board_lenght_summation = 0
         for board_row in request_body["board_array"]:
             board_lenght_summation += len(board_row)
+
         if board_dimensions == board_lenght_summation / board_dimensions:
-            print_log(load_log_message("lm_016").format("rows"), script_firm)
+            print_log("the board rows dimensions are correct", script_firm)
         else:
-            print_log(load_log_message("lm_017").format("rows"), script_firm)
-            message_key = "hm_011"
+            print_log("the board rows dimensions aren't correct", script_firm)
+            reason_message = "the board rows dimensions of your request are not correct, please check it before send your request again"
             continue_process = False
 
     if continue_process is True:
-        print_log(load_log_message("lm_010"), script_firm)
+        print_log("request body validation end successfully", script_firm)
     else:
-        print_log(load_log_message("lm_011"), script_firm)
+        print_log("request body validation dosn't end successfully", script_firm)
 
-    return continue_process, message_key
+    return continue_process, reason_message
 
 
 @api_routes.get("/solver/hc")
 async def solver(request: Request):
 
-    continue_process, message_key = await check_request_requirements(request)
-    reason_message = load_http_response_message(message_key)
+    continue_process, reason_message = await check_request_requirements(request)
 
     if continue_process is True:
 
@@ -152,7 +162,6 @@ async def solver(request: Request):
             restarts = request_body["restarts"]
         if "searchs" in request_body_keys:
             searchs = request_body["searchs"]
-
 
         solution_board = solve_sudoku_using_hill_climbing_algorithm(
             hill_climbing_restarts=restarts,
