@@ -18,17 +18,25 @@ async def check_request_requirements(request: Request):
 
     global script_firm
 
-    necessary_fields_in_request = ["board_array", "zone_length", "zone_height"]
-    api_key = "7bC47Aa517f3eC4BF7F29ee84dc0D5E3"
+    print_log(load_log_message("lm_009"), script_firm)
 
-    request_body = await request.json()
-    request_body_keys = [key for key in request_body.keys()]
+    try:
+        request_body = await request.json()
 
-    request_headers = request.headers
-    request_header_keys = [key for key in request_headers.keys()]
+        print_log(load_log_message("lm_003"), script_firm)
+        continue_process = True
+        message_key = "hm_001"
+    except:
+        print_log(load_log_message("lm_004"), script_firm)
+        continue_process = False
+        message_key = "hm_002"
 
-    continue_process = True
-    message_key = "hm_001"
+    if continue_process is True:
+        necessary_fields_in_request = ["board_array", "zone_length", "zone_height"]
+        request_header_keys = [key for key in request.headers.keys()]
+        request_body_keys = [key for key in request_body.keys()]
+        api_key = "7bC47Aa517f3eC4BF7F29ee84dc0D5E3"
+        request_headers = request.headers
 
     if continue_process is True:
         if "Authorization" in request_header_keys:
@@ -47,14 +55,6 @@ async def check_request_requirements(request: Request):
             continue_process = False
 
     if continue_process is True:
-        if request.body_exists:
-            print_log(load_log_message("lm_003"), script_firm)
-        else:
-            print_log(load_log_message("lm_004"), script_firm)
-            message_key = "hm_002"
-            continue_process = False
-
-    if continue_process is True:
         if type(request_body) is dict:
             print_log(load_log_message("lm_008"), script_firm)
         else:
@@ -64,28 +64,44 @@ async def check_request_requirements(request: Request):
 
     if continue_process is True:
         if all(key in request_body_keys for key in necessary_fields_in_request):
-            pass
+            print_log(load_log_message("lm_012"), script_firm)
         else:
             missing_keys = np.setdiff1d(necessary_fields_in_request, request_body_keys)
+            missing_keys_str = ""
+            for missing_key in missing_keys:
+                missing_keys_str += missing_key + ","
+            print_log(load_log_message("lm_013").format(missing_keys_str), script_firm)
+            message_key = "hm_006"
             continue_process = False
 
     if continue_process is True:
         if type(request_body["board_array"]) is list:
-            pass
+            print_log(load_log_message("lm_014").format("board_array"), script_firm)
         else:
+            print_log(load_log_message("lm_015").format("board_array"), script_firm)
+            message_key = "hm_007"
             continue_process = False
 
     if continue_process is True:
         if type(request_body["zone_length"]) is int:
-            pass
+            print_log(load_log_message("lm_014").format("zone_length"), script_firm)
         else:
+            print_log(load_log_message("lm_015").format("zone_length"), script_firm)
+            message_key = "hm_008"
             continue_process = False
 
     if continue_process is True:
         if type(request_body["zone_height"]) is int:
-            pass
+            print_log(load_log_message("lm_014").format("zone_height"), script_firm)
         else:
+            print_log(load_log_message("lm_015").format("zone_height"), script_firm)
+            message_key = "hm_009"
             continue_process = False
+
+    if continue_process is True:
+        print_log(load_log_message("lm_010"), script_firm)
+    else:
+        print_log(load_log_message("lm_011"), script_firm)
 
     return continue_process, message_key
 
