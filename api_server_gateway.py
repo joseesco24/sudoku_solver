@@ -17,114 +17,103 @@ async def check_request_mandatory_requirements(request: Request):
 
     global script_firm
 
-    print_log("starting request body validations", script_firm)
+    print_log(r"starting request body validations", script_firm)
 
     try:
         request_body = await request.json()
-
         necessary_fields_in_request = ["board_array", "zone_length", "zone_height"]
         request_header_keys = [key for key in request.headers.keys()]
         request_body_keys = [key for key in request_body.keys()]
         api_key = r"7bC47Aa517f3eC4BF7F29ee84dc0D5E3"
         request_headers = request.headers
         continue_process = True
-
+        print_log(r"the request body is correct", script_firm)
     except:
         continue_process = False
+        print_log(r"the request body is not correct", script_firm)
 
     # Authorization header validations.
 
     if continue_process is True:
         if "Authorization" in request_header_keys:
-            print_log("the authorization header exists", script_firm)
+            print_log(r"the authorization header exists", script_firm)
         else:
-            print_log("the authorization header dosn't exists", script_firm)
+            print_log(r"the authorization header dosn't exists", script_firm)
             continue_process = False
-
     if continue_process is True:
         if api_key == request_headers["Authorization"]:
-            print_log("the authorization header is valid", script_firm)
+            print_log(r"the authorization header is valid", script_firm)
         else:
-            print_log("the authorization header isn't valid", script_firm)
-            continue_process = False
-
-    # Body general validations.
-
-    if continue_process is True:
-        if type(request_body) is dict:
-            print_log("the request body is correct", script_firm)
-        else:
-            print_log("the request body is not correct", script_firm)
+            print_log(r"the authorization header isn't valid", script_firm)
             continue_process = False
 
     # Mandatory parameters existanse validations.
 
     if continue_process is True:
         if all(key in request_body_keys for key in necessary_fields_in_request):
-            print_log("the request body have all necesary labels", script_firm)
+            print_log(r"the request body have all necesary labels", script_firm)
         else:
-            print_log("the request body dosn't have all necessary labels", script_firm)
+            print_log(r"the request body dosn't have all necessary labels", script_firm)
             continue_process = False
 
     # Mandatory parameters type validations.
 
     if continue_process is True:
         if type(request_body["board_array"]) is list:
-            print_log("the variable board_array has the correct data type", script_firm)
+            print_log(
+                r"the variable board_array has the correct data type", script_firm
+            )
         else:
             print_log(
-                "the variable board_array hasn't the correct data type", script_firm
+                r"the variable board_array hasn't the correct data type", script_firm
             )
             continue_process = False
-
     if continue_process is True:
         if type(request_body["zone_length"]) is int:
-            print_log("the variable zone_length has the correct data type", script_firm)
+            print_log(
+                r"the variable zone_length has the correct data type", script_firm
+            )
         else:
             print_log(
-                "the variable zone_length hasn't the correct data type", script_firm
+                r"the variable zone_length hasn't the correct data type", script_firm
             )
             continue_process = False
-
     if continue_process is True:
         if type(request_body["zone_height"]) is int:
-            print_log("the variable zone_height has the correct data type", script_firm)
+            print_log(
+                r"the variable zone_height has the correct data type", script_firm
+            )
         else:
             print_log(
-                "the variable zone_height hasn't the correct data type", script_firm
+                r"the variable zone_height hasn't the correct data type", script_firm
             )
             continue_process = False
 
     # Board dimensions validations.
 
     if continue_process is True:
-
         board_dimensions = request_body["zone_height"] * request_body["zone_length"]
         board_height = len(request_body["board_array"])
-
         if board_dimensions == board_height:
-            print_log("the board columns dimensions are correct", script_firm)
+            print_log(r"the board columns dimensions are correct", script_firm)
         else:
-            print_log("the board columns dimensions aren't correct", script_firm)
+            print_log(r"the board columns dimensions aren't correct", script_firm)
             continue_process = False
-
     if continue_process is True:
-
         board_dimensions = request_body["zone_height"] * request_body["zone_length"]
         board_lenght_summation = 0
         for board_row in request_body["board_array"]:
             board_lenght_summation += len(board_row)
-
         if board_dimensions == board_lenght_summation / board_dimensions:
-            print_log("the board rows dimensions are correct", script_firm)
+            print_log(r"the board rows dimensions are correct", script_firm)
         else:
-            print_log("the board rows dimensions aren't correct", script_firm)
+            print_log(r"the board rows dimensions aren't correct", script_firm)
             continue_process = False
 
     if continue_process is True:
-        print_log("request body validation end successfully", script_firm)
+        print_log(r"request body validation end successfully", script_firm)
     else:
-        print_log("request body validation dosn't end successfully", script_firm)
+        print_log(r"request body validation dosn't end successfully", script_firm)
 
     return continue_process
 
