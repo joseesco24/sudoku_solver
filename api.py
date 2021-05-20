@@ -1,5 +1,7 @@
 from sudoku_hill_climbing import solve_sudoku_using_hill_climbing_algorithm
 
+from sudoku_common_functions import calculate_sudoku_board_fitness_score
+
 from yaml_reader import load_http_response_message
 from yaml_reader import load_log_message
 from logs_printer import print_log
@@ -149,7 +151,16 @@ async def solver(request: Request):
             zone_length=sudoku_zone_length,
         )
 
-        response_dict = {"board_array": solution_board}
+        solution_board_fitness = calculate_sudoku_board_fitness_score(
+            board=solution_board,
+            zone_height=sudoku_zone_height,
+            zone_length=sudoku_zone_length,
+        )
+
+        response_dict = {
+            "board_array": solution_board,
+            "fitness_score": solution_board_fitness,
+        }
 
         return web.Response(
             body=json.dumps(obj=response_dict, indent=None),

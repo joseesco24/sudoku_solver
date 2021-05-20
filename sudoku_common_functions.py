@@ -5,45 +5,45 @@ import random
 
 
 def exchange_two_numbers_from_a_current_board_row(
-    current_board: list, fixed_numbers_board: list
+    filled_board: list, fixed_numbers_board: list
 ) -> list:
 
-    row_index = random.randrange(len(current_board))
+    row_index = random.randrange(len(filled_board))
 
     while True:
-        column_index_1 = random.randrange(len(current_board[row_index]))
+        column_index_1 = random.randrange(len(filled_board[row_index]))
         if fixed_numbers_board[row_index][column_index_1] == 0:
-            number_1 = deepcopy(current_board[row_index][column_index_1])
+            number_1 = deepcopy(filled_board[row_index][column_index_1])
             break
 
     while True:
-        column_index_2 = random.randrange(len(current_board[row_index]))
+        column_index_2 = random.randrange(len(filled_board[row_index]))
         if fixed_numbers_board[row_index][column_index_2] == 0:
-            number_2 = deepcopy(current_board[row_index][column_index_2])
+            number_2 = deepcopy(filled_board[row_index][column_index_2])
             break
 
-    current_board[row_index][column_index_1] = number_2
-    current_board[row_index][column_index_2] = number_1
+    filled_board[row_index][column_index_1] = number_2
+    filled_board[row_index][column_index_2] = number_1
 
-    return current_board
+    return filled_board
 
 
 def randomly_start_the_board(
     fixed_numbers_board: list, zone_height: int, zone_length: int
 ) -> list:
 
-    board = deepcopy(fixed_numbers_board)
+    filled_board = deepcopy(fixed_numbers_board)
 
-    for row_index in range(len(board)):
-        for column_index in range(len(board[row_index])):
-            if board[row_index][column_index] == 0:
+    for row_index in range(len(filled_board)):
+        for column_index in range(len(filled_board[row_index])):
+            if filled_board[row_index][column_index] == 0:
                 while True:
                     new_number = random.randrange(1, (zone_height * zone_length) + 1)
-                    if new_number not in board[row_index]:
-                        board[row_index][column_index] = new_number
+                    if new_number not in filled_board[row_index]:
+                        filled_board[row_index][column_index] = new_number
                         break
 
-    return board
+    return filled_board
 
 
 def calculate_sudoku_board_fitness_score(

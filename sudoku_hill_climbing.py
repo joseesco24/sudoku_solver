@@ -14,14 +14,14 @@ script_firm = "hcs"
 
 
 def exchange_if_sudoku_board_improves(
-    current_board: list, fixed_numbers_board: list, zone_height: int, zone_length: int
+    filled_board: list, fixed_numbers_board: list, zone_height: int, zone_length: int
 ) -> list:
 
-    initial_board = deepcopy(current_board)
-    current_board = deepcopy(current_board)
+    initial_board = deepcopy(filled_board)
+    current_board = deepcopy(filled_board)
 
     current_board = exchange_two_numbers_from_a_current_board_row(
-        current_board=current_board, fixed_numbers_board=fixed_numbers_board
+        filled_board=current_board, fixed_numbers_board=fixed_numbers_board
     )
 
     current_board_fitness = calculate_sudoku_board_fitness_score(
@@ -41,33 +41,32 @@ def solve_sudoku_using_hill_climbing_algorithm(
     board: list,
     zone_height: int,
     zone_length: int,
-    hill_climbing_restarts: int = 0,
+    hill_climbing_restarts: int = 1,
     hill_climbing_searchs: int = 20,
 ) -> list:
 
     fixed_numbers_board = deepcopy(board)
-    current_board = deepcopy(board)
 
     print_log("starting to solve with hill climbing algorithm", script_firm)
 
-    board_list = list()
+    boards_list = list()
     start_time = time()
 
     for _ in itertools.repeat(None, hill_climbing_restarts + 1):
-        current_board = randomly_start_the_board(
+        filled_board = randomly_start_the_board(
             fixed_numbers_board=fixed_numbers_board,
             zone_height=zone_height,
             zone_length=zone_length,
         )
 
         for _ in itertools.repeat(None, hill_climbing_searchs):
-            current_board = exchange_if_sudoku_board_improves(
+            filled_board = exchange_if_sudoku_board_improves(
                 fixed_numbers_board=fixed_numbers_board,
-                current_board=current_board,
+                filled_board=filled_board,
                 zone_height=zone_height,
                 zone_length=zone_length,
             )
-            board_list.append(current_board)
+            boards_list.append(filled_board)
 
     end_time = time()
     elapsed_time = end_time - start_time
@@ -75,17 +74,17 @@ def solve_sudoku_using_hill_climbing_algorithm(
     print_log("finishing to solve with hill climbing algorithm", script_firm)
     print_log(f"time spent searching a solution: {elapsed_time} seconds", script_firm)
 
-    best_board = random.choice(board_list)
+    best_board = random.choice(boards_list)
 
-    for board in board_list:
+    for current_board in boards_list:
         best_board_fitness = calculate_sudoku_board_fitness_score(
             board=best_board, zone_height=zone_height, zone_length=zone_length
         )
-        board_fitness = calculate_sudoku_board_fitness_score(
-            board=board, zone_height=zone_height, zone_length=zone_length
+        current_board_fitness = calculate_sudoku_board_fitness_score(
+            board=current_board, zone_height=zone_height, zone_length=zone_length
         )
-        if board_fitness < best_board_fitness:
-            best_board = board
+        if current_board_fitness < best_board_fitness:
+            best_board = current_board
 
     print_sudoku_board_collisions_report(
         zone_height=zone_height,
