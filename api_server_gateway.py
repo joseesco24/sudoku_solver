@@ -135,9 +135,27 @@ async def solver(request: Request):
         sudoku_zone_length = request_body["zone_length"]
 
         if "restarts" in request_body_keys:
-            restarts = request_body["restarts"]
+            if type(request_body["restarts"]) is int:
+                print_log(
+                    r"the variable restarts has the correct data type", script_firm
+                )
+                restarts = request_body["restarts"]
+            else:
+                print_log(
+                    r"the variable restarts hasn't the correct data type, using default value",
+                    script_firm,
+                )
         if "searchs" in request_body_keys:
-            searchs = request_body["searchs"]
+            if type(request_body["searchs"]) is int:
+                print_log(
+                    r"the variable searchs has the correct data type", script_firm
+                )
+                searchs = request_body["searchs"]
+            else:
+                print_log(
+                    r"the variable searchs hasn't the correct data type, using default value",
+                    script_firm,
+                )
 
         solution_board = solve_using_hill_climbing_algorithm(
             hill_climbing_restarts=restarts,
