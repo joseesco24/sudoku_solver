@@ -184,7 +184,7 @@ async def solver(request: Request):
 
     else:
         return web.Response(
-            reason=r"your request wasn't successfully, check if your request body is correct",
+            reason=r"your request wasn't successfully, check the container logs for more details",
             status=400,
         )
 
