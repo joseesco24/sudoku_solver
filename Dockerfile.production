@@ -7,8 +7,7 @@ RUN useradd -ms /bin/bash $USERNAME
 
 RUN mkdir -p $WORKDIR/requirements
 
-COPY ["requirements/commons.txt","requirements/production.txt","$WORKDIR/requirements/"]
-COPY ["install_dependencies.sh","$WORKDIR/"]
+COPY ["requirements/commons.txt","$WORKDIR/requirements/"]
 
 RUN find "$WORKDIR/" -type d -exec chmod 755 {} \;
 RUN find "$WORKDIR/" -type f -exec chmod 755 {} \;
@@ -22,7 +21,7 @@ WORKDIR $WORKDIR
 USER $USERNAME
 
 RUN pip install --upgrade pip
-RUN ./install_dependencies.sh
+pip install -r requirements/commons.txt
 
 ENV PORT=3000
 EXPOSE $PORT
