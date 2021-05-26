@@ -1,5 +1,17 @@
+# python cache folder.
 __pycache__
 
+# all dependencies file.
+requirements/all.txt
+
+# vscode workspace file.
 *.code-workspace
-*.devcontainer
-*.vscode
+
+# vscode devcontainer and general setups.
+.devcontainer
+.vscode
+
+# specific exceptions of vscode development files.
+!vscode/sudoku_solver.code-workspace
+!vscode/.devcontainer
+!vscode/.vscode
