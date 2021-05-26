@@ -7,7 +7,7 @@ RUN useradd -ms /bin/bash $USERNAME
 
 RUN mkdir -p $WORKDIR/requirements
 
-COPY ["requirements/commons.txt","$WORKDIR/requirements/"]
+COPY [".","requirements/commons.txt","$WORKDIR/requirements/"]
 
 RUN find "$WORKDIR/" -type d -exec chmod 755 {} \;
 RUN find "$WORKDIR/" -type f -exec chmod 755 {} \;
@@ -25,3 +25,5 @@ RUN pip install -r requirements/commons.txt
 
 ENV PORT=3000
 EXPOSE $PORT
+
+CMD ["python", "api_server.py"]

@@ -1,0 +1,12 @@
+*.code-workspace
+*.dockerignore
+*.devcontainer
+*.gitignore
+*.vscode
+*.git
+
+Dockerfile
+
+requirements
+dockerfiles
+vscode

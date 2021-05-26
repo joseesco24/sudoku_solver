@@ -1,28 +1,32 @@
 version: "3.8"
 
 services:
+  hill_climbing_solver:
+    build: "hill_climbing_solver_container/."
+    image: "joseesco24/hill_climbing_solver"
+    networks:
+      - sudoku_solver_network
+    environment:
+      FITNESS_SINGLE_SCORE_LINK: "general_solvers_functions:3000/calculate_board_fitness_single"
+      FITNESS_REPORT_SCORE_LINK: "general_solvers_functions:3000/calculate_board_fitness_report"
+      RANDOM_INITIALIZATION_LINK: "general_solvers_functions:3000/board_random_initialization"
+      RANDOM_MUTATION_LINK: "general_solvers_functions:3000/board_random_mutation"
+      GENERAL_SOLVER_FUNCTIONS_KEY: "7bC47Aa517f3eC4BF7F29ee84dc0D5E3"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - general_solvers_functions
 
-    hill_climbing_solver:
-        build: "hill_climbing_solver_container/."
-        image: "hill_climbing_solver"
-        networks:
-            - sudoku_solver_network
-        environment:
-            general_solver_functions_link: "general_solvers_functions"
-            general_solver_functions_key: "7bC47Aa517f3eC4BF7F29ee84dc0D5E3"
-        depends_on:
-            - general_solvers_functions_container
-        command: python api_server.py
-
-    general_solvers_functions:
-        build: "general_solvers_functions_container/."
-        image: "general_solvers_functions"
-        networks:
-            - sudoku_solver_network
-        environment:
-            key: "7bC47Aa517f3eC4BF7F29ee84dc0D5E3"
-        command: python api_server.py
+  general_solvers_functions:
+    build: "general_solvers_functions_container/."
+    image: "joseesco24/general_solvers_functions"
+    networks:
+      - sudoku_solver_network
+    environment:
+      GENERAL_SOLVER_FUNCTIONS_KEY: "7bC47Aa517f3eC4BF7F29ee84dc0D5E3"
+    ports:
+      - "3000:3000"
 
 networks:
-    sudoku_solver_network:
-        name: sudoku_solver_network
+  sudoku_solver_network:
+    name: sudoku_solver_network

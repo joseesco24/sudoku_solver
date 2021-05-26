@@ -118,7 +118,7 @@ async def check_request_mandatory_requirements(request: Request):
     return continue_process
 
 
-@api_routes.get(r"/solver/hc")
+@api_routes.get(r"/solver")
 async def solver(request: Request):
 
     continue_process = await check_request_mandatory_requirements(request)
