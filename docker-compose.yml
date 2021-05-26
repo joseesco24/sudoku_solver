@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+
+    hill_climbing_solver:
+        build: "hill_climbing_solver_container/."
+        image: "hill_climbing_solver"
+        networks:
+            - sudoku_solver_network
+        environment:
+            general_solver_functions_link: "general_solvers_functions"
+            general_solver_functions_key: "7bC47Aa517f3eC4BF7F29ee84dc0D5E3"
+        depends_on:
+            - general_solvers_functions_container
+        command: python api_server.py
+
+    general_solvers_functions:
+        build: "general_solvers_functions_container/."
+        image: "general_solvers_functions"
+        networks:
+            - sudoku_solver_network
+        environment:
+            key: "7bC47Aa517f3eC4BF7F29ee84dc0D5E3"
+        command: python api_server.py
+
+networks:
+    sudoku_solver_network:
+        name: sudoku_solver_network

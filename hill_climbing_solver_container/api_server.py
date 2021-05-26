@@ -1,6 +1,6 @@
-from general_solvers_functions import calculate_board_fitness_score
-from greedy_solver import solve_using_hill_climbing_algorithm
-from general_utility_functions import print_log
+from general_solver_functions_access import calculate_board_fitness_score
+from hill_climbing import solve_using_hill_climbing_algorithm
+from general_utilities import print_log
 
 from aiohttp.web_request import Request
 from aiohttp import web

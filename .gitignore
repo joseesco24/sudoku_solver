@@ -2,16 +2,17 @@
 __pycache__
 
 # all dependencies file.
-requirements/all.txt
+general_solvers_functions_container/requirements/all.txt
+hill_climbing_solver_container/requirements/all.txt
 
 # vscode workspace file.
 *.code-workspace
 
 # vscode devcontainer and general setups.
-.devcontainer
-.vscode
+*.devcontainer
+*.vscode
 
 # specific exceptions of vscode development files.
-!vscode/sudoku_solver.code-workspace
-!vscode/.devcontainer
-!vscode/.vscode
+!general_solvers_functions_container/vscode/*
+!hill_climbing_solver_container/vscode/*
+!vscode/*
