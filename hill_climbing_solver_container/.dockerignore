@@ -4,9 +4,9 @@
 *.gitignore
 *.vscode
 *.git
+*.md
 
 Dockerfile
 
-requirements
 dockerfiles
 vscode

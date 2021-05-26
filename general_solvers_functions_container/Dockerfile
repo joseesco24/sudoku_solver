@@ -1,13 +1,11 @@
 FROM python:3.7.10
 
-ARG USERNAME=production
+ARG USERNAME=development
 ARG WORKDIR=/home/$USERNAME
 
 RUN useradd -ms /bin/bash $USERNAME
 
-RUN mkdir -p $WORKDIR/requirements
-
-COPY [".","requirements/commons.txt","$WORKDIR/requirements/"]
+COPY [".","$WORKDIR"]
 
 RUN find "$WORKDIR/" -type d -exec chmod 755 {} \;
 RUN find "$WORKDIR/" -type f -exec chmod 755 {} \;
@@ -21,9 +19,7 @@ WORKDIR $WORKDIR
 USER $USERNAME
 
 RUN pip install --upgrade pip
-RUN pip install -r requirements/commons.txt
+RUN pip install -r requirements/commons.txt -r requirements/development.txt
 
 ENV PORT=3000
 EXPOSE $PORT
-
-CMD ["python", "api_server.py"]
