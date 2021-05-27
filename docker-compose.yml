@@ -2,7 +2,9 @@ version: "3.8"
 
 services:
   hill_climbing_solver:
-    build: "hill_climbing_solver_container/."
+    build:
+      context: "hill_climbing_solver_container/."
+      dockerfile: "Dockerfile"
     image: "joseesco24/hill_climbing_solver"
     networks:
       - sudoku_solver_network
@@ -19,7 +21,9 @@ services:
     command: ["python", "api_server.py"]
 
   general_solvers_functions:
-    build: "general_solvers_functions_container/."
+    build:
+      context: "general_solvers_functions_container/."
+      dockerfile: "Dockerfile"
     image: "joseesco24/general_solvers_functions"
     networks:
       - sudoku_solver_network
