@@ -10,17 +10,17 @@ services:
     networks:
       - sudoku_solver_network
     environment:
-      FITNESS_SINGLE_SCORE_LINK: "general_solvers_functions:3000/calculate_board_fitness_single"
-      FITNESS_REPORT_SCORE_LINK: "general_solvers_functions:3000/calculate_board_fitness_report"
-      RANDOM_INITIALIZATION_LINK: "general_solvers_functions:3000/board_random_initialization"
-      RANDOM_MUTATION_LINK: "general_solvers_functions:3000/board_random_mutation"
+      FITNESS_SINGLE_SCORE_LINK: "http://general_solvers_functions:3000/calculate_board_fitness_single"
+      FITNESS_REPORT_SCORE_LINK: "http://general_solvers_functions:3000/calculate_board_fitness_report"
+      RANDOM_INITIALIZATION_LINK: "http://general_solvers_functions:3000/board_random_initialization"
+      RANDOM_MUTATION_LINK: "http://general_solvers_functions:3000/board_random_mutation"
       GENERAL_SOLVER_FUNCTIONS_KEY: "7bC47Aa517f3eC4BF7F29ee84dc0D5E3"
       HILL_CLIMBING_SOLVER_KEY: "5C8051525198465F6B5ad7d2F9F4F9B7"
     ports:
       - "3000:3000"
     depends_on:
       - general_solvers_functions
-    command: ["python", "api_server.py"]
+    command: ["python","-u","api_server.py"]
 
   general_solvers_functions:
     container_name: general_solvers_functions
@@ -32,7 +32,7 @@ services:
       - sudoku_solver_network
     environment:
       GENERAL_SOLVER_FUNCTIONS_KEY: "7bC47Aa517f3eC4BF7F29ee84dc0D5E3"
-    command: ["python", "api_server.py"]
+    command: ["python","-u","api_server.py"]
 
 networks:
   sudoku_solver_network:

@@ -65,6 +65,7 @@ async def get_board_fitness_single(request: Request):
             "fitness_score": fitness_score,
         }
         return web.Response(
+            headers={"CONTENT-TYPE": "application/json"},
             body=json.dumps(obj=response_dict, indent=None),
             reason=r"your request was successfully, check the results in the body of this response",
             status=200,
@@ -98,6 +99,7 @@ async def get_board_fitness_report(request: Request):
             "row_collisions": row_collisions,
         }
         return web.Response(
+            headers={"CONTENT-TYPE": "application/json"},
             body=json.dumps(obj=response_dict, indent=None),
             reason=r"your request was successfully, check the results in the body of this response",
             status=200,
@@ -123,6 +125,7 @@ async def get_random_initialization(request: Request):
             "board": board,
         }
         return web.Response(
+            headers={"CONTENT-TYPE": "application/json"},
             body=json.dumps(obj=response_dict, indent=None),
             reason=r"your request was successfully, check the results in the body of this response",
             status=200,
@@ -147,6 +150,7 @@ async def get_random_mutation(request: Request):
             "board": board,
         }
         return web.Response(
+            headers={"CONTENT-TYPE": "application/json"},
             body=json.dumps(obj=response_dict, indent=None),
             reason=r"your request was successfully, check the results in the body of this response",
             status=200,
