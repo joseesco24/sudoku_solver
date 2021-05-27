@@ -1,6 +1,6 @@
 FROM python:3.7.10
 
-ARG USERNAME=development
+ARG USERNAME=production
 ARG WORKDIR=/home/$USERNAME
 
 RUN useradd -ms /bin/bash $USERNAME
@@ -19,7 +19,9 @@ WORKDIR $WORKDIR
 USER $USERNAME
 
 RUN pip install --upgrade pip
-RUN pip install -r requirements/commons.txt -r requirements/development.txt
+RUN pip install -r requirements/commons.txt
 
 ENV PORT=3000
 EXPOSE $PORT
+
+CMD ["python", "api_server.py"]

@@ -26,7 +26,7 @@ async def check_request_mandatory_requirements(request: Request):
         necessary_fields_in_request = ["board_array", "zone_length", "zone_height"]
         request_header_keys = [key for key in request.headers.keys()]
         request_body_keys = [key for key in request_body.keys()]
-        api_key = r"7bC47Aa517f3eC4BF7F29ee84dc0D5E3"
+        api_key = str(os.environ["HILL_CLIMBING_SOLVER_KEY"])
         request_headers = request.headers
         continue_process = True
         print_log(r"the request body is correct", script_firm)
