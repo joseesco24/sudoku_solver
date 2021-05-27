@@ -4,7 +4,7 @@ services:
   hill_climbing_solver:
     build:
       context: "hill_climbing_solver_container/."
-      dockerfile: "Dockerfile"
+      dockerfile: "production.Dockerfile"
     image: "joseesco24/hill_climbing_solver"
     networks:
       - sudoku_solver_network
@@ -24,7 +24,7 @@ services:
   general_solvers_functions:
     build:
       context: "general_solvers_functions_container/."
-      dockerfile: "Dockerfile"
+      dockerfile: "production.Dockerfile"
     image: "joseesco24/general_solvers_functions"
     networks:
       - sudoku_solver_network

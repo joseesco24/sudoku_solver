@@ -1,7 +1,7 @@
 {
   "name": "Existing Dockerfile",
   "context": "..",
-  "dockerFile": "../Dockerfile",
+  "dockerFile": "../development.Dockerfile",
   "forwardPorts": [3000],
   "extensions": [
     "esbenp.prettier-vscode",
