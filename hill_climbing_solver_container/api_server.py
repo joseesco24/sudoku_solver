@@ -1,5 +1,7 @@
-from general_solver_functions_access import calculate_board_fitness_score
+from general_solver_functions_access import calculate_board_fitness_single
+
 from hill_climbing import solve_using_hill_climbing_algorithm
+
 from general_utilities import print_log
 
 from aiohttp.web_request import Request
@@ -157,7 +159,7 @@ async def solver(request: Request):
                     script_firm,
                 )
 
-        solution_board = solve_using_hill_climbing_algorithm(
+        solution_board = await solve_using_hill_climbing_algorithm(
             hill_climbing_restarts=restarts,
             hill_climbing_searchs=searchs,
             zone_height=sudoku_zone_height,
@@ -165,15 +167,15 @@ async def solver(request: Request):
             board=sudoku_initial_board,
         )
 
-        solution_board_fitness = calculate_board_fitness_score(
+        solution_board_fitness = await calculate_board_fitness_single(
             zone_height=sudoku_zone_height,
             zone_length=sudoku_zone_length,
             board=solution_board,
         )
 
         response_dict = {
-            "board_array": solution_board,
             "fitness_score": solution_board_fitness,
+            "board_array": solution_board,
         }
 
         return web.Response(

@@ -1,10 +1,12 @@
-from general_solver_functions_access import exchange_two_numbers_from_a_current_board_row
-from general_solver_functions_access import print_board_collisions_report
-from general_solver_functions_access import calculate_board_fitness_score
-from general_solver_functions_access import randomly_start_the_board
+from general_solver_functions_access import calculate_board_fitness_report
+from general_solver_functions_access import calculate_board_fitness_single
+from general_solver_functions_access import board_random_initialization
+from general_solver_functions_access import board_random_mutation
+
 from general_utilities import normalize_decimal
 from general_utilities import print_log
 
+from asyncio import gather
 from copy import deepcopy
 from time import time
 import itertools
@@ -13,22 +15,24 @@ import random
 script_firm = "grs"
 
 
-def exchange_if_sudoku_board_improves(
+async def exchange_if_sudoku_board_improves(
     filled_board: list, fixed_numbers_board: list, zone_height: int, zone_length: int
 ) -> list:
 
     initial_board = deepcopy(filled_board)
     current_board = deepcopy(filled_board)
 
-    current_board = exchange_two_numbers_from_a_current_board_row(
-        filled_board=current_board, fixed_numbers_board=fixed_numbers_board
+    current_board = await board_random_mutation(
+        board=current_board, fixed_numbers_board=fixed_numbers_board
     )
 
-    current_board_fitness = calculate_board_fitness_score(
-        board=current_board, zone_height=zone_height, zone_length=zone_length
-    )
-    initial_board_fitness = calculate_board_fitness_score(
-        board=initial_board, zone_height=zone_height, zone_length=zone_length
+    current_board_fitness, initial_board_fitness = await gather(
+        calculate_board_fitness_single(
+            board=current_board, zone_height=zone_height, zone_length=zone_length
+        ),
+        calculate_board_fitness_single(
+            board=initial_board, zone_height=zone_height, zone_length=zone_length
+        ),
     )
 
     if current_board_fitness <= initial_board_fitness:
@@ -37,7 +41,7 @@ def exchange_if_sudoku_board_improves(
         return initial_board
 
 
-def solve_using_hill_climbing_algorithm(
+async def solve_using_hill_climbing_algorithm(
     hill_climbing_restarts: int,
     hill_climbing_searchs: int,
     zone_height: int,
@@ -55,7 +59,7 @@ def solve_using_hill_climbing_algorithm(
 
     for _ in itertools.repeat(None, hill_climbing_restarts):
         restarts_counter += 1
-        filled_board = randomly_start_the_board(
+        filled_board = await board_random_initialization(
             fixed_numbers_board=fixed_numbers_board,
             zone_height=zone_height,
             zone_length=zone_length,
@@ -63,7 +67,7 @@ def solve_using_hill_climbing_algorithm(
 
         for _ in itertools.repeat(None, hill_climbing_searchs):
             searches_counter += 1
-            filled_board = exchange_if_sudoku_board_improves(
+            filled_board = await exchange_if_sudoku_board_improves(
                 fixed_numbers_board=fixed_numbers_board,
                 filled_board=filled_board,
                 zone_height=zone_height,
@@ -87,16 +91,18 @@ def solve_using_hill_climbing_algorithm(
     best_board = random.choice(boards_list)
 
     for current_board in boards_list:
-        best_board_fitness = calculate_board_fitness_score(
-            board=best_board, zone_height=zone_height, zone_length=zone_length
-        )
-        current_board_fitness = calculate_board_fitness_score(
-            board=current_board, zone_height=zone_height, zone_length=zone_length
+        best_board_fitness, current_board_fitness = await gather(
+            calculate_board_fitness_single(
+                board=best_board, zone_height=zone_height, zone_length=zone_length
+            ),
+            calculate_board_fitness_single(
+                board=current_board, zone_height=zone_height, zone_length=zone_length
+            ),
         )
         if current_board_fitness < best_board_fitness:
             best_board = current_board
 
-    print_board_collisions_report(
+    await calculate_board_fitness_report(
         zone_height=zone_height,
         zone_length=zone_length,
         script_firm=script_firm,

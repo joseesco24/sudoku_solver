@@ -15,7 +15,8 @@ services:
       RANDOM_MUTATION_LINK: "general_solvers_functions:3000/board_random_mutation"
       GENERAL_SOLVER_FUNCTIONS_KEY: "7bC47Aa517f3eC4BF7F29ee84dc0D5E3"
     ports:
-      - "3000:3000"
+      target: "3000"
+      published: "3000"
     depends_on:
       - general_solvers_functions
     command: ["python", "api_server.py"]
@@ -29,8 +30,8 @@ services:
       - sudoku_solver_network
     environment:
       GENERAL_SOLVER_FUNCTIONS_KEY: "7bC47Aa517f3eC4BF7F29ee84dc0D5E3"
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000"
     command: ["python", "api_server.py"]
 
 networks:
