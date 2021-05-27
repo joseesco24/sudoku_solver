@@ -2,6 +2,7 @@ version: "3.8"
 
 services:
   hill_climbing_solver:
+    container_name: hill_climbing_solver
     build:
       context: "hill_climbing_solver_container/."
       dockerfile: "production.Dockerfile"
@@ -22,6 +23,7 @@ services:
     command: ["python", "api_server.py"]
 
   general_solvers_functions:
+    container_name: general_solvers_functions
     build:
       context: "general_solvers_functions_container/."
       dockerfile: "production.Dockerfile"
@@ -30,9 +32,12 @@ services:
       - sudoku_solver_network
     environment:
       GENERAL_SOLVER_FUNCTIONS_KEY: "7bC47Aa517f3eC4BF7F29ee84dc0D5E3"
-    expose:
-      - "3000"
     command: ["python", "api_server.py"]
+
+  alpine:
+    container_name: alpine
+    image: alpine
+    command: ["ping", "general_solvers_functions:3000/board_random_initialization"]
 
 networks:
   sudoku_solver_network:
