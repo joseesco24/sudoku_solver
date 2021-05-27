@@ -34,11 +34,6 @@ services:
       GENERAL_SOLVER_FUNCTIONS_KEY: "7bC47Aa517f3eC4BF7F29ee84dc0D5E3"
     command: ["python", "api_server.py"]
 
-  alpine:
-    container_name: alpine
-    image: alpine
-    command: ["ping", "general_solvers_functions:3000/board_random_initialization"]
-
 networks:
   sudoku_solver_network:
     name: sudoku_solver_network
