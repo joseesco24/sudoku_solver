@@ -20,6 +20,3 @@ USER $USERNAME
 
 RUN pip install --upgrade pip
 RUN pip install -r requirements/commons.txt
-
-ENV PORT=3000
-EXPOSE $PORT

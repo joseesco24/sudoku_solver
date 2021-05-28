@@ -16,3 +16,9 @@ hill_climbing_solver_container/requirements/all.txt
 !general_solvers_functions_container/vscode/*
 !hill_climbing_solver_container/vscode/*
 !vscode/*
+
+# env files.
+*.env
+
+# specific env files needed in repository.
+!env_files/*

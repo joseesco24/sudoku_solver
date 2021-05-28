@@ -4,37 +4,44 @@ services:
   hill_climbing_solver:
     container_name: hill_climbing_solver
     build:
-      context: "hill_climbing_solver_container/."
-      dockerfile: "production.Dockerfile"
-    image: "joseesco24/hill_climbing_solver"
+      context: hill_climbing_solver_container/.
+      dockerfile: production.Dockerfile
+    image: joseesco24/hill_climbing_solver
     networks:
-      - sudoku_solver_network
+      - general_solvers_functions_network
     environment:
-      FITNESS_SINGLE_SCORE_LINK: "http://general_solvers_functions:3000/calculate_board_fitness_single"
-      FITNESS_REPORT_SCORE_LINK: "http://general_solvers_functions:3000/calculate_board_fitness_report"
-      RANDOM_INITIALIZATION_LINK: "http://general_solvers_functions:3000/board_random_initialization"
-      RANDOM_MUTATION_LINK: "http://general_solvers_functions:3000/board_random_mutation"
-      GENERAL_SOLVER_FUNCTIONS_KEY: "7bC47Aa517f3eC4BF7F29ee84dc0D5E3"
-      HILL_CLIMBING_SOLVER_KEY: "5C8051525198465F6B5ad7d2F9F4F9B7"
+      FITNESS_SINGLE_SCORE_LINK: ${FITNESS_SINGLE_SCORE_LINK}
+      FITNESS_REPORT_SCORE_LINK: ${FITNESS_REPORT_SCORE_LINK}
+      RANDOM_INITIALIZATION_LINK: ${RANDOM_INITIALIZATION_LINK}
+      RANDOM_MUTATION_LINK: ${RANDOM_MUTATION_LINK}
+      GENERAL_SOLVER_FUNCTIONS_KEY: ${GENERAL_SOLVER_FUNCTIONS_KEY}
+      HILL_CLIMBING_SOLVER_KEY: ${HILL_CLIMBING_SOLVER_KEY}
+      ACCESS_PORT: ${HILL_CLIMBING_SOLVER_PORT}
     ports:
-      - "3000:3000"
+      - target: ${HILL_CLIMBING_SOLVER_PORT}
+        published: ${SERVICE_ACCESS_PORT}
+        protocol: tcp
     depends_on:
       - general_solvers_functions
-    command: ["python","-u","api_server.py"]
+    entrypoint: ["python", "-u", "api_server.py"]
 
   general_solvers_functions:
     container_name: general_solvers_functions
     build:
-      context: "general_solvers_functions_container/."
-      dockerfile: "production.Dockerfile"
-    image: "joseesco24/general_solvers_functions"
+      context: general_solvers_functions_container/.
+      dockerfile: production.Dockerfile
+    image: joseesco24/general_solvers_functions
     networks:
-      - sudoku_solver_network
+      - general_solvers_functions_network
     environment:
-      GENERAL_SOLVER_FUNCTIONS_KEY: "7bC47Aa517f3eC4BF7F29ee84dc0D5E3"
-    command: ["python","-u","api_server.py"]
+      GENERAL_SOLVER_FUNCTIONS_KEY: ${GENERAL_SOLVER_FUNCTIONS_KEY}
+      ACCESS_PORT: ${GENERAL_SOLVERS_FUNCTIONS_PORT}
+    expose:
+      - ${GENERAL_SOLVERS_FUNCTIONS_PORT}
+    entrypoint: ["python", "-u", "api_server.py"]
 
 networks:
-  sudoku_solver_network:
-    name: sudoku_solver_network
+  general_solvers_functions_network:
+    name: general_solvers_functions_network
+    external: false
     driver: bridge
