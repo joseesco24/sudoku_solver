@@ -3,10 +3,10 @@ version: "3.8"
 services:
   hill_climbing_solver:
     container_name: hill_climbing_solver
+    image: joseesco24/hill_climbing_solver
     build:
       context: hill_climbing_solver_container/.
       dockerfile: production.Dockerfile
-    image: joseesco24/hill_climbing_solver
     networks:
       - general_solvers_functions_network
     environment:
@@ -27,10 +27,10 @@ services:
 
   general_solvers_functions:
     container_name: general_solvers_functions
+    image: joseesco24/general_solvers_functions
     build:
       context: general_solvers_functions_container/.
       dockerfile: production.Dockerfile
-    image: joseesco24/general_solvers_functions
     networks:
       - general_solvers_functions_network
     environment:
