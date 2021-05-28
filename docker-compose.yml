@@ -1,6 +1,7 @@
 version: "3.8"
 
 services:
+
   hill_climbing_solver:
     container_name: hill_climbing_solver
     image: joseesco24/hill_climbing_solver
@@ -9,6 +10,7 @@ services:
       dockerfile: production.Dockerfile
     networks:
       - general_solvers_functions_network
+      - main_proxy_gateway_network
     environment:
       FITNESS_SINGLE_SCORE_LINK: ${FITNESS_SINGLE_SCORE_LINK}
       FITNESS_REPORT_SCORE_LINK: ${FITNESS_REPORT_SCORE_LINK}
@@ -17,13 +19,29 @@ services:
       GENERAL_SOLVER_FUNCTIONS_KEY: ${GENERAL_SOLVER_FUNCTIONS_KEY}
       HILL_CLIMBING_SOLVER_KEY: ${HILL_CLIMBING_SOLVER_KEY}
       ACCESS_PORT: ${HILL_CLIMBING_SOLVER_PORT}
-    ports:
-      - target: ${HILL_CLIMBING_SOLVER_PORT}
-        published: ${SERVICE_ACCESS_PORT}
-        protocol: tcp
+    expose:
+      - ${HILL_CLIMBING_SOLVER_PORT}
     depends_on:
       - general_solvers_functions
+      - main_proxy_gateway
     entrypoint: ["python", "-u", "api_server.py"]
+
+  main_proxy_gateway:
+    container_name: main_proxy_gateway
+    image: joseesco24/main_proxy_gateway
+    build:
+      context: main_proxy_gateway_container/.
+      dockerfile: production.Dockerfile
+    networks:
+      - main_proxy_gateway_network
+    environment:
+      HILL_CLIMBING_SOLVER_LINK: ${HILL_CLIMBING_SOLVER_LINK}
+      HILL_CLIMBING_SOLVER_KEY: ${HILL_CLIMBING_SOLVER_KEY}
+      ACCESS_PORT: ${MAIN_PROXY_GATEWAY_PORT}
+    ports:
+      - target: ${MAIN_PROXY_GATEWAY_PORT}
+        published: ${HOST_ACCESS_PORT}
+        protocol: tcp
 
   general_solvers_functions:
     container_name: general_solvers_functions
@@ -43,5 +61,9 @@ services:
 networks:
   general_solvers_functions_network:
     name: general_solvers_functions_network
+    external: false
+    driver: bridge
+  main_proxy_gateway_network:
+    name: main_proxy_gateway_network
     external: false
     driver: bridge
