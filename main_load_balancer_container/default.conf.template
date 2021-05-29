@@ -29,28 +29,28 @@ server {
 
 upstream calculate_board_fitness_single_load_balancer {
     server ${FITNESS_SINGLE_SCORE_LINK_R1} weight=8;
-    server ${FITNESS_SINGLE_SCORE_LINK_R2} weight=6;
-    server ${FITNESS_SINGLE_SCORE_LINK_R3} weight=4;
-    server ${FITNESS_SINGLE_SCORE_LINK_R4} weight=2;
+    server ${FITNESS_SINGLE_SCORE_LINK_R2} weight=8;
+    server ${FITNESS_SINGLE_SCORE_LINK_R3} weight=8;
+    server ${FITNESS_SINGLE_SCORE_LINK_R4} weight=8;
 }
 
 upstream calculate_board_fitness_report_load_balancer {
     server ${FITNESS_REPORT_SCORE_LINK_R1} weight=8;
-    server ${FITNESS_REPORT_SCORE_LINK_R2} weight=6;
-    server ${FITNESS_REPORT_SCORE_LINK_R3} weight=4;
-    server ${FITNESS_REPORT_SCORE_LINK_R4} weight=2;
+    server ${FITNESS_REPORT_SCORE_LINK_R2} weight=8;
+    server ${FITNESS_REPORT_SCORE_LINK_R3} weight=8;
+    server ${FITNESS_REPORT_SCORE_LINK_R4} weight=8;
 }
 
 upstream board_random_initialization_load_balancer {
     server ${RANDOM_INITIALIZATION_LINK_R1} weight=8;
-    server ${RANDOM_INITIALIZATION_LINK_R2} weight=6;
-    server ${RANDOM_INITIALIZATION_LINK_R3} weight=4;
-    server ${RANDOM_INITIALIZATION_LINK_R4} weight=2;
+    server ${RANDOM_INITIALIZATION_LINK_R2} weight=8;
+    server ${RANDOM_INITIALIZATION_LINK_R3} weight=8;
+    server ${RANDOM_INITIALIZATION_LINK_R4} weight=8;
 }
 
 upstream board_random_mutation_load_balancer {
     server ${RANDOM_MUTATION_LINK_R1} weight=8;
-    server ${RANDOM_MUTATION_LINK_R2} weight=6;
-    server ${RANDOM_MUTATION_LINK_R3} weight=4;
-    server ${RANDOM_MUTATION_LINK_R4} weight=2;
+    server ${RANDOM_MUTATION_LINK_R2} weight=8;
+    server ${RANDOM_MUTATION_LINK_R3} weight=8;
+    server ${RANDOM_MUTATION_LINK_R4} weight=8;
 }
