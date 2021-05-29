@@ -20,6 +20,41 @@ services:
     depends_on:
       - hill_climbing_solver
 
+  main_load_balancer:
+    container_name: main_load_balancer
+    image: joseesco24/main_load_balancer
+    build:
+      context: main_load_balancer_container/.
+      dockerfile: production.Dockerfile
+    networks:
+      - general_solvers_functions_network
+      - main_load_balancer_network
+    environment:
+      FITNESS_SINGLE_SCORE_LINK_R1: ${FITNESS_SINGLE_SCORE_LINK_R1}
+      FITNESS_SINGLE_SCORE_LINK_R2: ${FITNESS_SINGLE_SCORE_LINK_R2}
+      FITNESS_SINGLE_SCORE_LINK_R3: ${FITNESS_SINGLE_SCORE_LINK_R3}
+      FITNESS_SINGLE_SCORE_LINK_R4: ${FITNESS_SINGLE_SCORE_LINK_R4}
+      FITNESS_REPORT_SCORE_LINK_R1: ${FITNESS_REPORT_SCORE_LINK_R1}
+      FITNESS_REPORT_SCORE_LINK_R2: ${FITNESS_REPORT_SCORE_LINK_R2}
+      FITNESS_REPORT_SCORE_LINK_R3: ${FITNESS_REPORT_SCORE_LINK_R3}
+      FITNESS_REPORT_SCORE_LINK_R4: ${FITNESS_REPORT_SCORE_LINK_R4}
+      RANDOM_INITIALIZATION_LINK_R1: ${RANDOM_INITIALIZATION_LINK_R1}
+      RANDOM_INITIALIZATION_LINK_R2: ${RANDOM_INITIALIZATION_LINK_R2}
+      RANDOM_INITIALIZATION_LINK_R3: ${RANDOM_INITIALIZATION_LINK_R3}
+      RANDOM_INITIALIZATION_LINK_R4: ${RANDOM_INITIALIZATION_LINK_R4}
+      RANDOM_MUTATION_LINK_R1: ${RANDOM_MUTATION_LINK_R1}
+      RANDOM_MUTATION_LINK_R2: ${RANDOM_MUTATION_LINK_R2}
+      RANDOM_MUTATION_LINK_R3: ${RANDOM_MUTATION_LINK_R3}
+      RANDOM_MUTATION_LINK_R4: ${RANDOM_MUTATION_LINK_R4}
+      ACCESS_PORT: ${MAIN_LOAD_BALANCER_PORT}
+    expose:
+      - ${MAIN_LOAD_BALANCER_PORT}
+    depends_on:
+      - general_solvers_functions_1
+      - general_solvers_functions_2
+      - general_solvers_functions_3
+      - general_solvers_functions_4
+
   hill_climbing_solver:
     container_name: hill_climbing_solver
     image: joseesco24/hill_climbing_solver
@@ -27,24 +62,69 @@ services:
       context: hill_climbing_solver_container/.
       dockerfile: production.Dockerfile
     networks:
-      - general_solvers_functions_network
+      - main_load_balancer_network
       - main_proxy_gateway_network
     environment:
-      FITNESS_SINGLE_SCORE_LINK: ${FITNESS_SINGLE_SCORE_LINK}
-      FITNESS_REPORT_SCORE_LINK: ${FITNESS_REPORT_SCORE_LINK}
-      RANDOM_INITIALIZATION_LINK: ${RANDOM_INITIALIZATION_LINK}
-      RANDOM_MUTATION_LINK: ${RANDOM_MUTATION_LINK}
+      FITNESS_SINGLE_SCORE_LINK: ${FITNESS_SINGLE_SCORE_LINK_LB}
+      FITNESS_REPORT_SCORE_LINK: ${FITNESS_REPORT_SCORE_LINK_LB}
+      RANDOM_INITIALIZATION_LINK: ${RANDOM_INITIALIZATION_LINK_LB}
+      RANDOM_MUTATION_LINK: ${RANDOM_MUTATION_LINK_LB}
       GENERAL_SOLVER_FUNCTIONS_KEY: ${GENERAL_SOLVER_FUNCTIONS_KEY}
       HILL_CLIMBING_SOLVER_KEY: ${HILL_CLIMBING_SOLVER_KEY}
       ACCESS_PORT: ${HILL_CLIMBING_SOLVER_PORT}
     expose:
       - ${HILL_CLIMBING_SOLVER_PORT}
     depends_on:
-      - general_solvers_functions
+      - main_load_balancer
     entrypoint: ["python", "-u", "api_server.py"]
 
-  general_solvers_functions:
-    container_name: general_solvers_functions
+  general_solvers_functions_1:
+    container_name: general_solvers_functions_1
+    image: joseesco24/general_solvers_functions
+    build:
+      context: general_solvers_functions_container/.
+      dockerfile: production.Dockerfile
+    networks:
+      - general_solvers_functions_network
+    environment:
+      GENERAL_SOLVER_FUNCTIONS_KEY: ${GENERAL_SOLVER_FUNCTIONS_KEY}
+      ACCESS_PORT: ${GENERAL_SOLVERS_FUNCTIONS_PORT}
+    expose:
+      - ${GENERAL_SOLVERS_FUNCTIONS_PORT}
+    entrypoint: ["python", "-u", "api_server.py"]
+
+  general_solvers_functions_2:
+    container_name: general_solvers_functions_2
+    image: joseesco24/general_solvers_functions
+    build:
+      context: general_solvers_functions_container/.
+      dockerfile: production.Dockerfile
+    networks:
+      - general_solvers_functions_network
+    environment:
+      GENERAL_SOLVER_FUNCTIONS_KEY: ${GENERAL_SOLVER_FUNCTIONS_KEY}
+      ACCESS_PORT: ${GENERAL_SOLVERS_FUNCTIONS_PORT}
+    expose:
+      - ${GENERAL_SOLVERS_FUNCTIONS_PORT}
+    entrypoint: ["python", "-u", "api_server.py"]
+
+  general_solvers_functions_3:
+    container_name: general_solvers_functions_3
+    image: joseesco24/general_solvers_functions
+    build:
+      context: general_solvers_functions_container/.
+      dockerfile: production.Dockerfile
+    networks:
+      - general_solvers_functions_network
+    environment:
+      GENERAL_SOLVER_FUNCTIONS_KEY: ${GENERAL_SOLVER_FUNCTIONS_KEY}
+      ACCESS_PORT: ${GENERAL_SOLVERS_FUNCTIONS_PORT}
+    expose:
+      - ${GENERAL_SOLVERS_FUNCTIONS_PORT}
+    entrypoint: ["python", "-u", "api_server.py"]
+
+  general_solvers_functions_4:
+    container_name: general_solvers_functions_4
     image: joseesco24/general_solvers_functions
     build:
       context: general_solvers_functions_container/.
@@ -63,7 +143,13 @@ networks:
     name: general_solvers_functions_network
     external: false
     driver: bridge
+
   main_proxy_gateway_network:
     name: main_proxy_gateway_network
+    external: false
+    driver: bridge
+
+  main_load_balancer_network:
+    name: main_load_balancer_network
     external: false
     driver: bridge
