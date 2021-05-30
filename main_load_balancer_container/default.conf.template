@@ -3,54 +3,33 @@ server {
     root  /var/www/public;
 
     location /calculate_board_fitness_single {
-        proxy_pass http://calculate_board_fitness_single_load_balancer;
+        proxy_pass http://general_solvers_functions_servers;
         proxy_pass_request_headers on;
         proxy_pass_request_body on;
     }
 
     location /calculate_board_fitness_report {
-        proxy_pass http://calculate_board_fitness_report_load_balancer;
+        proxy_pass http://general_solvers_functions_servers;
         proxy_pass_request_headers on;
         proxy_pass_request_body on;
     }
 
     location /board_random_initialization {
-        proxy_pass http://board_random_initialization_load_balancer;
+        proxy_pass http://general_solvers_functions_servers;
         proxy_pass_request_headers on;
         proxy_pass_request_body on;
     }
 
     location /board_random_mutation {
-        proxy_pass http://board_random_mutation_load_balancer;
+        proxy_pass http://general_solvers_functions_servers;
         proxy_pass_request_headers on;
         proxy_pass_request_body on;
     }
 }
 
-upstream calculate_board_fitness_single_load_balancer {
-    server ${FITNESS_SINGLE_SCORE_LINK_R1} weight=8;
-    server ${FITNESS_SINGLE_SCORE_LINK_R2} weight=8;
-    server ${FITNESS_SINGLE_SCORE_LINK_R3} weight=8;
-    server ${FITNESS_SINGLE_SCORE_LINK_R4} weight=8;
-}
-
-upstream calculate_board_fitness_report_load_balancer {
-    server ${FITNESS_REPORT_SCORE_LINK_R1} weight=8;
-    server ${FITNESS_REPORT_SCORE_LINK_R2} weight=8;
-    server ${FITNESS_REPORT_SCORE_LINK_R3} weight=8;
-    server ${FITNESS_REPORT_SCORE_LINK_R4} weight=8;
-}
-
-upstream board_random_initialization_load_balancer {
-    server ${RANDOM_INITIALIZATION_LINK_R1} weight=8;
-    server ${RANDOM_INITIALIZATION_LINK_R2} weight=8;
-    server ${RANDOM_INITIALIZATION_LINK_R3} weight=8;
-    server ${RANDOM_INITIALIZATION_LINK_R4} weight=8;
-}
-
-upstream board_random_mutation_load_balancer {
-    server ${RANDOM_MUTATION_LINK_R1} weight=8;
-    server ${RANDOM_MUTATION_LINK_R2} weight=8;
-    server ${RANDOM_MUTATION_LINK_R3} weight=8;
-    server ${RANDOM_MUTATION_LINK_R4} weight=8;
+upstream general_solvers_functions_servers {
+    server ${GENERAL_SOLVERS_FUNCTIONS_SERVER_1} weight=8;
+    server ${GENERAL_SOLVERS_FUNCTIONS_SERVER_2} weight=8;
+    server ${GENERAL_SOLVERS_FUNCTIONS_SERVER_3} weight=8;
+    server ${GENERAL_SOLVERS_FUNCTIONS_SERVER_4} weight=8;
 }
