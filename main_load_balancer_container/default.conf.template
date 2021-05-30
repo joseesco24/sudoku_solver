@@ -1,6 +1,5 @@
 server {
     listen ${ACCESS_PORT};
-    root /var/www/public;
 
     location /calculate_board_fitness_single {
         proxy_pass http://general_solvers_functions_servers;
