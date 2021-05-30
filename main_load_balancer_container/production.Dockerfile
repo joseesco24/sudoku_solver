@@ -1,5 +1,4 @@
 FROM nginx:1.21.0
 
-ARG NGINX_CONFIG_DIRECTORY=/etc/nginx/templates
-
-COPY ["default.conf.template","$NGINX_CONFIG_DIRECTORY/"]
+COPY ["default.conf.template","/etc/nginx/templates/"]
+COPY ["nginx.conf", "/etc/nginx/"]
