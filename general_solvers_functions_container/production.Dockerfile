@@ -4,8 +4,9 @@ ARG USERNAME=production
 ARG WORKDIR=/home/$USERNAME
 
 RUN useradd -ms /bin/bash $USERNAME
+RUN mkdir -p $WORKDIR/requirements/
 
-COPY [".","$WORKDIR"]
+COPY ["requirements/commons.txt","$WORKDIR/requirements/"]
 
 RUN find "$WORKDIR/" -type d -exec chmod 755 {} \;
 RUN find "$WORKDIR/" -type f -exec chmod 755 {} \;
@@ -20,3 +21,5 @@ USER $USERNAME
 
 RUN pip install --upgrade pip
 RUN pip install -r requirements/commons.txt
+
+COPY [".","$WORKDIR"]
