@@ -89,6 +89,38 @@ function check_request_mandatory_requirements(request) {
         }
     }
 
+    // Board elements validations.
+
+    if (valid_request_body == true) {
+        request_body.board_array.forEach(function (board_row) {
+            if (valid_request_body == true) {
+                board_row.forEach(function (board_element) {
+                    if (valid_request_body == true) {
+                        if (Number.isInteger(board_element) == false) {
+                            request.error(
+                                `the board have an element that isn't a number: ${board_element} isn't a number, data type ${typeof board_element}`
+                            );
+                            valid_request_body = false;
+                        }
+                    }
+                    if (valid_request_body == true) {
+                        if (board_element != 0) {
+                            if (board_element > board_dimensions || board_element < 1) {
+                                request.error(
+                                    `the board have number out of range: ${board_element} isn't in range of ${1} and ${board_dimensions}`
+                                );
+                                valid_request_body = false;
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    }
+    if (valid_request_body == true) {
+        request.error("all the board dimensions are correct");
+    }
+
     // Routing and end message.
 
     if (valid_request_body == true) {
