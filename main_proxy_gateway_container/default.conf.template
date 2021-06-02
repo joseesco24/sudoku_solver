@@ -32,5 +32,4 @@ server {
         default_type application/json;
         return 415 '{"message": "errors in request body"}';
     }
-
 }
