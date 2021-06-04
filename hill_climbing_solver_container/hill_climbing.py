@@ -12,7 +12,7 @@ from time import time
 import itertools
 import random
 
-script_firm = "grs"
+script_firm = "hcs"
 
 
 async def exchange_if_sudoku_board_improves(

@@ -10,7 +10,9 @@ services:
     networks:
       - main_proxy_gateway_network
     environment:
+      GENETIC_ALGORITHM_SOLVER_LINK: ${GENETIC_ALGORITHM_SOLVER_LINK}
       HILL_CLIMBING_SOLVER_LINK: ${HILL_CLIMBING_SOLVER_LINK}
+      GENETIC_ALGORITHM_SOLVER_KEY: ${GENETIC_ALGORITHM_SOLVER_KEY}
       HILL_CLIMBING_SOLVER_KEY: ${HILL_CLIMBING_SOLVER_KEY}
       ACCESS_PORT: ${MAIN_PROXY_GATEWAY_PORT}
     ports:
@@ -18,6 +20,7 @@ services:
         published: ${HOST_ACCESS_PORT}
         protocol: tcp
     depends_on:
+      - genetic_algorithm_solver
       - hill_climbing_solver
 
   hill_climbing_solver:
@@ -35,10 +38,33 @@ services:
       RANDOM_INITIALIZATION_LINK: ${RANDOM_INITIALIZATION_LINK_LB}
       RANDOM_MUTATION_LINK: ${RANDOM_MUTATION_LINK_LB}
       GENERAL_SOLVER_FUNCTIONS_KEY: ${GENERAL_SOLVER_FUNCTIONS_KEY}
-      HILL_CLIMBING_SOLVER_KEY: ${HILL_CLIMBING_SOLVER_KEY}
+      SELF_ACCESS_KEY: ${HILL_CLIMBING_SOLVER_KEY}
       ACCESS_PORT: ${HILL_CLIMBING_SOLVER_PORT}
     expose:
       - ${HILL_CLIMBING_SOLVER_PORT}
+    depends_on:
+      - main_load_balancer
+    entrypoint: ["python", "-u", "api_server.py"]
+
+  genetic_algorithm_solver:
+    container_name: genetic_algorithm_solver
+    image: joseesco24/genetic_algorithm_solver
+    build:
+      context: genetic_algorithm_solver_container/.
+      dockerfile: production.Dockerfile
+    networks:
+      - main_load_balancer_network
+      - main_proxy_gateway_network
+    environment:
+      FITNESS_SINGLE_SCORE_LINK: ${FITNESS_SINGLE_SCORE_LINK_LB}
+      FITNESS_REPORT_SCORE_LINK: ${FITNESS_REPORT_SCORE_LINK_LB}
+      RANDOM_INITIALIZATION_LINK: ${RANDOM_INITIALIZATION_LINK_LB}
+      RANDOM_MUTATION_LINK: ${RANDOM_MUTATION_LINK_LB}
+      GENERAL_SOLVER_FUNCTIONS_KEY: ${GENERAL_SOLVER_FUNCTIONS_KEY}
+      SELF_ACCESS_KEY: ${GENETIC_ALGORITHM_SOLVER_KEY}
+      ACCESS_PORT: ${GENETIC_ALGORITHM_SOLVER_PORT}
+    expose:
+      - ${GENETIC_ALGORITHM_SOLVER_PORT}
     depends_on:
       - main_load_balancer
     entrypoint: ["python", "-u", "api_server.py"]

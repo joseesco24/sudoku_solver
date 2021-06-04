@@ -18,60 +18,78 @@ script_firm = "api"
 @api_routes.get(r"/solver")
 async def solver(request: Request):
 
-    restarts, searchs = 10, 10
+    request_header_keys = [key for key in request.headers.keys()]
 
-    request_body = await request.json()
-    request_body_keys = [key for key in request_body.keys()]
+    if (
+        "Authorization" in request_header_keys
+        and request.headers["Authorization"] == os.environ["SELF_ACCESS_KEY"]
+    ):
 
-    sudoku_initial_board = request_body["board_array"]
-    sudoku_zone_height = request_body["zone_height"]
-    sudoku_zone_length = request_body["zone_length"]
+        restarts, searchs = 10, 10
 
-    # Validation and search of specific solver parameters.
+        request_body = await request.json()
+        request_body_keys = [key for key in request_body.keys()]
 
-    if "restarts" in request_body_keys:
-        if type(request_body["restarts"]) is int:
-            print_log(r"the variable restarts has the correct data type", script_firm)
-            restarts = request_body["restarts"]
-        else:
-            print_log(
-                r"the variable restarts hasn't the correct data type, using default value",
-                script_firm,
-            )
-    if "searchs" in request_body_keys:
-        if type(request_body["searchs"]) is int:
-            print_log(r"the variable searchs has the correct data type", script_firm)
-            searchs = request_body["searchs"]
-        else:
-            print_log(
-                r"the variable searchs hasn't the correct data type, using default value",
-                script_firm,
-            )
+        sudoku_initial_board = request_body["board_array"]
+        sudoku_zone_height = request_body["zone_height"]
+        sudoku_zone_length = request_body["zone_length"]
 
-    solution_board = await solve_using_hill_climbing_algorithm(
-        hill_climbing_restarts=restarts,
-        hill_climbing_searchs=searchs,
-        zone_height=sudoku_zone_height,
-        zone_length=sudoku_zone_length,
-        board=sudoku_initial_board,
-    )
+        # Validation and search of specific solver parameters.
 
-    solution_board_fitness = await calculate_board_fitness_single(
-        zone_height=sudoku_zone_height,
-        zone_length=sudoku_zone_length,
-        board=solution_board,
-    )
+        if "restarts" in request_body_keys:
+            if type(request_body["restarts"]) is int:
+                print_log(
+                    r"the variable restarts has the correct data type", script_firm
+                )
+                restarts = request_body["restarts"]
+            else:
+                print_log(
+                    r"the variable restarts hasn't the correct data type, using default value",
+                    script_firm,
+                )
+        if "searchs" in request_body_keys:
+            if type(request_body["searchs"]) is int:
+                print_log(
+                    r"the variable searchs has the correct data type", script_firm
+                )
+                searchs = request_body["searchs"]
+            else:
+                print_log(
+                    r"the variable searchs hasn't the correct data type, using default value",
+                    script_firm,
+                )
 
-    response_dict = {
-        "fitness_score": solution_board_fitness,
-        "board_array": solution_board,
-    }
+        solution_board = await solve_using_hill_climbing_algorithm(
+            hill_climbing_restarts=restarts,
+            hill_climbing_searchs=searchs,
+            zone_height=sudoku_zone_height,
+            zone_length=sudoku_zone_length,
+            board=sudoku_initial_board,
+        )
 
-    return web.Response(
-        body=json.dumps(obj=response_dict, indent=None),
-        reason=r"your request was successfully, check the results in the body of this response",
-        status=200,
-    )
+        solution_board_fitness = await calculate_board_fitness_single(
+            zone_height=sudoku_zone_height,
+            zone_length=sudoku_zone_length,
+            board=solution_board,
+        )
+
+        response_dict = {
+            "fitness_score": solution_board_fitness,
+            "board_array": solution_board,
+        }
+
+        return web.Response(
+            body=json.dumps(obj=response_dict, indent=None),
+            reason=r"your request was successfully, check the results in the body of this response",
+            status=200,
+        )
+
+    else:
+        print_log(r"the authorization wasn't found or isn't correct", script_firm)
+        return web.Response(
+            reason=r"you aren't authorized to use this api, check your request Authorization header",
+            status=401,
+        )
 
 
 api.add_routes(api_routes)
