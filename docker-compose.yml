@@ -20,29 +20,6 @@ services:
     depends_on:
       - hill_climbing_solver
 
-  main_load_balancer:
-    container_name: main_load_balancer
-    image: joseesco24/main_load_balancer
-    build:
-      context: main_load_balancer_container/.
-      dockerfile: production.Dockerfile
-    networks:
-      - general_solvers_functions_network
-      - main_load_balancer_network
-    environment:
-      GENERAL_SOLVERS_FUNCTIONS_SERVER_1: ${GENERAL_SOLVERS_FUNCTIONS_SERVER_1}
-      GENERAL_SOLVERS_FUNCTIONS_SERVER_2: ${GENERAL_SOLVERS_FUNCTIONS_SERVER_2}
-      GENERAL_SOLVERS_FUNCTIONS_SERVER_3: ${GENERAL_SOLVERS_FUNCTIONS_SERVER_3}
-      GENERAL_SOLVERS_FUNCTIONS_SERVER_4: ${GENERAL_SOLVERS_FUNCTIONS_SERVER_4}
-      ACCESS_PORT: ${MAIN_LOAD_BALANCER_PORT}
-    expose:
-      - ${MAIN_LOAD_BALANCER_PORT}
-    depends_on:
-      - general_solvers_functions_1
-      - general_solvers_functions_2
-      - general_solvers_functions_3
-      - general_solvers_functions_4
-
   hill_climbing_solver:
     container_name: hill_climbing_solver
     image: joseesco24/hill_climbing_solver
@@ -65,6 +42,29 @@ services:
     depends_on:
       - main_load_balancer
     entrypoint: ["python", "-u", "api_server.py"]
+
+  main_load_balancer:
+    container_name: main_load_balancer
+    image: joseesco24/main_load_balancer
+    build:
+      context: main_load_balancer_container/.
+      dockerfile: production.Dockerfile
+    networks:
+      - general_solvers_functions_network
+      - main_load_balancer_network
+    environment:
+      GENERAL_SOLVERS_FUNCTIONS_SERVER_1: ${GENERAL_SOLVERS_FUNCTIONS_SERVER_1}
+      GENERAL_SOLVERS_FUNCTIONS_SERVER_2: ${GENERAL_SOLVERS_FUNCTIONS_SERVER_2}
+      GENERAL_SOLVERS_FUNCTIONS_SERVER_3: ${GENERAL_SOLVERS_FUNCTIONS_SERVER_3}
+      GENERAL_SOLVERS_FUNCTIONS_SERVER_4: ${GENERAL_SOLVERS_FUNCTIONS_SERVER_4}
+      ACCESS_PORT: ${MAIN_LOAD_BALANCER_PORT}
+    expose:
+      - ${MAIN_LOAD_BALANCER_PORT}
+    depends_on:
+      - general_solvers_functions_1
+      - general_solvers_functions_2
+      - general_solvers_functions_3
+      - general_solvers_functions_4
 
   general_solvers_functions_1:
     container_name: general_solvers_functions_1
