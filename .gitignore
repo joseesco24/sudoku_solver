@@ -3,6 +3,7 @@ __pycache__
 
 # all dependencies file.
 general_solvers_functions_container/requirements/all.txt
+genetic_algorithm_solver_container/requirements/all.txt
 hill_climbing_solver_container/requirements/all.txt
 
 # vscode workspace file.
@@ -14,6 +15,7 @@ hill_climbing_solver_container/requirements/all.txt
 
 # specific exceptions of vscode development files.
 !general_solvers_functions_container/vscode/*
+!genetic_algorithm_solver_container/vscode/*
 !hill_climbing_solver_container/vscode/*
 !vscode/*
 
