@@ -5,7 +5,7 @@ ARG WORKDIR=/home/$USERNAME
 
 RUN useradd -ms /bin/bash $USERNAME
 
-COPY [".","$WORKDIR"]
+COPY ["requirements/commons.txt","requirements/development.txt","$WORKDIR"]
 
 RUN find "$WORKDIR/" -type d -exec chmod 755 {} \;
 RUN find "$WORKDIR/" -type f -exec chmod 755 {} \;
@@ -19,7 +19,4 @@ WORKDIR $WORKDIR
 USER $USERNAME
 
 RUN pip install --upgrade pip
-RUN pip install -r requirements/commons.txt -r requirements/development.txt
-
-ENV PORT=3000
-EXPOSE $PORT
+RUN pip install -r commons.txt -r development.txt

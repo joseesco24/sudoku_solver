@@ -2,7 +2,7 @@
   "name": "Existing Dockerfile",
   "context": "..",
   "dockerFile": "../development.Dockerfile",
-  "forwardPorts": [3000],
+  "forwardPorts": [],
   "extensions": [
     "esbenp.prettier-vscode",
     "ms-python.python",
