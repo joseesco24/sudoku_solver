@@ -87,7 +87,7 @@ async def solver(request: Request):
     else:
         print_log(r"the authorization wasn't found or isn't correct", script_firm)
         return web.Response(
-            reason=r"you aren't authorized to use this api, check your request Authorization header",
+            reason=r"you aren't authorized to use this api",
             status=401,
         )
 
