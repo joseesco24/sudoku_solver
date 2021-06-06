@@ -10,18 +10,64 @@ services:
     networks:
       - main_proxy_gateway_network
     environment:
-      GENETIC_ALGORITHM_SOLVER_LINK: ${GENETIC_ALGORITHM_SOLVER_LINK}
-      HILL_CLIMBING_SOLVER_LINK: ${HILL_CLIMBING_SOLVER_LINK}
-      GENETIC_ALGORITHM_SOLVER_KEY: ${GENETIC_ALGORITHM_SOLVER_KEY}
-      HILL_CLIMBING_SOLVER_KEY: ${HILL_CLIMBING_SOLVER_KEY}
+      SEARCHER_SERVER_1: ${SEARCHER_SERVER_1}
+      SEARCHER_SERVER_2: ${SEARCHER_SERVER_2}
       ACCESS_PORT: ${MAIN_PROXY_GATEWAY_PORT}
     ports:
       - target: ${MAIN_PROXY_GATEWAY_PORT}
         published: ${HOST_ACCESS_PORT}
         protocol: tcp
     depends_on:
+      - solved_boards_searcher_container_1
+      - solved_boards_searcher_container_2
+
+  solved_boards_searcher_container_1:
+    container_name: solved_boards_searcher_1
+    image: joseesco24/solved_boards_searcher
+    build:
+      context: solved_boards_searcher_container/.
+      dockerfile: production.Dockerfile
+    networks:
+      - solved_boards_database_network
+      - main_proxy_gateway_network
+      - solvers_network
+    environment:
+      GENETIC_ALGORITHM_SOLVER_LINK: ${GENETIC_ALGORITHM_SOLVER_LINK}
+      HILL_CLIMBING_SOLVER_LINK: ${HILL_CLIMBING_SOLVER_LINK}
+      GENETIC_ALGORITHM_SOLVER_KEY: ${GENETIC_ALGORITHM_SOLVER_KEY}
+      HILL_CLIMBING_SOLVER_KEY: ${HILL_CLIMBING_SOLVER_KEY}
+      ACCESS_PORT: ${SOLVED_BOARDS_SEARCHER_PORT}
+      ACCESS_KEY: ${SOLVED_BOARDS_SEARCHER_KEY}
+    expose:
+      - ${SOLVED_BOARDS_SEARCHER_PORT}
+    depends_on:
       - genetic_algorithm_solver
       - hill_climbing_solver
+    entrypoint: ["node", "api_server.js"]
+
+  solved_boards_searcher_container_2:
+    container_name: solved_boards_searcher_2
+    image: joseesco24/solved_boards_searcher
+    build:
+      context: solved_boards_searcher_container/.
+      dockerfile: production.Dockerfile
+    networks:
+      - solved_boards_database_network
+      - main_proxy_gateway_network
+      - solvers_network
+    environment:
+      GENETIC_ALGORITHM_SOLVER_LINK: ${GENETIC_ALGORITHM_SOLVER_LINK}
+      HILL_CLIMBING_SOLVER_LINK: ${HILL_CLIMBING_SOLVER_LINK}
+      GENETIC_ALGORITHM_SOLVER_KEY: ${GENETIC_ALGORITHM_SOLVER_KEY}
+      HILL_CLIMBING_SOLVER_KEY: ${HILL_CLIMBING_SOLVER_KEY}
+      ACCESS_PORT: ${SOLVED_BOARDS_SEARCHER_PORT}
+      ACCESS_KEY: ${SOLVED_BOARDS_SEARCHER_KEY}
+    expose:
+      - ${SOLVED_BOARDS_SEARCHER_PORT}
+    depends_on:
+      - genetic_algorithm_solver
+      - hill_climbing_solver
+    entrypoint: ["node", "api_server.js"]
 
   hill_climbing_solver:
     container_name: hill_climbing_solver
@@ -30,16 +76,17 @@ services:
       context: hill_climbing_solver_container/.
       dockerfile: production.Dockerfile
     networks:
+      - solved_boards_database_network
       - main_load_balancer_network
-      - main_proxy_gateway_network
+      - solvers_network
     environment:
       FITNESS_SINGLE_SCORE_LINK: ${FITNESS_SINGLE_SCORE_LINK_LB}
       FITNESS_REPORT_SCORE_LINK: ${FITNESS_REPORT_SCORE_LINK_LB}
       RANDOM_INITIALIZATION_LINK: ${RANDOM_INITIALIZATION_LINK_LB}
       RANDOM_MUTATION_LINK: ${RANDOM_MUTATION_LINK_LB}
       GENERAL_SOLVER_FUNCTIONS_KEY: ${GENERAL_SOLVER_FUNCTIONS_KEY}
-      SELF_ACCESS_KEY: ${HILL_CLIMBING_SOLVER_KEY}
       ACCESS_PORT: ${HILL_CLIMBING_SOLVER_PORT}
+      ACCESS_KEY: ${HILL_CLIMBING_SOLVER_KEY}
     expose:
       - ${HILL_CLIMBING_SOLVER_PORT}
     depends_on:
@@ -53,16 +100,17 @@ services:
       context: genetic_algorithm_solver_container/.
       dockerfile: production.Dockerfile
     networks:
+      - solved_boards_database_network
       - main_load_balancer_network
-      - main_proxy_gateway_network
+      - solvers_network
     environment:
       FITNESS_SINGLE_SCORE_LINK: ${FITNESS_SINGLE_SCORE_LINK_LB}
       FITNESS_REPORT_SCORE_LINK: ${FITNESS_REPORT_SCORE_LINK_LB}
       RANDOM_INITIALIZATION_LINK: ${RANDOM_INITIALIZATION_LINK_LB}
       RANDOM_MUTATION_LINK: ${RANDOM_MUTATION_LINK_LB}
       GENERAL_SOLVER_FUNCTIONS_KEY: ${GENERAL_SOLVER_FUNCTIONS_KEY}
-      SELF_ACCESS_KEY: ${GENETIC_ALGORITHM_SOLVER_KEY}
       ACCESS_PORT: ${GENETIC_ALGORITHM_SOLVER_PORT}
+      ACCESS_KEY: ${GENETIC_ALGORITHM_SOLVER_KEY}
     expose:
       - ${GENETIC_ALGORITHM_SOLVER_PORT}
     depends_on:
@@ -158,6 +206,11 @@ networks:
     external: false
     driver: bridge
 
+  solved_boards_database_network:
+    name: solved_boards_database_network
+    external: false
+    driver: bridge
+
   main_proxy_gateway_network:
     name: main_proxy_gateway_network
     external: false
@@ -165,5 +218,10 @@ networks:
 
   main_load_balancer_network:
     name: main_load_balancer_network
+    external: false
+    driver: bridge
+
+  solvers_network:
+    name: solvers_network
     external: false
     driver: bridge

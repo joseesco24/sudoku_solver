@@ -22,7 +22,7 @@ async def solver(request: Request):
 
     if (
         "Authorization" in request_header_keys
-        and request.headers["Authorization"] == os.environ["SELF_ACCESS_KEY"]
+        and request.headers["Authorization"] == os.environ["ACCESS_KEY"]
     ):
 
         restarts, searchs = 10, 10

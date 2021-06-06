@@ -1,6 +1,11 @@
 js_import conf.d/nginx_validator.js;
 js_set $request_checker nginx_validator.check_request_mandatory_requirements;
 
+upstream searcher_servers {
+    server ${SEARCHER_SERVER_1} weight=8;
+    server ${SEARCHER_SERVER_2} weight=8;
+}
+
 server {
     listen ${ACCESS_PORT};
 
@@ -8,20 +13,8 @@ server {
         return 204;
     }
 
-    location /hill_climbing {
-        set $sucess_link ${HILL_CLIMBING_SOLVER_LINK};
-        set $error_link http://127.0.0.1:10415;
-        proxy_pass_request_headers on;
-        proxy_pass_request_body on;
-        mirror /_get_request_body;
-        client_body_in_single_buffer on;
-        client_body_buffer_size 16k;
-        client_max_body_size 16k;
-        proxy_pass $request_checker;
-    }
-
-    location /genetic_algorithm {
-        set $sucess_link ${GENETIC_ALGORITHM_SOLVER_LINK};
+    location ~ ^/(hill_climbing|genetic_algorithm|simulated_annealing|neuronal_network) {
+        set $sucess_link http://searcher_servers;
         set $error_link http://127.0.0.1:10415;
         proxy_pass_request_headers on;
         proxy_pass_request_body on;

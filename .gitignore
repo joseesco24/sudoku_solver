@@ -13,6 +13,12 @@ hill_climbing_solver_container/requirements/all.txt
 *.devcontainer
 *.vscode
 
+# nodejs modules.
+node_modules
+
+# nodejs unnecessary files
+package-lock.json
+
 # specific exceptions of vscode development files.
 !general_solvers_functions_container/vscode/*
 !genetic_algorithm_solver_container/vscode/*

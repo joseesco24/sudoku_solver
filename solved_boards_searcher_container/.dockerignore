@@ -1,0 +1,13 @@
+package-lock.json
+node_modules
+
+*.code-workspace
+*.dockerignore
+*.devcontainer
+*.Dockerfile
+*.gitignore
+*.vscode
+*.git
+*.md
+
+vscode
