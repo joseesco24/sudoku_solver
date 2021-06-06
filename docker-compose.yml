@@ -43,7 +43,7 @@ services:
     depends_on:
       - genetic_algorithm_solver
       - hill_climbing_solver
-    entrypoint: ["node", "api_server.js"]
+    entrypoint: ["node", "api_server.mjs"]
 
   solved_boards_searcher_container_2:
     container_name: solved_boards_searcher_2
@@ -67,7 +67,7 @@ services:
     depends_on:
       - genetic_algorithm_solver
       - hill_climbing_solver
-    entrypoint: ["node", "api_server.js"]
+    entrypoint: ["node", "api_server.mjs"]
 
   hill_climbing_solver:
     container_name: hill_climbing_solver
