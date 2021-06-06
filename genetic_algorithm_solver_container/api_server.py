@@ -80,7 +80,6 @@ async def solver(request: Request):
 
         return web.Response(
             body=json.dumps(obj=response_dict, indent=None),
-            reason=r"your request was successfully, check the results in the body of this response",
             status=200,
         )
 

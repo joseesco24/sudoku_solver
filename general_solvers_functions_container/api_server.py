@@ -67,13 +67,11 @@ async def get_board_fitness_single(request: Request):
         headers = {"Content-Type": "application/json"}
         return web.Response(
             body=json.dumps(obj=response_dict, indent=None),
-            reason=r"your request was successfully, check the results in the body of this response",
             headers=headers,
             status=200,
         )
     else:
         return web.Response(
-            reason=r"your request wasn't successfully, check the container logs for more details",
             status=400,
         )
 
@@ -102,13 +100,11 @@ async def get_board_fitness_report(request: Request):
         headers = {"Content-Type": "application/json"}
         return web.Response(
             body=json.dumps(obj=response_dict, indent=None),
-            reason=r"your request was successfully, check the results in the body of this response",
             headers=headers,
             status=200,
         )
     else:
         return web.Response(
-            reason=r"your request wasn't successfully, check the container logs for more details",
             status=400,
         )
 
@@ -129,13 +125,11 @@ async def get_random_initialization(request: Request):
         headers = {"Content-Type": "application/json"}
         return web.Response(
             body=json.dumps(obj=response_dict, indent=None),
-            reason=r"your request was successfully, check the results in the body of this response",
             headers=headers,
             status=200,
         )
     else:
         return web.Response(
-            reason=r"your request wasn't successfully, check the container logs for more details",
             status=400,
         )
 
@@ -155,13 +149,11 @@ async def get_random_mutation(request: Request):
         headers = {"Content-Type": "application/json"}
         return web.Response(
             body=json.dumps(obj=response_dict, indent=None),
-            reason=r"your request was successfully, check the results in the body of this response",
             headers=headers,
             status=200,
         )
     else:
         return web.Response(
-            reason=r"your request wasn't successfully, check the container logs for more details",
             status=400,
         )
 
