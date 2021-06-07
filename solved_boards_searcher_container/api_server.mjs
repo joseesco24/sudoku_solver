@@ -8,17 +8,30 @@ const api = express();
 
 api.use(express.json());
 
-async function proxy_redirect(local_authorization, local_body, local_url) {
+async function proxy_redirect(
+    authorization,
+    body,
+    destination_url,
+    origin_url,
+    response
+) {
+    print_log(`making request to ${destination_url}`, script_firm);
     const api_response = await axios({
         headers: {
-            Authorization: local_authorization,
             "Content-Type": "application/json",
+            "Authorization": authorization,
         },
-        data: local_body,
-        url: local_url,
+        url: destination_url,
         method: "get",
+        data: body,
     });
-    return api_response;
+    print_log(`receiving response from ${destination_url}`, script_firm);
+    print_log(`routing from ${destination_url} to ${origin_url}`, script_firm);
+    if (api_response.status == 200) {
+        return response.status(api_response.status).json(api_response.data);
+    } else {
+        return response.status(api_response.status).send(api_response.statusText);
+    }
 }
 
 api.get(
@@ -30,112 +43,59 @@ api.get(
     ],
     async (request, response) => {
         print_log(`new request received at ${request.path}`, script_firm);
-        const full_url =
-            request.protocol + "://" + request.get("host") + request.originalUrl;
-
-        print_log(`request origin ${full_url}`, script_firm);
-
+        const origin_server = request.protocol + "://" + request.get("host");
+        const origin_url = origin_server + request.originalUrl;
+        print_log(`request origin ${origin_url}`, script_firm);
         try {
             const original_path = request.path;
-            let api_response, routing_link, authorization;
-
+            let destination_url, authorization;
             if (original_path == "/hill_climbing") {
-                routing_link = process.env.HILL_CLIMBING_SOLVER_LINK;
+                destination_url = process.env.HILL_CLIMBING_SOLVER_LINK;
                 authorization = process.env.HILL_CLIMBING_SOLVER_KEY;
-                print_log(`making request to ${routing_link}`, script_firm);
-                api_response = await proxy_redirect(
+                return await proxy_redirect(
                     authorization,
                     request.body,
-                    routing_link
+                    destination_url,
+                    origin_url,
+                    response
                 );
-                print_log(`receiving response from ${routing_link}`, script_firm);
-                print_log(
-                    `sending response from ${routing_link} to ${full_url}`,
-                    script_firm
-                );
-                if (api_response.status == 200) {
-                    return response.status(api_response.status).json(api_response.data);
-                } else {
-                    return response
-                        .status(api_response.status)
-                        .send(api_response.statusText);
-                }
             }
-
             if (original_path == "/genetic_algorithm") {
-                routing_link = process.env.GENETIC_ALGORITHM_SOLVER_LINK;
+                destination_url = process.env.GENETIC_ALGORITHM_SOLVER_LINK;
                 authorization = process.env.GENETIC_ALGORITHM_SOLVER_KEY;
-                print_log(`making request to ${routing_link}`, script_firm);
-                api_response = await proxy_redirect(
+                return await proxy_redirect(
                     authorization,
                     request.body,
-                    routing_link
+                    destination_url,
+                    origin_url,
+                    response
                 );
-                print_log(`receiving response from ${routing_link}`, script_firm);
-                print_log(
-                    `sending response from ${routing_link} to ${full_url}`,
-                    script_firm
-                );
-                if (api_response.status == 200) {
-                    return response.status(api_response.status).json(api_response.data);
-                } else {
-                    return response
-                        .status(api_response.status)
-                        .send(api_response.statusText);
-                }
             }
-
             if (original_path == "/simulated_annealing") {
-                routing_link = process.env.HILL_CLIMBING_SOLVER_LINK;
+                destination_url = process.env.HILL_CLIMBING_SOLVER_LINK;
                 authorization = process.env.HILL_CLIMBING_SOLVER_KEY;
-                print_log(`making request to ${routing_link}`, script_firm);
-                api_response = await proxy_redirect(
+                return await proxy_redirect(
                     authorization,
                     request.body,
-                    routing_link
+                    destination_url,
+                    origin_url,
+                    response
                 );
-                print_log(`receiving response from ${routing_link}`, script_firm);
-                print_log(
-                    `sending response from ${routing_link} to ${full_url}`,
-                    script_firm
-                );
-                if (api_response.status == 200) {
-                    return response.status(api_response.status).json(api_response.data);
-                } else {
-                    return response
-                        .status(api_response.status)
-                        .send(api_response.statusText);
-                }
             }
-
             if (original_path == "/neuronal_network") {
-                routing_link = process.env.HILL_CLIMBING_SOLVER_LINK;
+                destination_url = process.env.HILL_CLIMBING_SOLVER_LINK;
                 authorization = process.env.HILL_CLIMBING_SOLVER_KEY;
-                print_log(`making request to ${routing_link}`, script_firm);
-                api_response = await proxy_redirect(
+                return await proxy_redirect(
                     authorization,
                     request.body,
-                    routing_link
+                    destination_url,
+                    origin_url,
+                    response
                 );
-                print_log(`receiving response from ${routing_link}`, script_firm);
-                print_log(
-                    `sending response from ${routing_link} to ${full_url}`,
-                    script_firm
-                );
-                if (api_response.status == 200) {
-                    return response.status(api_response.status).json(api_response.data);
-                } else {
-                    return response
-                        .status(api_response.status)
-                        .send(api_response.statusText);
-                }
             }
         } catch (error) {
             if (typeof error === "object") {
-                print_log(
-                    `server error ${error.message} in line ${error.lineno}`,
-                    script_firm
-                );
+                print_log(`server error ${error.message}`, script_firm);
             }
             return response.status(500).send("internal server error");
         }
