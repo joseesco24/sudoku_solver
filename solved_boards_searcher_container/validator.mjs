@@ -18,10 +18,14 @@ export default function check_request_mandatory_requirements(request_body) {
             "zone_length",
             "zone_height",
         ];
-        print_log("request body checked successfully", script_firm);
+        print_log(
+            "request body checked successfully, the request body is json",
+            script_firm
+        );
         valid_request_body = true;
     } catch (error) {
-        print_log("request body checked unsuccessfully", script_firm);
+        message = "request body check unsuccessfully, the request body isn't json";
+        print_log(message, script_firm);
         valid_request_body = false;
     }
 
@@ -33,12 +37,10 @@ export default function check_request_mandatory_requirements(request_body) {
                 request_body_keys.includes(elem)
             ) == true
         ) {
-            print_log("the request body have all necesary labels", script_firm);
+            print_log("the request body have all the necesary labels", script_firm);
         } else {
-            print_log(
-                "the request body dosn't have all necessary labels",
-                script_firm
-            );
+            message = "the request body dosn't have all the necessary labels";
+            print_log(message, script_firm);
             valid_request_body = false;
         }
     }
@@ -52,10 +54,8 @@ export default function check_request_mandatory_requirements(request_body) {
                 script_firm
             );
         } else {
-            print_log(
-                "the variable board_array hasn't the correct data type",
-                script_firm
-            );
+            message = "the variable board_array hasn't the correct data type";
+            print_log(message, script_firm);
             valid_request_body = false;
         }
     }
@@ -66,10 +66,8 @@ export default function check_request_mandatory_requirements(request_body) {
                 script_firm
             );
         } else {
-            print_log(
-                "the variable zone_length hasn't the correct data type",
-                script_firm
-            );
+            message = "the variable zone_length hasn't the correct data type";
+            print_log(message, script_firm);
             valid_request_body = false;
         }
     }
@@ -80,10 +78,8 @@ export default function check_request_mandatory_requirements(request_body) {
                 script_firm
             );
         } else {
-            print_log(
-                "the variable zone_height hasn't the correct data type",
-                script_firm
-            );
+            message = "the variable zone_height hasn't the correct data type";
+            print_log(message, script_firm);
             valid_request_body = false;
         }
     }
@@ -95,7 +91,8 @@ export default function check_request_mandatory_requirements(request_body) {
         if (board_dimensions == request_body.board_array.length) {
             print_log("the board columns dimensions are correct", script_firm);
         } else {
-            print_log("the board columns dimensions aren't correct", script_firm);
+            message = "the board columns dimensions aren't correct";
+            print_log(message, script_firm);
             valid_request_body = false;
         }
     }
@@ -107,7 +104,8 @@ export default function check_request_mandatory_requirements(request_body) {
         if (board_dimensions == board_lenght_summation / board_dimensions) {
             print_log("the board rows dimensions are correct", script_firm);
         } else {
-            print_log("the board rows dimensions aren't correct", script_firm);
+            message = "the board rows dimensions aren't correct";
+            print_log(message, script_firm);
             valid_request_body = false;
         }
     }
@@ -120,20 +118,16 @@ export default function check_request_mandatory_requirements(request_body) {
                 board_row.forEach(function (board_element) {
                     if (valid_request_body == true) {
                         if (Number.isInteger(board_element) == false) {
-                            print_log(
-                                `the board have an element that isn't a number: ${board_element} isn't a number, data type ${typeof board_element}`,
-                                script_firm
-                            );
+                            message = `the board have an element that isn't a number: ${board_element} isn't a number, data type ${typeof board_element}`;
+                            print_log(message, script_firm);
                             valid_request_body = false;
                         }
                     }
                     if (valid_request_body == true) {
                         if (board_element != 0) {
                             if (board_element > board_dimensions || board_element < 1) {
-                                print_log(
-                                    `the board have a number out of range: ${board_element} isn't in range of ${1} and ${board_dimensions}`,
-                                    script_firm
-                                );
+                                message = `the board have a number out of range: ${board_element} isn't in range of ${1} and ${board_dimensions}`;
+                                print_log(message, script_firm);
                                 valid_request_body = false;
                             }
                         }
@@ -162,10 +156,8 @@ export default function check_request_mandatory_requirements(request_body) {
                     if (current_number != 0 && !(current_number in row_dict)) {
                         row_dict[current_number] = [row_index, column_index];
                     } else if (current_number != 0 && current_number in row_dict) {
-                        print_log(
-                            `the board have a fixed number repeated: ${current_number} is in te position (${row_dict[current_number][0]}, ${row_dict[current_number][1]}) and (${row_index}, ${column_index})`,
-                            script_firm
-                        );
+                        message = `the board have a fixed number repeated: ${current_number} is in te position (${row_dict[current_number][0]}, ${row_dict[current_number][1]}) and (${row_index}, ${column_index})`;
+                        print_log(message, script_firm);
                         valid_request_body = false;
                         break;
                     }
@@ -189,10 +181,8 @@ export default function check_request_mandatory_requirements(request_body) {
                     if (current_number != 0 && !(current_number in col_dict)) {
                         col_dict[current_number] = [row_index, column_index];
                     } else if (current_number != 0 && current_number in col_dict) {
-                        print_log(
-                            `the board have a fixed number repeated: ${current_number} is in te position (${col_dict[current_number][0]}, ${col_dict[current_number][1]}) and (${row_index}, ${column_index})`,
-                            script_firm
-                        );
+                        message = `the board have a fixed number repeated: ${current_number} is in te position (${col_dict[current_number][0]}, ${col_dict[current_number][1]}) and (${row_index}, ${column_index})`;
+                        print_log(message, script_firm);
                         valid_request_body = false;
                         break;
                     }

@@ -20,7 +20,7 @@ async function proxy_redirect(
     const api_response = await axios({
         headers: {
             "Content-Type": "application/json",
-            Authorization: authorization,
+            "Authorization": authorization,
         },
         url: destination_url,
         method: "get",
@@ -49,6 +49,10 @@ api.get(
         print_log(`request origin ${origin_url}`, script_firm);
         const [valid_request_body, message] = check_request_mandatory_requirements(
             request.body
+        );
+        print_log(
+            `request body validation status: ${valid_request_body}`,
+            script_firm
         );
         if (valid_request_body == true) {
             try {
@@ -105,6 +109,7 @@ api.get(
                 return response.status(500).send("internal server error");
             }
         } else if (valid_request_body == false) {
+            print_log(`request body validation failed: ${message}`, script_firm);
             return response.status(415).send(message);
         }
     }
