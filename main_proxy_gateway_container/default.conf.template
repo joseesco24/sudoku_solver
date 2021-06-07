@@ -2,8 +2,9 @@ js_import conf.d/nginx_validator.js;
 js_set $request_checker nginx_validator.check_request_mandatory_requirements;
 
 upstream searcher_servers {
-    server ${SEARCHER_SERVER_1} weight=8;
-    server ${SEARCHER_SERVER_2} weight=8;
+    server ${SEARCHER_SERVER_1} weight=8 max_fails=1 fail_timeout=20s;
+    server ${SEARCHER_SERVER_2} weight=8 max_fails=1 fail_timeout=20s;
+    server ${SEARCHER_SERVER_3} backup;
 }
 
 server {
@@ -29,11 +30,4 @@ server {
 server {
     listen 127.0.0.1:10415;
     return 415;
-
-    error_page 415 @415_json;
-
-    location @415_json {
-        default_type application/json;
-        return 415 '{"message": "errors in request body"}';
-    }
 }

@@ -12,6 +12,7 @@ services:
     environment:
       SEARCHER_SERVER_1: ${SEARCHER_SERVER_1}
       SEARCHER_SERVER_2: ${SEARCHER_SERVER_2}
+      SEARCHER_SERVER_3: ${SEARCHER_SERVER_3}
       ACCESS_PORT: ${MAIN_PROXY_GATEWAY_PORT}
     ports:
       - target: ${MAIN_PROXY_GATEWAY_PORT}
@@ -20,6 +21,7 @@ services:
     depends_on:
       - solved_boards_searcher_container_1
       - solved_boards_searcher_container_2
+      - solved_boards_searcher_container_3
 
   solved_boards_searcher_container_1:
     container_name: solved_boards_searcher_1
@@ -47,6 +49,30 @@ services:
 
   solved_boards_searcher_container_2:
     container_name: solved_boards_searcher_2
+    image: joseesco24/solved_boards_searcher
+    build:
+      context: solved_boards_searcher_container/.
+      dockerfile: production.Dockerfile
+    networks:
+      - solved_boards_database_network
+      - main_proxy_gateway_network
+      - solvers_network
+    environment:
+      GENETIC_ALGORITHM_SOLVER_LINK: ${GENETIC_ALGORITHM_SOLVER_LINK}
+      HILL_CLIMBING_SOLVER_LINK: ${HILL_CLIMBING_SOLVER_LINK}
+      GENETIC_ALGORITHM_SOLVER_KEY: ${GENETIC_ALGORITHM_SOLVER_KEY}
+      HILL_CLIMBING_SOLVER_KEY: ${HILL_CLIMBING_SOLVER_KEY}
+      ACCESS_PORT: ${SOLVED_BOARDS_SEARCHER_PORT}
+      ACCESS_KEY: ${SOLVED_BOARDS_SEARCHER_KEY}
+    expose:
+      - ${SOLVED_BOARDS_SEARCHER_PORT}
+    depends_on:
+      - genetic_algorithm_solver
+      - hill_climbing_solver
+    entrypoint: ["node", "api_server.mjs"]
+
+  solved_boards_searcher_container_3:
+    container_name: solved_boards_searcher_3
     image: joseesco24/solved_boards_searcher
     build:
       context: solved_boards_searcher_container/.
@@ -130,7 +156,6 @@ services:
       GENERAL_SOLVERS_FUNCTIONS_SERVER_1: ${GENERAL_SOLVERS_FUNCTIONS_SERVER_1}
       GENERAL_SOLVERS_FUNCTIONS_SERVER_2: ${GENERAL_SOLVERS_FUNCTIONS_SERVER_2}
       GENERAL_SOLVERS_FUNCTIONS_SERVER_3: ${GENERAL_SOLVERS_FUNCTIONS_SERVER_3}
-      GENERAL_SOLVERS_FUNCTIONS_SERVER_4: ${GENERAL_SOLVERS_FUNCTIONS_SERVER_4}
       ACCESS_PORT: ${MAIN_LOAD_BALANCER_PORT}
     expose:
       - ${MAIN_LOAD_BALANCER_PORT}
@@ -138,7 +163,6 @@ services:
       - general_solvers_functions_1
       - general_solvers_functions_2
       - general_solvers_functions_3
-      - general_solvers_functions_4
 
   general_solvers_functions_1:
     container_name: general_solvers_functions_1
@@ -172,21 +196,6 @@ services:
 
   general_solvers_functions_3:
     container_name: general_solvers_functions_3
-    image: joseesco24/general_solvers_functions
-    build:
-      context: general_solvers_functions_container/.
-      dockerfile: production.Dockerfile
-    networks:
-      - general_solvers_functions_network
-    environment:
-      GENERAL_SOLVER_FUNCTIONS_KEY: ${GENERAL_SOLVER_FUNCTIONS_KEY}
-      ACCESS_PORT: ${GENERAL_SOLVERS_FUNCTIONS_PORT}
-    expose:
-      - ${GENERAL_SOLVERS_FUNCTIONS_PORT}
-    entrypoint: ["python", "-u", "api_server.py"]
-
-  general_solvers_functions_4:
-    container_name: general_solvers_functions_4
     image: joseesco24/general_solvers_functions
     build:
       context: general_solvers_functions_container/.

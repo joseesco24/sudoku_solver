@@ -123,50 +123,54 @@ function check_request_mandatory_requirements(request) {
 
     // Checking if the board can be solved.
 
-    for (
-        var row_index = 0; row_index < request_body.board_array.length; row_index++
-    ) {
-        if (valid_request_body == true) {
-            var row_dict = new Object();
-            for (
-                var column_index = 0; column_index < request_body.board_array.length; column_index++
-            ) {
-                var current_number = request_body.board_array[row_index][column_index];
-                if (current_number != 0 && !(current_number in row_dict)) {
-                    row_dict[current_number] = [row_index, column_index];
-                } else if (current_number != 0 && current_number in row_dict) {
-                    request.error(
-                        `the board have a fixed number repeated: ${current_number} is in te position (${row_dict[current_number][0]}, ${row_dict[current_number][1]}) and (${row_index}, ${column_index})`
-                    );
-                    valid_request_body = false;
-                    break;
+    if (valid_request_body == true) {
+        for (
+            var row_index = 0; row_index < request_body.board_array.length; row_index++
+        ) {
+            if (valid_request_body == true) {
+                var row_dict = new Object();
+                for (
+                    var column_index = 0; column_index < request_body.board_array.length; column_index++
+                ) {
+                    var current_number = request_body.board_array[row_index][column_index];
+                    if (current_number != 0 && !(current_number in row_dict)) {
+                        row_dict[current_number] = [row_index, column_index];
+                    } else if (current_number != 0 && current_number in row_dict) {
+                        request.error(
+                            `the board have a fixed number repeated: ${current_number} is in te position (${row_dict[current_number][0]}, ${row_dict[current_number][1]}) and (${row_index}, ${column_index})`
+                        );
+                        valid_request_body = false;
+                        break;
+                    }
                 }
+            } else {
+                break;
             }
-        } else {
-            break;
         }
     }
-    for (
-        var row_index = 0; row_index < request_body.board_array.length; row_index++
-    ) {
-        if (valid_request_body == true) {
-            var col_dict = new Object();
-            for (
-                var column_index = 0; column_index < request_body.board_array.length; column_index++
-            ) {
-                var current_number = request_body.board_array[column_index][row_index];
-                if (current_number != 0 && !(current_number in col_dict)) {
-                    col_dict[current_number] = [row_index, column_index];
-                } else if (current_number != 0 && current_number in col_dict) {
-                    request.error(
-                        `the board have a fixed number repeated: ${current_number} is in te position (${col_dict[current_number][0]}, ${col_dict[current_number][1]}) and (${row_index}, ${column_index})`
-                    );
-                    valid_request_body = false;
-                    break;
+    if (valid_request_body == true) {
+        for (
+            var row_index = 0; row_index < request_body.board_array.length; row_index++
+        ) {
+            if (valid_request_body == true) {
+                var col_dict = new Object();
+                for (
+                    var column_index = 0; column_index < request_body.board_array.length; column_index++
+                ) {
+                    var current_number = request_body.board_array[column_index][row_index];
+                    if (current_number != 0 && !(current_number in col_dict)) {
+                        col_dict[current_number] = [row_index, column_index];
+                    } else if (current_number != 0 && current_number in col_dict) {
+                        request.error(
+                            `the board have a fixed number repeated: ${current_number} is in te position (${col_dict[current_number][0]}, ${col_dict[current_number][1]}) and (${row_index}, ${column_index})`
+                        );
+                        valid_request_body = false;
+                        break;
+                    }
                 }
+            } else {
+                break;
             }
-        } else {
-            break;
         }
     }
     if (valid_request_body == true) {

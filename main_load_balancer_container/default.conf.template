@@ -1,3 +1,9 @@
+upstream general_solvers_functions_servers {
+    server ${GENERAL_SOLVERS_FUNCTIONS_SERVER_1} weight=8 max_fails=1 fail_timeout=20s;
+    server ${GENERAL_SOLVERS_FUNCTIONS_SERVER_2} weight=8 max_fails=1 fail_timeout=20s;
+    server ${GENERAL_SOLVERS_FUNCTIONS_SERVER_3} backup;
+}
+
 server {
     listen ${ACCESS_PORT};
 
@@ -24,11 +30,4 @@ server {
         proxy_pass_request_headers on;
         proxy_pass_request_body on;
     }
-}
-
-upstream general_solvers_functions_servers {
-    server ${GENERAL_SOLVERS_FUNCTIONS_SERVER_1} weight=8;
-    server ${GENERAL_SOLVERS_FUNCTIONS_SERVER_2} weight=8;
-    server ${GENERAL_SOLVERS_FUNCTIONS_SERVER_3} weight=8;
-    server ${GENERAL_SOLVERS_FUNCTIONS_SERVER_4} weight=8;
 }
