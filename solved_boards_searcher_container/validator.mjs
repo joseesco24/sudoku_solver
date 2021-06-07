@@ -156,7 +156,7 @@ export default function check_request_mandatory_requirements(request_body) {
                     if (current_number != 0 && !(current_number in row_dict)) {
                         row_dict[current_number] = [row_index, column_index];
                     } else if (current_number != 0 && current_number in row_dict) {
-                        message = `the board have a fixed number repeated: ${current_number} is in te position (${row_dict[current_number][0]}, ${row_dict[current_number][1]}) and (${row_index}, ${column_index})`;
+                        message = `the board have a fixed number repeated: ${current_number} is in the position (${row_dict[current_number][0]}, ${row_dict[current_number][1]}) and (${row_index}, ${column_index})`;
                         print_log(message, script_firm);
                         valid_request_body = false;
                         break;
