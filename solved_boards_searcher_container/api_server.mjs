@@ -1,3 +1,4 @@
+import check_request_mandatory_requirements from "./validator.mjs";
 import print_log from "./general_utilities.mjs";
 
 import express from "express";
@@ -19,7 +20,7 @@ async function proxy_redirect(
     const api_response = await axios({
         headers: {
             "Content-Type": "application/json",
-            "Authorization": authorization,
+            Authorization: authorization,
         },
         url: destination_url,
         method: "get",
@@ -46,58 +47,65 @@ api.get(
         const origin_server = request.protocol + "://" + request.get("host");
         const origin_url = origin_server + request.originalUrl;
         print_log(`request origin ${origin_url}`, script_firm);
-        try {
-            const original_path = request.path;
-            let destination_url, authorization;
-            if (original_path == "/hill_climbing") {
-                destination_url = process.env.HILL_CLIMBING_SOLVER_LINK;
-                authorization = process.env.HILL_CLIMBING_SOLVER_KEY;
-                return await proxy_redirect(
-                    authorization,
-                    request.body,
-                    destination_url,
-                    origin_url,
-                    response
-                );
+        const [valid_request_body, message] = check_request_mandatory_requirements(
+            request.body
+        );
+        if (valid_request_body == true) {
+            try {
+                const original_path = request.path;
+                let destination_url, authorization;
+                if (original_path == "/hill_climbing") {
+                    destination_url = process.env.HILL_CLIMBING_SOLVER_LINK;
+                    authorization = process.env.HILL_CLIMBING_SOLVER_KEY;
+                    return await proxy_redirect(
+                        authorization,
+                        request.body,
+                        destination_url,
+                        origin_url,
+                        response
+                    );
+                }
+                if (original_path == "/genetic_algorithm") {
+                    destination_url = process.env.GENETIC_ALGORITHM_SOLVER_LINK;
+                    authorization = process.env.GENETIC_ALGORITHM_SOLVER_KEY;
+                    return await proxy_redirect(
+                        authorization,
+                        request.body,
+                        destination_url,
+                        origin_url,
+                        response
+                    );
+                }
+                if (original_path == "/simulated_annealing") {
+                    destination_url = process.env.HILL_CLIMBING_SOLVER_LINK;
+                    authorization = process.env.HILL_CLIMBING_SOLVER_KEY;
+                    return await proxy_redirect(
+                        authorization,
+                        request.body,
+                        destination_url,
+                        origin_url,
+                        response
+                    );
+                }
+                if (original_path == "/neuronal_network") {
+                    destination_url = process.env.HILL_CLIMBING_SOLVER_LINK;
+                    authorization = process.env.HILL_CLIMBING_SOLVER_KEY;
+                    return await proxy_redirect(
+                        authorization,
+                        request.body,
+                        destination_url,
+                        origin_url,
+                        response
+                    );
+                }
+            } catch (error) {
+                if (typeof error === "object") {
+                    print_log(`server error ${error.message}`, script_firm);
+                }
+                return response.status(500).send("internal server error");
             }
-            if (original_path == "/genetic_algorithm") {
-                destination_url = process.env.GENETIC_ALGORITHM_SOLVER_LINK;
-                authorization = process.env.GENETIC_ALGORITHM_SOLVER_KEY;
-                return await proxy_redirect(
-                    authorization,
-                    request.body,
-                    destination_url,
-                    origin_url,
-                    response
-                );
-            }
-            if (original_path == "/simulated_annealing") {
-                destination_url = process.env.HILL_CLIMBING_SOLVER_LINK;
-                authorization = process.env.HILL_CLIMBING_SOLVER_KEY;
-                return await proxy_redirect(
-                    authorization,
-                    request.body,
-                    destination_url,
-                    origin_url,
-                    response
-                );
-            }
-            if (original_path == "/neuronal_network") {
-                destination_url = process.env.HILL_CLIMBING_SOLVER_LINK;
-                authorization = process.env.HILL_CLIMBING_SOLVER_KEY;
-                return await proxy_redirect(
-                    authorization,
-                    request.body,
-                    destination_url,
-                    origin_url,
-                    response
-                );
-            }
-        } catch (error) {
-            if (typeof error === "object") {
-                print_log(`server error ${error.message}`, script_firm);
-            }
-            return response.status(500).send("internal server error");
+        } else if (valid_request_body == false) {
+            return response.status(415).send(message);
         }
     }
 );
