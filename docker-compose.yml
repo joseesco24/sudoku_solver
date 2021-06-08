@@ -8,30 +8,30 @@ services:
       context: main_proxy_gateway_container/.
       dockerfile: production.Dockerfile
     networks:
-      - main_proxy_gateway_network
+      - middle_proxy_network
     environment:
-      SEARCHER_SERVER_1: ${SEARCHER_SERVER_1}
-      SEARCHER_SERVER_2: ${SEARCHER_SERVER_2}
-      SEARCHER_SERVER_3: ${SEARCHER_SERVER_3}
+      MIDDLE_PROXY_1: ${MIDDLE_PROXY_1}
+      MIDDLE_PROXY_2: ${MIDDLE_PROXY_2}
+      MIDDLE_PROXY_3: ${MIDDLE_PROXY_3}
       ACCESS_PORT: ${MAIN_PROXY_GATEWAY_PORT}
     ports:
       - target: ${MAIN_PROXY_GATEWAY_PORT}
         published: ${HOST_ACCESS_PORT}
         protocol: tcp
     depends_on:
-      - solved_boards_searcher_container_1
-      - solved_boards_searcher_container_2
-      - solved_boards_searcher_container_3
+      - middle_proxy_1
+      - middle_proxy_2
+      - middle_proxy_3
 
-  solved_boards_searcher_container_1:
-    container_name: solved_boards_searcher_1
-    image: joseesco24/solved_boards_searcher
+  middle_proxy_1:
+    container_name: middle_proxy_1
+    image: joseesco24/middle_proxy
     build:
-      context: solved_boards_searcher_container/.
+      context: container_middle_proxy/.
       dockerfile: production.Dockerfile
     networks:
       - solved_boards_database_network
-      - main_proxy_gateway_network
+      - middle_proxy_network
       - solvers_network
     environment:
       HILL_CLIMBING_SOLVER_HEALTH_TEST_LINK: ${HILL_CLIMBING_SOLVER_HEALTH_TEST_LINK}
@@ -40,24 +40,24 @@ services:
       HILL_CLIMBING_SOLVER_LINK: ${HILL_CLIMBING_SOLVER_LINK}
       GENETIC_ALGORITHM_SOLVER_KEY: ${GENETIC_ALGORITHM_SOLVER_KEY}
       HILL_CLIMBING_SOLVER_KEY: ${HILL_CLIMBING_SOLVER_KEY}
-      ACCESS_PORT: ${SOLVED_BOARDS_SEARCHER_PORT}
-      ACCESS_KEY: ${SOLVED_BOARDS_SEARCHER_KEY}
+      ACCESS_PORT: ${MIDDLE_PROXY_PORT}
+      ACCESS_KEY: ${MIDDLE_PROXY_KEY}
     expose:
-      - ${SOLVED_BOARDS_SEARCHER_PORT}
+      - ${MIDDLE_PROXY_PORT}
     depends_on:
       - genetic_algorithm_solver
       - hill_climbing_solver
     entrypoint: ["node", "api_server.mjs"]
 
-  solved_boards_searcher_container_2:
-    container_name: solved_boards_searcher_2
-    image: joseesco24/solved_boards_searcher
+  middle_proxy_2:
+    container_name: middle_proxy_2
+    image: joseesco24/middle_proxy
     build:
-      context: solved_boards_searcher_container/.
+      context: container_middle_proxy/.
       dockerfile: production.Dockerfile
     networks:
       - solved_boards_database_network
-      - main_proxy_gateway_network
+      - middle_proxy_network
       - solvers_network
     environment:
       HILL_CLIMBING_SOLVER_HEALTH_TEST_LINK: ${HILL_CLIMBING_SOLVER_HEALTH_TEST_LINK}
@@ -66,34 +66,36 @@ services:
       HILL_CLIMBING_SOLVER_LINK: ${HILL_CLIMBING_SOLVER_LINK}
       GENETIC_ALGORITHM_SOLVER_KEY: ${GENETIC_ALGORITHM_SOLVER_KEY}
       HILL_CLIMBING_SOLVER_KEY: ${HILL_CLIMBING_SOLVER_KEY}
-      ACCESS_PORT: ${SOLVED_BOARDS_SEARCHER_PORT}
-      ACCESS_KEY: ${SOLVED_BOARDS_SEARCHER_KEY}
+      ACCESS_PORT: ${MIDDLE_PROXY_PORT}
+      ACCESS_KEY: ${MIDDLE_PROXY_KEY}
     expose:
-      - ${SOLVED_BOARDS_SEARCHER_PORT}
+      - ${MIDDLE_PROXY_PORT}
     depends_on:
       - genetic_algorithm_solver
       - hill_climbing_solver
     entrypoint: ["node", "api_server.mjs"]
 
-  solved_boards_searcher_container_3:
-    container_name: solved_boards_searcher_3
-    image: joseesco24/solved_boards_searcher
+  middle_proxy_3:
+    container_name: middle_proxy_3
+    image: joseesco24/middle_proxy
     build:
-      context: solved_boards_searcher_container/.
+      context: container_middle_proxy/.
       dockerfile: production.Dockerfile
     networks:
       - solved_boards_database_network
-      - main_proxy_gateway_network
+      - middle_proxy_network
       - solvers_network
     environment:
+      HILL_CLIMBING_SOLVER_HEALTH_TEST_LINK: ${HILL_CLIMBING_SOLVER_HEALTH_TEST_LINK}
+      GENETIC_ALGORITHM_SOLVER_HEALTH_TEST_LINK: ${GENETIC_ALGORITHM_SOLVER_HEALTH_TEST_LINK}
       GENETIC_ALGORITHM_SOLVER_LINK: ${GENETIC_ALGORITHM_SOLVER_LINK}
       HILL_CLIMBING_SOLVER_LINK: ${HILL_CLIMBING_SOLVER_LINK}
       GENETIC_ALGORITHM_SOLVER_KEY: ${GENETIC_ALGORITHM_SOLVER_KEY}
       HILL_CLIMBING_SOLVER_KEY: ${HILL_CLIMBING_SOLVER_KEY}
-      ACCESS_PORT: ${SOLVED_BOARDS_SEARCHER_PORT}
-      ACCESS_KEY: ${SOLVED_BOARDS_SEARCHER_KEY}
+      ACCESS_PORT: ${MIDDLE_PROXY_PORT}
+      ACCESS_KEY: ${MIDDLE_PROXY_KEY}
     expose:
-      - ${SOLVED_BOARDS_SEARCHER_PORT}
+      - ${MIDDLE_PROXY_PORT}
     depends_on:
       - genetic_algorithm_solver
       - hill_climbing_solver
@@ -224,8 +226,8 @@ networks:
     external: false
     driver: bridge
 
-  main_proxy_gateway_network:
-    name: main_proxy_gateway_network
+  middle_proxy_network:
+    name: middle_proxy_network
     external: false
     driver: bridge
 
