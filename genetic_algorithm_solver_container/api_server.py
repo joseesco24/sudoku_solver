@@ -15,6 +15,22 @@ api = web.Application()
 script_firm = "api"
 
 
+@api_routes.get(r"/health_test")
+async def health_test(request: Request):
+
+    origin_url = f"{request.scheme}://{request.remote}{request.rel_url}"
+
+    print_log(f"incoming health test request form {origin_url}", script_firm)
+    print_log(
+        f"responding health test request from {origin_url} with status code 200",
+        script_firm,
+    )
+
+    return web.Response(
+        status=200,
+    )
+
+
 @api_routes.get(r"/solver")
 async def solver(request: Request):
 

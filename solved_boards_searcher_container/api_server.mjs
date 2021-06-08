@@ -14,26 +14,57 @@ async function proxy_redirect(
     body,
     destination_url,
     origin_url,
-    response
+    response,
+    health_test_url
 ) {
-    print_log(`making request to ${destination_url}`, script_firm);
-    const api_response = await axios({
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: authorization,
-        },
-        url: destination_url,
-        method: "get",
-        data: body,
-    });
-    print_log(`receiving response from ${destination_url}`, script_firm);
-    print_log(`routing from ${destination_url} to ${origin_url}`, script_firm);
-    if (api_response.status == 200) {
-        response.statusMessage = "OK";
-        return response.status(api_response.status).json(api_response.data);
+    print_log(
+        `making server health test using the path ${health_test_url}`,
+        script_firm
+    );
+    let resume;
+    try {
+        const health_test_response = await axios({
+            url: health_test_url,
+            method: "get",
+            timeout: 1000,
+        });
+        print_log(`reciving response from ${health_test_url}`, script_firm);
+        print_log(`health test code: ${health_test_response.status}`, script_firm);
+        if (health_test_response.status == 200) {
+            resume = true;
+        }
+    } catch (error) {
+        if (typeof error === "object") {
+            print_log(`health test error ${error.message}`, script_firm);
+        }
+        print_log(`health test to ${health_test_url} failed`, script_firm);
+        resume = false;
+    }
+    if (resume == true) {
+        print_log(`starting to solve using ${destination_url} solver`, script_firm);
+        print_log(`making request to ${destination_url}`, script_firm);
+        const solver_response = await axios({
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": authorization,
+            },
+            url: destination_url,
+            method: "get",
+            data: body,
+        });
+        print_log(`reciving response from ${destination_url}`, script_firm);
+        print_log(`routing from ${destination_url} to ${origin_url}`, script_firm);
+        if (solver_response.status == 200) {
+            response.statusMessage = "OK";
+            return response.status(solver_response.status).json(solver_response.data);
+        } else {
+            response.statusMessage = solver_response.statusText;
+            return response.status(solver_response.status).end();
+        }
     } else {
-        response.statusMessage = api_response.statusText;
-        return response.status(api_response.status).end();
+        print_log(`failed to solve using ${destination_url} solver`, script_firm);
+        response.statusMessage = `the requested solver is not currently working, please use other solver or request it later`;
+        return response.status(501).end();
     }
 }
 
@@ -48,7 +79,7 @@ api.get(
         print_log(`new request received at ${request.path}`, script_firm);
         const origin_server = request.protocol + "://" + request.get("host");
         const origin_url = origin_server + request.originalUrl;
-        print_log(`request origin ${origin_url}`, script_firm);
+        print_log(`request origin url ${origin_url}`, script_firm);
         const [valid_request_body, message] = check_request_mandatory_requirements(
             request.body
         );
@@ -59,8 +90,9 @@ api.get(
         if (valid_request_body == true) {
             try {
                 const original_path = request.path;
-                let destination_url, authorization;
+                let destination_url, authorization, health_test_url;
                 if (original_path == "/hill_climbing") {
+                    health_test_url = process.env.HILL_CLIMBING_SOLVER_HEALTH_TEST_LINK;
                     destination_url = process.env.HILL_CLIMBING_SOLVER_LINK;
                     authorization = process.env.HILL_CLIMBING_SOLVER_KEY;
                     return await proxy_redirect(
@@ -68,10 +100,13 @@ api.get(
                         request.body,
                         destination_url,
                         origin_url,
-                        response
+                        response,
+                        health_test_url
                     );
                 }
                 if (original_path == "/genetic_algorithm") {
+                    health_test_url =
+                        process.env.GENETIC_ALGORITHM_SOLVER_HEALTH_TEST_LINK;
                     destination_url = process.env.GENETIC_ALGORITHM_SOLVER_LINK;
                     authorization = process.env.GENETIC_ALGORITHM_SOLVER_KEY;
                     return await proxy_redirect(
@@ -79,10 +114,12 @@ api.get(
                         request.body,
                         destination_url,
                         origin_url,
-                        response
+                        response,
+                        health_test_url
                     );
                 }
                 if (original_path == "/simulated_annealing") {
+                    health_test_url = process.env.HILL_CLIMBING_SOLVER_HEALTH_TEST_LINK;
                     destination_url = process.env.HILL_CLIMBING_SOLVER_LINK;
                     authorization = process.env.HILL_CLIMBING_SOLVER_KEY;
                     return await proxy_redirect(
@@ -90,10 +127,12 @@ api.get(
                         request.body,
                         destination_url,
                         origin_url,
-                        response
+                        response,
+                        health_test_url
                     );
                 }
                 if (original_path == "/neuronal_network") {
+                    health_test_url = process.env.HILL_CLIMBING_SOLVER_HEALTH_TEST_LINK;
                     destination_url = process.env.HILL_CLIMBING_SOLVER_LINK;
                     authorization = process.env.HILL_CLIMBING_SOLVER_KEY;
                     return await proxy_redirect(
@@ -101,7 +140,8 @@ api.get(
                         request.body,
                         destination_url,
                         origin_url,
-                        response
+                        response,
+                        health_test_url
                     );
                 }
             } catch (error) {
