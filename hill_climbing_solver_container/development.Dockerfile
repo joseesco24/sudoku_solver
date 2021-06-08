@@ -5,7 +5,7 @@ ARG WORKDIR=/home/$USERNAME
 
 RUN useradd -ms /bin/bash $USERNAME
 
-COPY ["requirements/commons.txt","requirements/development.txt","$WORKDIR"]
+COPY ["requirements/commons.txt","requirements/development.txt","$WORKDIR/"]
 
 RUN find "$WORKDIR/" -type d -exec chmod 755 {} \;
 RUN find "$WORKDIR/" -type f -exec chmod 755 {} \;
