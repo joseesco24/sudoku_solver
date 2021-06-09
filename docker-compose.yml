@@ -112,7 +112,7 @@ services:
       - solved_boards_database_network
       - solvers_network
     environment:
-      GENERAL_SOLVER_FUNCTIONS_KEY: ${GENERAL_SOLVER_FUNCTIONS_KEY}
+      SOLVER_FUNCTIONS_KEY: ${SOLVER_FUNCTIONS_KEY}
       RANDOM_INITIALIZATION_LINK: ${RANDOM_INITIALIZATION_LINK}
       FITNESS_SINGLE_SCORE_LINK: ${FITNESS_SINGLE_SCORE_LINK}
       FITNESS_REPORT_SCORE_LINK: ${FITNESS_REPORT_SCORE_LINK}
@@ -136,7 +136,7 @@ services:
       - solved_boards_database_network
       - solvers_network
     environment:
-      GENERAL_SOLVER_FUNCTIONS_KEY: ${GENERAL_SOLVER_FUNCTIONS_KEY}
+      SOLVER_FUNCTIONS_KEY: ${SOLVER_FUNCTIONS_KEY}
       RANDOM_INITIALIZATION_LINK: ${RANDOM_INITIALIZATION_LINK}
       FITNESS_SINGLE_SCORE_LINK: ${FITNESS_SINGLE_SCORE_LINK}
       FITNESS_REPORT_SCORE_LINK: ${FITNESS_REPORT_SCORE_LINK}
@@ -166,53 +166,53 @@ services:
     expose:
       - ${SOLVER_FUNCTIONS_LOAD_BALANCER_PORT}
     depends_on:
-      - general_solvers_functions_1
-      - general_solvers_functions_2
-      - general_solvers_functions_3
+      - solver_functions_1
+      - solver_functions_2
+      - solver_functions_3
 
-  general_solvers_functions_1:
-    container_name: general_solvers_functions_1
-    image: joseesco24/general_solvers_functions
+  solver_functions_1:
+    container_name: solver_functions_1
+    image: joseesco24/solver_functions
     build:
-      context: general_solvers_functions_container/.
+      context: container_solver_functions/.
       dockerfile: production.Dockerfile
     networks:
       - solver_functions_network
     environment:
-      GENERAL_SOLVER_FUNCTIONS_KEY: ${GENERAL_SOLVER_FUNCTIONS_KEY}
-      ACCESS_PORT: ${GENERAL_SOLVERS_FUNCTIONS_PORT}
+      ACCESS_PORT: ${SOLVER_FUNCTIONS_PORT}
+      ACCESS_KEY: ${SOLVER_FUNCTIONS_KEY}
     expose:
-      - ${GENERAL_SOLVERS_FUNCTIONS_PORT}
+      - ${SOLVER_FUNCTIONS_PORT}
     entrypoint: ["python", "-u", "api_server.py"]
 
-  general_solvers_functions_2:
-    container_name: general_solvers_functions_2
-    image: joseesco24/general_solvers_functions
+  solver_functions_2:
+    container_name: solver_functions_2
+    image: joseesco24/solver_functions
     build:
-      context: general_solvers_functions_container/.
+      context: container_solver_functions/.
       dockerfile: production.Dockerfile
     networks:
       - solver_functions_network
     environment:
-      GENERAL_SOLVER_FUNCTIONS_KEY: ${GENERAL_SOLVER_FUNCTIONS_KEY}
-      ACCESS_PORT: ${GENERAL_SOLVERS_FUNCTIONS_PORT}
+      ACCESS_PORT: ${SOLVER_FUNCTIONS_PORT}
+      ACCESS_KEY: ${SOLVER_FUNCTIONS_KEY}
     expose:
-      - ${GENERAL_SOLVERS_FUNCTIONS_PORT}
+      - ${SOLVER_FUNCTIONS_PORT}
     entrypoint: ["python", "-u", "api_server.py"]
 
-  general_solvers_functions_3:
-    container_name: general_solvers_functions_3
-    image: joseesco24/general_solvers_functions
+  solver_functions_3:
+    container_name: solver_functions_3
+    image: joseesco24/solver_functions
     build:
-      context: general_solvers_functions_container/.
+      context: container_solver_functions/.
       dockerfile: production.Dockerfile
     networks:
       - solver_functions_network
     environment:
-      GENERAL_SOLVER_FUNCTIONS_KEY: ${GENERAL_SOLVER_FUNCTIONS_KEY}
-      ACCESS_PORT: ${GENERAL_SOLVERS_FUNCTIONS_PORT}
+      ACCESS_PORT: ${SOLVER_FUNCTIONS_PORT}
+      ACCESS_KEY: ${SOLVER_FUNCTIONS_KEY}
     expose:
-      - ${GENERAL_SOLVERS_FUNCTIONS_PORT}
+      - ${SOLVER_FUNCTIONS_PORT}
     entrypoint: ["python", "-u", "api_server.py"]
 
 networks:

@@ -25,7 +25,7 @@ async def check_request_mandatory_requirements(request: Request):
     try:
         await request.json()
         request_header_keys = [key for key in request.headers.keys()]
-        api_key = str(os.environ["GENERAL_SOLVER_FUNCTIONS_KEY"])
+        api_key = str(os.environ["ACCESS_KEY"])
         request_headers = request.headers
         continue_process = True
         print_log(r"the request headers and body are correct", script_firm)

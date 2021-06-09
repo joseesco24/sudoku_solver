@@ -3,7 +3,7 @@ from general_utilities import print_log
 import aiohttp
 import os
 
-api_key = str(os.environ["GENERAL_SOLVER_FUNCTIONS_KEY"])
+api_key = str(os.environ["SOLVER_FUNCTIONS_KEY"])
 
 
 async def calculate_board_fitness_single(
