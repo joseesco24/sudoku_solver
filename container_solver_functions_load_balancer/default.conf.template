@@ -1,7 +1,7 @@
 upstream general_solvers_functions_servers {
-    server ${GENERAL_SOLVERS_FUNCTIONS_SERVER_1} weight=8 max_fails=1 fail_timeout=20s;
-    server ${GENERAL_SOLVERS_FUNCTIONS_SERVER_2} weight=8 max_fails=1 fail_timeout=20s;
-    server ${GENERAL_SOLVERS_FUNCTIONS_SERVER_3} backup;
+    server ${SOLVER_FUNCTIONS_CONTAINER_1} weight=8 max_fails=1 fail_timeout=20s;
+    server ${SOLVER_FUNCTIONS_CONTAINER_2} weight=8 max_fails=1 fail_timeout=20s;
+    server ${SOLVER_FUNCTIONS_CONTAINER_3} backup;
 }
 
 server {

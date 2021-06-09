@@ -108,8 +108,8 @@ services:
       context: container_hill_climbing_solver/.
       dockerfile: production.Dockerfile
     networks:
+      - solver_functions_load_balancer_network
       - solved_boards_database_network
-      - main_load_balancer_network
       - solvers_network
     environment:
       GENERAL_SOLVER_FUNCTIONS_KEY: ${GENERAL_SOLVER_FUNCTIONS_KEY}
@@ -122,7 +122,7 @@ services:
     expose:
       - ${HILL_CLIMBING_SOLVER_PORT}
     depends_on:
-      - main_load_balancer
+      - solver_functions_load_balancer
     entrypoint: ["python", "-u", "api_server.py"]
 
   genetic_algorithm_solver:
@@ -132,8 +132,8 @@ services:
       context: container_genetic_algorithm_solver/.
       dockerfile: production.Dockerfile
     networks:
+      - solver_functions_load_balancer_network
       - solved_boards_database_network
-      - main_load_balancer_network
       - solvers_network
     environment:
       GENERAL_SOLVER_FUNCTIONS_KEY: ${GENERAL_SOLVER_FUNCTIONS_KEY}
@@ -146,25 +146,25 @@ services:
     expose:
       - ${GENETIC_ALGORITHM_SOLVER_PORT}
     depends_on:
-      - main_load_balancer
+      - solver_functions_load_balancer
     entrypoint: ["python", "-u", "api_server.py"]
 
-  main_load_balancer:
-    container_name: main_load_balancer
-    image: joseesco24/main_load_balancer
+  solver_functions_load_balancer:
+    container_name: solver_functions_load_balancer
+    image: joseesco24/solver_functions_load_balancer
     build:
-      context: main_load_balancer_container/.
+      context: container_solver_functions_load_balancer/.
       dockerfile: production.Dockerfile
     networks:
-      - general_solvers_functions_network
-      - main_load_balancer_network
+      - solver_functions_load_balancer_network
+      - solver_functions_network
     environment:
-      GENERAL_SOLVERS_FUNCTIONS_SERVER_1: ${GENERAL_SOLVERS_FUNCTIONS_SERVER_1}
-      GENERAL_SOLVERS_FUNCTIONS_SERVER_2: ${GENERAL_SOLVERS_FUNCTIONS_SERVER_2}
-      GENERAL_SOLVERS_FUNCTIONS_SERVER_3: ${GENERAL_SOLVERS_FUNCTIONS_SERVER_3}
-      ACCESS_PORT: ${MAIN_LOAD_BALANCER_PORT}
+      SOLVER_FUNCTIONS_CONTAINER_1: ${SOLVER_FUNCTIONS_CONTAINER_1}
+      SOLVER_FUNCTIONS_CONTAINER_2: ${SOLVER_FUNCTIONS_CONTAINER_2}
+      SOLVER_FUNCTIONS_CONTAINER_3: ${SOLVER_FUNCTIONS_CONTAINER_3}
+      ACCESS_PORT: ${SOLVER_FUNCTIONS_LOAD_BALANCER_PORT}
     expose:
-      - ${MAIN_LOAD_BALANCER_PORT}
+      - ${SOLVER_FUNCTIONS_LOAD_BALANCER_PORT}
     depends_on:
       - general_solvers_functions_1
       - general_solvers_functions_2
@@ -177,7 +177,7 @@ services:
       context: general_solvers_functions_container/.
       dockerfile: production.Dockerfile
     networks:
-      - general_solvers_functions_network
+      - solver_functions_network
     environment:
       GENERAL_SOLVER_FUNCTIONS_KEY: ${GENERAL_SOLVER_FUNCTIONS_KEY}
       ACCESS_PORT: ${GENERAL_SOLVERS_FUNCTIONS_PORT}
@@ -192,7 +192,7 @@ services:
       context: general_solvers_functions_container/.
       dockerfile: production.Dockerfile
     networks:
-      - general_solvers_functions_network
+      - solver_functions_network
     environment:
       GENERAL_SOLVER_FUNCTIONS_KEY: ${GENERAL_SOLVER_FUNCTIONS_KEY}
       ACCESS_PORT: ${GENERAL_SOLVERS_FUNCTIONS_PORT}
@@ -207,7 +207,7 @@ services:
       context: general_solvers_functions_container/.
       dockerfile: production.Dockerfile
     networks:
-      - general_solvers_functions_network
+      - solver_functions_network
     environment:
       GENERAL_SOLVER_FUNCTIONS_KEY: ${GENERAL_SOLVER_FUNCTIONS_KEY}
       ACCESS_PORT: ${GENERAL_SOLVERS_FUNCTIONS_PORT}
@@ -216,8 +216,8 @@ services:
     entrypoint: ["python", "-u", "api_server.py"]
 
 networks:
-  general_solvers_functions_network:
-    name: general_solvers_functions_network
+  solver_functions_network:
+    name: solver_functions_network
     external: false
     driver: bridge
 
@@ -231,8 +231,8 @@ networks:
     external: false
     driver: bridge
 
-  main_load_balancer_network:
-    name: main_load_balancer_network
+  solver_functions_load_balancer_network:
+    name: solver_functions_load_balancer_network
     external: false
     driver: bridge
 
