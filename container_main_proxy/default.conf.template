@@ -1,7 +1,7 @@
 upstream searcher_servers {
-    server ${MIDDLE_PROXY_1} weight=8 max_fails=1 fail_timeout=20s;
-    server ${MIDDLE_PROXY_2} weight=8 max_fails=1 fail_timeout=20s;
-    server ${MIDDLE_PROXY_3} backup;
+    server ${MIDDLE_PROXY_CONTAINER_1} weight=8 max_fails=1 fail_timeout=20s;
+    server ${MIDDLE_PROXY_CONTAINER_2} weight=8 max_fails=1 fail_timeout=20s;
+    server ${MIDDLE_PROXY_CONTAINER_3} backup;
 }
 
 server {

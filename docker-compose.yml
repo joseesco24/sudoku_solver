@@ -1,21 +1,21 @@
 version: "3.8"
 
 services:
-  external_proxy_gateway:
-    container_name: external_proxy_gateway
-    image: joseesco24/external_proxy_gateway
+  main_proxy:
+    container_name: main_proxy
+    image: joseesco24/main_proxy
     build:
-      context: container_external_proxy_gateway/.
+      context: container_main_proxy/.
       dockerfile: production.Dockerfile
     networks:
       - middle_proxy_network
     environment:
-      MIDDLE_PROXY_1: ${MIDDLE_PROXY_1}
-      MIDDLE_PROXY_2: ${MIDDLE_PROXY_2}
-      MIDDLE_PROXY_3: ${MIDDLE_PROXY_3}
-      ACCESS_PORT: ${EXTERNAL_PROXY_GATEWAY_PORT}
+      MIDDLE_PROXY_CONTAINER_1: ${MIDDLE_PROXY_CONTAINER_1}
+      MIDDLE_PROXY_CONTAINER_2: ${MIDDLE_PROXY_CONTAINER_2}
+      MIDDLE_PROXY_CONTAINER_3: ${MIDDLE_PROXY_CONTAINER_3}
+      ACCESS_PORT: ${MAIN_PROXY_PORT}
     ports:
-      - target: ${EXTERNAL_PROXY_GATEWAY_PORT}
+      - target: ${MAIN_PROXY_PORT}
         published: ${HOST_ACCESS_PORT}
         protocol: tcp
     depends_on:
