@@ -2,9 +2,9 @@
 __pycache__
 
 # all dependencies file.
-general_solvers_functions_container/requirements/all.txt
-genetic_algorithm_solver_container/requirements/all.txt
-hill_climbing_solver_container/requirements/all.txt
+container_genetic_algorithm_solver/requirements/all.txt
+container_hill_climbing_solver/requirements/all.txt
+container_solver_functions/requirements/all.txt
 
 # vscode workspace file.
 *.code-workspace
@@ -20,9 +20,9 @@ node_modules
 package-lock.json
 
 # specific exceptions of vscode development files.
-!general_solvers_functions_container/vscode/*
-!genetic_algorithm_solver_container/vscode/*
-!hill_climbing_solver_container/vscode/*
+!container_genetic_algorithm_solver/vscode/*
+!container_hill_climbing_solver/vscode/*
+!container_solver_functions/vscode/*
 !container_middle_proxy/vscode/*
 !vscode/*
 
