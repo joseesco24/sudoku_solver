@@ -113,14 +113,20 @@ export default function check_request_mandatory_requirements(request_body) {
     // Board elements validations.
 
     if (valid_request_body == true) {
-        request_body.board_array.forEach(function (board_row) {
+        for (
+            var row_index = 0; row_index < request_body.board_array.length; row_index++
+        ) {
             if (valid_request_body == true) {
-                board_row.forEach(function (board_element) {
+                for (
+                    var column_index = 0; column_index < request_body.board_array.length; column_index++
+                ) {
+                    var board_element = request_body.board_array[row_index][column_index];
                     if (valid_request_body == true) {
                         if (Number.isInteger(board_element) == false) {
                             message = `the board have an element that isn't a number: ${board_element} isn't a number, data type ${typeof board_element}`;
                             print_log(message, script_firm);
                             valid_request_body = false;
+                            break;
                         }
                     }
                     if (valid_request_body == true) {
@@ -129,13 +135,17 @@ export default function check_request_mandatory_requirements(request_body) {
                                 message = `the board have a number out of range: ${board_element} isn't in range of ${1} and ${board_dimensions}`;
                                 print_log(message, script_firm);
                                 valid_request_body = false;
+                                break;
                             }
                         }
                     }
-                });
+                }
+            } else {
+                break;
             }
-        });
+        }
     }
+
     if (valid_request_body == true) {
         print_log("all the board dimensions are correct", script_firm);
     }
