@@ -83,12 +83,55 @@ export default function check_request_mandatory_requirements(request_body) {
             valid_request_body = false;
         }
     }
+    if (valid_request_body == true) {
+        if (request_body.zone_length > 0) {
+            print_log("the variable zone_length is positive", script_firm);
+        } else {
+            message = "the variable zone_length needs to be positive";
+            print_log(message, script_firm);
+            valid_request_body = false;
+        }
+    }
+    if (valid_request_body == true) {
+        if (request_body.zone_height > 0) {
+            print_log("the variable zone_height is positive", script_firm);
+        } else {
+            message = "the variable zone_height needs to be positive";
+            print_log(message, script_firm);
+            valid_request_body = false;
+        }
+    }
 
     // Board dimensions validations.
 
-    var board_dimensions = request_body.zone_height * request_body.zone_length;
+    const board_dimensions = request_body.zone_height * request_body.zone_length;
+
     if (valid_request_body == true) {
-        if (board_dimensions == request_body.board_array.length) {
+        if (board_dimensions >= process.env.MIN_BOARD_SIZE) {
+            print_log(
+                "the board size is over or equal to the minimum supported size",
+                script_firm
+            );
+        } else {
+            message = `the board size is not over or equal to the minimum supported size, the minimum supported size is ${process.env.MIN_BOARD_SIZE}x${process.env.MIN_BOARD_SIZE} and the board is ${board_dimensions}x${board_dimensions}`;
+            print_log(message, script_firm);
+            valid_request_body = false;
+        }
+    }
+    if (valid_request_body == true) {
+        if (board_dimensions <= process.env.MAX_BOARD_SIZE) {
+            print_log(
+                "the board size is less or equal to the maximum supported size",
+                script_firm
+            );
+        } else {
+            message = `the board size is not less or equal to the maximum supported size, the maximum supported size is ${process.env.MAX_BOARD_SIZE}x${process.env.MAX_BOARD_SIZE} and the board is ${board_dimensions}x${board_dimensions}`;
+            print_log(message, script_firm);
+            valid_request_body = false;
+        }
+    }
+    if (valid_request_body == true) {
+        if (request_body.board_array.length == board_dimensions) {
             print_log("the board columns dimensions are correct", script_firm);
         } else {
             message = "the board columns dimensions aren't correct";
@@ -101,7 +144,7 @@ export default function check_request_mandatory_requirements(request_body) {
         request_body.board_array.forEach(function (board_row) {
             board_lenght_summation += board_row.length;
         });
-        if (board_dimensions == board_lenght_summation / board_dimensions) {
+        if (board_lenght_summation / board_dimensions == board_dimensions) {
             print_log("the board rows dimensions are correct", script_firm);
         } else {
             message = "the board rows dimensions aren't correct";
@@ -202,11 +245,12 @@ export default function check_request_mandatory_requirements(request_body) {
             }
         }
     }
+
     if (valid_request_body == true) {
         print_log("the board can be solved", script_firm);
     }
 
-    // Routing and end message.
+    // end message.
 
     if (valid_request_body == true) {
         print_log("request body validation end successfully", script_firm);
