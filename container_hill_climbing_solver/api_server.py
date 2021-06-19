@@ -1,4 +1,4 @@
-from general_solver_functions_access import calculate_board_fitness_single
+from general_solver_functions_access import calculate_board_fitness_report
 
 from hill_climbing import solve_using_hill_climbing_algorithm
 
@@ -83,15 +83,23 @@ async def solver(request: Request):
             board=sudoku_initial_board,
         )
 
-        solution_board_fitness = await calculate_board_fitness_single(
+        (
+            total_collisions,
+            column_collisions,
+            row_collisions,
+            zone_collisions,
+        ) = await calculate_board_fitness_report(
             zone_height=sudoku_zone_height,
             zone_length=sudoku_zone_length,
             board=solution_board,
         )
 
         response_dict = {
-            "fitness_score": solution_board_fitness,
-            "board_array": solution_board,
+            "total collisions": total_collisions,
+            "column collisions": column_collisions,
+            "row collisions": row_collisions,
+            "zone collisions": zone_collisions,
+            "board array": solution_board,
         }
 
         return web.Response(

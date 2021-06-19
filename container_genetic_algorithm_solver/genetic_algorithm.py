@@ -1,4 +1,4 @@
-from general_solver_functions_access import calculate_board_fitness_report
+from general_solver_functions_access import calculate_and_print_board_fitness_report
 from general_solver_functions_access import calculate_board_fitness_single
 from general_solver_functions_access import board_random_initialization
 from general_solver_functions_access import board_random_mutation
@@ -102,7 +102,7 @@ async def solve_using_genetic_algorithm(
         if current_board_fitness < best_board_fitness:
             best_board = current_board
 
-    await calculate_board_fitness_report(
+    await calculate_and_print_board_fitness_report(
         zone_height=zone_height,
         zone_length=zone_length,
         script_firm=script_firm,
