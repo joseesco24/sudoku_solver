@@ -1,13 +1,15 @@
 import print_log from "./general_utilities.mjs";
 
-const script_firm = "val";
+const script_firm = "bvl";
 
-export default function check_request_mandatory_requirements(request_body) {
+export default function check_body_request_mandatory_requirements(
+    request_body
+) {
     print_log("starting request body validations", script_firm);
 
     // Control vars declarations.
 
-    var valid_request_body, message;
+    let valid_request_body, message;
 
     // Body general validations and use vars declarations.
 
@@ -19,12 +21,12 @@ export default function check_request_mandatory_requirements(request_body) {
             "zone_height",
         ];
         print_log(
-            "request body checked successfully, the request body is json",
+            "request body checked successfully, the request body is a dict",
             script_firm
         );
         valid_request_body = true;
     } catch (error) {
-        message = "request body check unsuccessfully, the request body isn't json";
+        message = "request body check unsuccessfully, the request body isn't a dict";
         print_log(message, script_firm);
         valid_request_body = false;
     }

@@ -5,6 +5,7 @@
   "forwardPorts": [],
   "extensions": [
     "mgmcdermott.vscode-language-babel",
+    "xabikos.javascriptsnippets",
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
     "oderwat.indent-rainbow",
