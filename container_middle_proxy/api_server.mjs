@@ -13,7 +13,6 @@ const api = express();
 api.use(express.json());
 
 /**
- * 
  * This function is the incharge of act as a proxy in the middle proxy container, 
  * it receives as inputs the mandatory parameters from the original request and 
  * uses them for making a new request to the correct solver, it also checks before 
@@ -22,13 +21,13 @@ api.use(express.json());
  * code and the solved board data, in any other way it returns the response code 
  * and a status message from the respective solver.
  * 
- * @param authorization
- * @param body
- * @param destination_url
- * @param origin_url
- * @param response
- * @param health_test_url
- * @returns
+ * @param authorization {string} the needed authorization for use the respective solver.
+ * @param body {object} the original request body.
+ * @param destination_url {string} the solver url.
+ * @param origin_url {string} the url that generates the original request.
+ * @param response {express.response} the express response object.
+ * @param health_test_url {string} the solver health test url.
+ * @returns {express.response} the response from the solver or from the method if the solver fails.
  */
 async function proxy_redirect(authorization, body, destination_url, origin_url, response, health_test_url) {
 
@@ -82,10 +81,10 @@ async function proxy_redirect(authorization, body, destination_url, origin_url, 
         print_log(`routing from: ${destination_url} to: ${origin_url}`, script_firm);
 
         if (solver_response.status == 200) {
-            response.statusMessage = "OK";
+            response.statusMessage = "ok";
             return response.status(solver_response.status).json(solver_response.data);
         } else {
-            response.statusMessage = solver_response.statusText;
+            response.statusMessage = solver_response.statusText.toLowerCase();
             return response.status(solver_response.status).end();
         }
 
@@ -151,7 +150,7 @@ api.get(["/hill_climbing", "/genetic_algorithm", "/simulated_annealing", "/neuro
                     health_test_url = process.env.HILL_CLIMBING_SOLVER_HEALTH_TEST_LINK;
                     destination_url = process.env.HILL_CLIMBING_SOLVER_LINK;
                     authorization = process.env.HILL_CLIMBING_SOLVER_KEY;
-                    return await proxy_redirect(
+                    return proxy_redirect(
                         authorization,
                         request.body,
                         destination_url,
@@ -161,11 +160,10 @@ api.get(["/hill_climbing", "/genetic_algorithm", "/simulated_annealing", "/neuro
                     );
 
                 } else if (original_path == "/genetic_algorithm") {
-                    health_test_url =
-                        process.env.GENETIC_ALGORITHM_SOLVER_HEALTH_TEST_LINK;
+                    health_test_url = process.env.GENETIC_ALGORITHM_SOLVER_HEALTH_TEST_LINK;
                     destination_url = process.env.GENETIC_ALGORITHM_SOLVER_LINK;
                     authorization = process.env.GENETIC_ALGORITHM_SOLVER_KEY;
-                    return await proxy_redirect(
+                    return proxy_redirect(
                         authorization,
                         request.body,
                         destination_url,
@@ -178,7 +176,7 @@ api.get(["/hill_climbing", "/genetic_algorithm", "/simulated_annealing", "/neuro
                     health_test_url = process.env.HILL_CLIMBING_SOLVER_HEALTH_TEST_LINK;
                     destination_url = process.env.HILL_CLIMBING_SOLVER_LINK;
                     authorization = process.env.HILL_CLIMBING_SOLVER_KEY;
-                    return await proxy_redirect(
+                    return proxy_redirect(
                         authorization,
                         request.body,
                         destination_url,
@@ -191,7 +189,7 @@ api.get(["/hill_climbing", "/genetic_algorithm", "/simulated_annealing", "/neuro
                     health_test_url = process.env.HILL_CLIMBING_SOLVER_HEALTH_TEST_LINK;
                     destination_url = process.env.HILL_CLIMBING_SOLVER_LINK;
                     authorization = process.env.HILL_CLIMBING_SOLVER_KEY;
-                    return await proxy_redirect(
+                    return proxy_redirect(
                         authorization,
                         request.body,
                         destination_url,
@@ -206,7 +204,7 @@ api.get(["/hill_climbing", "/genetic_algorithm", "/simulated_annealing", "/neuro
                     `request body validation failed: ${body_validation_message}`,
                     script_firm
                 );
-                response.statusMessage = body_validation_message;
+                response.statusMessage = body_validation_message.toLowerCase();
                 return response.status(400).end();
             }
 
@@ -215,7 +213,7 @@ api.get(["/hill_climbing", "/genetic_algorithm", "/simulated_annealing", "/neuro
                 `request header validation failed: ${header_validation_message}`,
                 script_firm
             );
-            response.statusMessage = header_validation_message;
+            response.statusMessage = header_validation_message.toLowerCase();
             return response.status(400).end();
         }
 
