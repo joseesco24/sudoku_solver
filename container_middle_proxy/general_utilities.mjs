@@ -1,3 +1,7 @@
+/**
+ * @param message 
+ * @param script_firm 
+ */
 export default function print_log(message, script_firm = null) {
     message = message.trim().replace(/^\w/, (c) => c.toUpperCase());
     let date_obj = new Date();

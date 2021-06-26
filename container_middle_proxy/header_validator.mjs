@@ -2,6 +2,10 @@ import print_log from "./general_utilities.mjs";
 
 const script_firm = "hvl";
 
+/**
+ * @param request_header 
+ * @returns 
+ */
 export default function check_header_request_mandatory_requirements(
     request_header
 ) {

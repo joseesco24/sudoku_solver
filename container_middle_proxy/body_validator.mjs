@@ -2,6 +2,10 @@ import print_log from "./general_utilities.mjs";
 
 const script_firm = "bvl";
 
+/**
+ * @param request_body 
+ * @returns 
+ */
 export default function check_body_request_mandatory_requirements(
     request_body
 ) {

@@ -12,40 +12,62 @@ const api = express();
 
 api.use(express.json());
 
-async function proxy_redirect(
-    authorization,
-    body,
-    destination_url,
-    origin_url,
-    response,
-    health_test_url
-) {
+/**
+ * 
+ * This function is the incharge of act as a proxy in the middle proxy container, 
+ * it receives as inputs the mandatory parameters from the original request and 
+ * uses them for making a new request to the correct solver, it also checks before 
+ * that the required solver is working, if it's not working the function returns a 
+ * 500 error code, if the solver solves the board correctly it returns a 200 status
+ * code and the solved board data, in any other way it returns the response code 
+ * and a status message from the respective solver.
+ * 
+ * @param authorization
+ * @param body
+ * @param destination_url
+ * @param origin_url
+ * @param response
+ * @param health_test_url
+ * @returns
+ */
+async function proxy_redirect(authorization, body, destination_url, origin_url, response, health_test_url) {
+
+    // Control variables.
+
+    let resume;
+
     print_log(
-        `making server health test using the path ${health_test_url}`,
+        `making server health test using the path: ${health_test_url}`,
         script_firm
     );
-    let resume;
+
+    // Health check request.
+
     try {
         const health_test_response = await axios({
             url: health_test_url,
             method: "get",
             timeout: 1000,
         });
-        print_log(`reciving response from ${health_test_url}`, script_firm);
+        print_log(`reciving response from: ${health_test_url}`, script_firm);
         print_log(`health test code: ${health_test_response.status}`, script_firm);
         if (health_test_response.status == 200) {
             resume = true;
         }
     } catch (error) {
         if (typeof error === "object") {
-            print_log(`health test error ${error.message}`, script_firm);
+            print_log(`health test error: ${error.message}`, script_firm);
         }
-        print_log(`health test to ${health_test_url} failed`, script_firm);
+        print_log(`health test failed to: ${health_test_url}`, script_firm);
         resume = false;
     }
+
+    // Proxy request if health check goes wright.
+
     if (resume == true) {
-        print_log(`starting to solve using ${destination_url} solver`, script_firm);
-        print_log(`making request to ${destination_url}`, script_firm);
+        print_log(`starting to solve using: ${destination_url}`, script_firm);
+        print_log(`making request to: ${destination_url}`, script_firm);
+
         const solver_response = await axios({
             headers: {
                 "Content-Type": "application/json",
@@ -55,8 +77,10 @@ async function proxy_redirect(
             method: "get",
             data: body,
         });
-        print_log(`reciving response from ${destination_url}`, script_firm);
-        print_log(`routing from ${destination_url} to ${origin_url}`, script_firm);
+
+        print_log(`reciving response from: ${destination_url}`, script_firm);
+        print_log(`routing from: ${destination_url} to: ${origin_url}`, script_firm);
+
         if (solver_response.status == 200) {
             response.statusMessage = "OK";
             return response.status(solver_response.status).json(solver_response.data);
@@ -64,101 +88,119 @@ async function proxy_redirect(
             response.statusMessage = solver_response.statusText;
             return response.status(solver_response.status).end();
         }
-    } else {
-        print_log(`failed to solve using ${destination_url} solver`, script_firm);
+
+    } else if (resume == false) {
+        print_log(`failed to solve using: ${destination_url}`, script_firm);
         response.statusMessage = `the requested solver is not currently working, please use other solver or request it later`;
         return response.status(500).end();
     }
+
 }
 
-api.get(
-    [
-        "/hill_climbing",
-        "/genetic_algorithm",
-        "/simulated_annealing",
-        "/neuronal_network",
-    ],
-    async (request, response) => {
-        print_log(`new request received at ${request.path}`, script_firm);
-        const origin_url =
-            request.protocol + "://" + request.get("host") + request.originalUrl;
-        print_log(`request origin url ${origin_url}`, script_firm);
+/**
+ * This function acts as an api gateway for the middle proxy, for this reason it 
+ * receives request in multiple paths and it's only accessible using http request, 
+ * this function uses functions from other modules and from this one to validate 
+ * the request body and header and reject the request if something goes wrong in 
+ * the validations or redirect the request if the validation ends correctly
+ */
+api.get(["/hill_climbing", "/genetic_algorithm", "/simulated_annealing", "/neuronal_network", ], async (request, response) => {
+
+    // Try catch for keep the api running even if something goes wrong.
+
+    try {
+
+        print_log(`new request received at: ${request.path}`, script_firm);
+
+        const origin_url = request.protocol + "://" + request.get("host") + request.originalUrl;
+
+        print_log(`request origin url: ${origin_url}`, script_firm);
+
+        // Validating request header.
+
         const [valid_request_header, header_validation_message] =
         check_header_request_mandatory_requirements(request.headers);
+
         print_log(
             `request header validation status: ${valid_request_header}`,
             script_firm
         );
+
         if (valid_request_header == true) {
+
+            // Validating request body.
+
             const [valid_request_body, body_validation_message] =
             check_body_request_mandatory_requirements(request.body);
+
             print_log(
                 `request body validation status: ${valid_request_body}`,
                 script_firm
             );
+
             if (valid_request_body == true) {
-                try {
-                    const original_path = request.path;
-                    let destination_url, authorization, health_test_url;
-                    if (original_path == "/hill_climbing") {
-                        health_test_url = process.env.HILL_CLIMBING_SOLVER_HEALTH_TEST_LINK;
-                        destination_url = process.env.HILL_CLIMBING_SOLVER_LINK;
-                        authorization = process.env.HILL_CLIMBING_SOLVER_KEY;
-                        return await proxy_redirect(
-                            authorization,
-                            request.body,
-                            destination_url,
-                            origin_url,
-                            response,
-                            health_test_url
-                        );
-                    }
-                    if (original_path == "/genetic_algorithm") {
-                        health_test_url = process.env.GENETIC_ALGORITHM_SOLVER_HEALTH_TEST_LINK;
-                        destination_url = process.env.GENETIC_ALGORITHM_SOLVER_LINK;
-                        authorization = process.env.GENETIC_ALGORITHM_SOLVER_KEY;
-                        return await proxy_redirect(
-                            authorization,
-                            request.body,
-                            destination_url,
-                            origin_url,
-                            response,
-                            health_test_url
-                        );
-                    }
-                    if (original_path == "/simulated_annealing") {
-                        health_test_url = process.env.HILL_CLIMBING_SOLVER_HEALTH_TEST_LINK;
-                        destination_url = process.env.HILL_CLIMBING_SOLVER_LINK;
-                        authorization = process.env.HILL_CLIMBING_SOLVER_KEY;
-                        return await proxy_redirect(
-                            authorization,
-                            request.body,
-                            destination_url,
-                            origin_url,
-                            response,
-                            health_test_url
-                        );
-                    }
-                    if (original_path == "/neuronal_network") {
-                        health_test_url = process.env.HILL_CLIMBING_SOLVER_HEALTH_TEST_LINK;
-                        destination_url = process.env.HILL_CLIMBING_SOLVER_LINK;
-                        authorization = process.env.HILL_CLIMBING_SOLVER_KEY;
-                        return await proxy_redirect(
-                            authorization,
-                            request.body,
-                            destination_url,
-                            origin_url,
-                            response,
-                            health_test_url
-                        );
-                    }
-                } catch (error) {
-                    if (typeof error === "object") {
-                        print_log(`server error ${error.message}`, script_firm);
-                    }
-                    response.statusMessage = "internal server error";
-                    return response.status(500).end();
+
+                // Routing variables.
+
+                const original_path = request.path;
+                let destination_url, authorization, health_test_url;
+
+                // Redirecting the request using built in proxy function using the original request mandatory parameters.
+
+                if (original_path == "/hill_climbing") {
+                    health_test_url = process.env.HILL_CLIMBING_SOLVER_HEALTH_TEST_LINK;
+                    destination_url = process.env.HILL_CLIMBING_SOLVER_LINK;
+                    authorization = process.env.HILL_CLIMBING_SOLVER_KEY;
+                    return await proxy_redirect(
+                        authorization,
+                        request.body,
+                        destination_url,
+                        origin_url,
+                        response,
+                        health_test_url
+                    );
+
+                } else if (original_path == "/genetic_algorithm") {
+                    health_test_url =
+                        process.env.GENETIC_ALGORITHM_SOLVER_HEALTH_TEST_LINK;
+                    destination_url = process.env.GENETIC_ALGORITHM_SOLVER_LINK;
+                    authorization = process.env.GENETIC_ALGORITHM_SOLVER_KEY;
+                    return await proxy_redirect(
+                        authorization,
+                        request.body,
+                        destination_url,
+                        origin_url,
+                        response,
+                        health_test_url
+                    );
+
+                } else if (original_path == "/simulated_annealing") {
+                    health_test_url = process.env.HILL_CLIMBING_SOLVER_HEALTH_TEST_LINK;
+                    destination_url = process.env.HILL_CLIMBING_SOLVER_LINK;
+                    authorization = process.env.HILL_CLIMBING_SOLVER_KEY;
+                    return await proxy_redirect(
+                        authorization,
+                        request.body,
+                        destination_url,
+                        origin_url,
+                        response,
+                        health_test_url
+                    );
+
+                } else if (original_path == "/neuronal_network") {
+                    health_test_url = process.env.HILL_CLIMBING_SOLVER_HEALTH_TEST_LINK;
+                    destination_url = process.env.HILL_CLIMBING_SOLVER_LINK;
+                    authorization = process.env.HILL_CLIMBING_SOLVER_KEY;
+                    return await proxy_redirect(
+                        authorization,
+                        request.body,
+                        destination_url,
+                        origin_url,
+                        response,
+                        health_test_url
+                    );
                 }
+
             } else if (valid_request_body == false) {
                 print_log(
                     `request body validation failed: ${body_validation_message}`,
@@ -167,6 +209,7 @@ api.get(
                 response.statusMessage = body_validation_message;
                 return response.status(400).end();
             }
+
         } else if (valid_request_header == false) {
             print_log(
                 `request header validation failed: ${header_validation_message}`,
@@ -175,7 +218,15 @@ api.get(
             response.statusMessage = header_validation_message;
             return response.status(400).end();
         }
+
+    } catch (error) {
+        if (typeof error === "object") {
+            print_log(`server error: ${error.message}`, script_firm);
+        }
+        response.statusMessage = "internal server error";
+        return response.status(500).end();
     }
-);
+
+});
 
 api.listen(process.env.ACCESS_PORT);
