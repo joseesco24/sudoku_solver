@@ -3,12 +3,15 @@ import print_log from "./general_utilities.mjs";
 const script_firm = "bvl";
 
 /**
- * @param request_body 
- * @returns 
+ * This function makes all the request body necessary validations, it returns 
+ * a status message that indicates if the request body is accepted or rejected 
+ * and why and a boolean that indicates if the request body is or not valid.
+ * 
+ * @param request_body {object} the original request body.
+ * @returns {array} a list with the status message from the validator and a boolean that indicates if the body is or not correct.
  */
-export default function check_body_request_mandatory_requirements(
-    request_body
-) {
+export default function check_body_request_mandatory_requirements(request_body) {
+
     print_log("starting request body validations", script_firm);
 
     // Control vars declarations.
@@ -265,4 +268,5 @@ export default function check_body_request_mandatory_requirements(
     }
 
     return [valid_request_body, message];
+
 }
