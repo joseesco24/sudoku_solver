@@ -11,5 +11,5 @@ def print_log(message: str, script_firm: str = None) -> None:
         print(f"[{date_time}] - {message}")
 
 
-def normalize_decimal(decimal: float):
+def normalize_decimal(decimal: float) -> float:
     return round(decimal, 4)

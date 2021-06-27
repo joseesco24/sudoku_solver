@@ -4,10 +4,13 @@
   "dockerFile": "../development.Dockerfile",
   "forwardPorts": [],
   "extensions": [
-    "esbenp.prettier-vscode",
-    "ms-python.python",
+    "coenraads.bracket-pair-colorizer-2",
+    "aaron-bond.better-comments",
     "ms-python.vscode-pylance",
+    "njpwerner.autodocstring",
+    "oderwat.indent-rainbow",
+    "esbenp.prettier-vscode",
     "ms-toolsai.jupyter",
-    "oderwat.indent-rainbow"
+    "ms-python.python"
   ]
 }
