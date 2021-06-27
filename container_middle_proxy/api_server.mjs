@@ -8,6 +8,7 @@ import express from "express";
 import axios from "axios";
 
 const script_firm = "api";
+const error_firm = "err";
 const api = express();
 
 api.use(express.json());
@@ -103,7 +104,7 @@ async function proxy_redirect(authorization, body, destination_url, origin_url, 
  * the request body and header and reject the request if something goes wrong in 
  * the validations or redirect the request if the validation ends correctly
  */
-api.get(["/hill_climbing", "/genetic_algorithm", "/simulated_annealing", "/neuronal_network", ], async (request, response) => {
+api.get(["/hill_climbing", "/genetic_algorithm", "/simulated_annealing", "/neuronal_network"], async (request, response) => {
 
     // Try catch for keep the api running even if something goes wrong.
 
@@ -218,10 +219,10 @@ api.get(["/hill_climbing", "/genetic_algorithm", "/simulated_annealing", "/neuro
         }
 
     } catch (error) {
-        const error_message = error.stack.split("\n", 1).join("").split(":")[1].trim();
-        const error_location_array = error.stack.split("\n")[1].split("/");
-        const error_location = error_location_array[error_location_array.length - 1];
-        print_log(`server error: ${error_message} at ${error_location}`, script_firm);
+        const error_stack = error.stack.split("\n");
+        for (var error_index = 0; error_index < error_stack.length; error_index++) {
+            print_log(error_stack[error_index].trim(), error_firm);
+        }
         response.statusMessage = "internal server error";
         return response.status(500).end();
     }
