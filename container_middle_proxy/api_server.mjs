@@ -218,9 +218,10 @@ api.get(["/hill_climbing", "/genetic_algorithm", "/simulated_annealing", "/neuro
         }
 
     } catch (error) {
-        if (typeof error === "object") {
-            print_log(`server error: ${error.message}`, script_firm);
-        }
+        const error_message = error.stack.split("\n", 1).join("").split(":")[1].trim();
+        const error_location_array = error.stack.split("\n")[1].split("/");
+        const error_location = error_location_array[error_location_array.length - 1];
+        print_log(`server error: ${error_message} at ${error_location}`, script_firm);
         response.statusMessage = "internal server error";
         return response.status(500).end();
     }
