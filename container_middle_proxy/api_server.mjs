@@ -76,9 +76,19 @@ async function proxy_redirect(authorization, body, destination_url, origin_url, 
             url: destination_url,
             method: "get",
             data: body,
+        }).catch(function (error) {
+            print_log(
+                `there was an error while requesting to: ${destination_url}`,
+                error_firm
+            );
+            return {
+                statusText: "request to solver failed, please use other solver or request it later",
+                status: 500,
+            };
         });
 
         print_log(`reciving response from: ${destination_url}`, script_firm);
+        print_log(`response code from: ${destination_url} is: ${solver_response.status}`, script_firm);
         print_log(`routing from: ${destination_url} to: ${origin_url}`, script_firm);
 
         if (solver_response.status == 200) {
