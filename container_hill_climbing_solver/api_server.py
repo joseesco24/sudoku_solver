@@ -36,7 +36,7 @@ async def health_test(request: Request) -> web.Response:
 
     except:
 
-        error_stack = traceback.format_exc().split("\n")
+        error_stack = traceback.format_exc().split("\n")[:-1]
         for error in error_stack:
             print_log(error.strip(), error_firm)
 

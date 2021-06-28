@@ -220,7 +220,7 @@ api.get(["/hill_climbing", "/genetic_algorithm", "/simulated_annealing", "/neuro
 
     } catch (error) {
         const error_stack = error.stack.split("\n");
-        for (var error_index = 0; error_index < error_stack.length; error_index++) {
+        for (let error_index = 0; error_index < error_stack.length; error_index++) {
             print_log(error_stack[error_index].trim(), error_firm);
         }
         response.statusMessage = "internal server error";

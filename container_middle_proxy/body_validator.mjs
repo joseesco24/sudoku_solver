@@ -149,7 +149,7 @@ export default function check_body_request_mandatory_requirements(request_body) 
         }
     }
     if (valid_request_body == true) {
-        var board_lenght_summation = 0;
+        let board_lenght_summation = 0;
         request_body.board_array.forEach(function (board_row) {
             board_lenght_summation += board_row.length;
         });
@@ -166,13 +166,13 @@ export default function check_body_request_mandatory_requirements(request_body) 
 
     if (valid_request_body == true) {
         for (
-            var row_index = 0; row_index < request_body.board_array.length; row_index++
+            let row_index = 0; row_index < request_body.board_array.length; row_index++
         ) {
             if (valid_request_body == true) {
                 for (
-                    var column_index = 0; column_index < request_body.board_array.length; column_index++
+                    let column_index = 0; column_index < request_body.board_array.length; column_index++
                 ) {
-                    var board_element = request_body.board_array[row_index][column_index];
+                    let board_element = request_body.board_array[row_index][column_index];
                     if (valid_request_body == true) {
                         if (Number.isInteger(board_element) == false) {
                             message = `the board have an element that isn't a number: ${board_element} isn't a number, data type ${typeof board_element}`;
@@ -206,15 +206,14 @@ export default function check_body_request_mandatory_requirements(request_body) 
 
     if (valid_request_body == true) {
         for (
-            var row_index = 0; row_index < request_body.board_array.length; row_index++
+            let row_index = 0; row_index < request_body.board_array.length; row_index++
         ) {
             if (valid_request_body == true) {
-                var row_dict = new Object();
+                let row_dict = new Object();
                 for (
-                    var column_index = 0; column_index < request_body.board_array.length; column_index++
+                    let column_index = 0; column_index < request_body.board_array.length; column_index++
                 ) {
-                    var current_number =
-                        request_body.board_array[row_index][column_index];
+                    let current_number = request_body.board_array[row_index][column_index];
                     if (current_number != 0 && !(current_number in row_dict)) {
                         row_dict[current_number] = [row_index, column_index];
                     } else if (current_number != 0 && current_number in row_dict) {
@@ -231,15 +230,14 @@ export default function check_body_request_mandatory_requirements(request_body) 
     }
     if (valid_request_body == true) {
         for (
-            var row_index = 0; row_index < request_body.board_array.length; row_index++
+            let row_index = 0; row_index < request_body.board_array.length; row_index++
         ) {
             if (valid_request_body == true) {
-                var col_dict = new Object();
+                let col_dict = new Object();
                 for (
-                    var column_index = 0; column_index < request_body.board_array.length; column_index++
+                    let column_index = 0; column_index < request_body.board_array.length; column_index++
                 ) {
-                    var current_number =
-                        request_body.board_array[column_index][row_index];
+                    let current_number = request_body.board_array[column_index][row_index];
                     if (current_number != 0 && !(current_number in col_dict)) {
                         col_dict[current_number] = [row_index, column_index];
                     } else if (current_number != 0 && current_number in col_dict) {
