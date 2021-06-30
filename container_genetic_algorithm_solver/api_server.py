@@ -20,6 +20,18 @@ error_firm = "err"
 @api_routes.get(r"/health_test")
 async def health_test(request: Request) -> web.Response:
 
+    """Health Test Path Function
+
+    This function is incharge of response all the health check petitions that the middle proxy makes for
+    checking if the requested solver is active before making a solver request.
+
+    Args:
+        request (aiohttp.web_request.Request): The health test request made from the middle proxy.
+
+    Returns:
+        web.Response: A 200 status code if everything goes wright, 500 if something goes wrong.
+    """
+
     try:
 
         origin_url = f"{request.scheme}://{request.remote}{request.rel_url}"
@@ -47,6 +59,23 @@ async def health_test(request: Request) -> web.Response:
 
 @api_routes.get(r"/solver")
 async def solver(request: Request) -> web.Response:
+
+    """Solver Core Function
+
+    This function is in charge to expose the solver functionality, this function receives the board solve
+    parameters and initial board in the body of a json http request and returns response with the board
+    best solution that this solver could find using a genetic algorithm in the response body also
+    using json format.
+
+    Args:
+        request (aiohttp.web_request.Request): An http request verified for the middle proxy that contains
+        in the body the solve parameters and the initial board.
+
+    Returns:
+        web.Response: A 200 status code and a json body with the board solution if everything goes right,
+        500 if something goes wrong with an error message or a 401 code if the api key used by the middle
+        proxy is wrong for some reason.
+    """
 
     try:
 
