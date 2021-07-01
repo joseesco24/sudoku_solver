@@ -6,6 +6,19 @@ def calculate_board_fitness_single(
     board: list, zone_height: int, zone_length: int
 ) -> int:
 
+    """Calculate Board Fitness Single Function
+
+    This function calculates and returns all the collisions on a board and returns the summation of them.
+
+    Args:
+        board (list): A full filled 2D board array representation.
+        zone_height (int): The zones height.
+        zone_length (int): The zones length.
+
+    Returns:
+        int: Total collisions on the board.
+    """
+
     collisions = 0
 
     for row in range(len(board)):
@@ -37,6 +50,23 @@ def calculate_board_fitness_single(
 def calculate_board_fitness_report(
     board: list, zone_height: int, zone_length: int
 ) -> list:
+
+    """Calculate Board Fitness Report Function
+
+    This function calculates and returns all the collisions on a board and returns the count separated
+    by total, zone, row and column.
+
+    Args:
+        board (list): A full filled 2D board array representation.
+        zone_height (int): The zones height.
+        zone_length (int): The zones length.
+
+    Returns:
+        int: Total collisions on the board.
+        int: Total collisions on the board zones.
+        int: Total collisions on the board rows.
+        int: Total collisions on the board columns.
+    """
 
     row_collisions, column_collisions, zone_collisions = 0, 0, 0
 
@@ -72,6 +102,23 @@ def board_random_initialization(
     fixed_numbers_board: list, zone_height: int, zone_length: int
 ) -> list:
 
+    """Board Random Initialization Function
+
+    This function initializes a board that is not full filled, it checks the number range of the rows, columns
+    and zones based on the product of the zone measure for filling the white positions with numbers on the
+    range that are not in the row, this function fill the board row by row, it does not care the columns, the
+    function just check when filling that the numbers in the rows are not repeated, in this way the collision
+    of the board rows are 0 since the board initialization.
+
+    Args:
+        fixed_numbers_board (list): A 2D board array representation that includes just the fixed numbers.
+        zone_height (int): The zones height.
+        zone_length (int): The zones length.
+
+    Returns:
+        list: A full filled 2D board array representation.
+    """
+
     filled_board = deepcopy(fixed_numbers_board)
 
     for row_index in range(len(filled_board)):
@@ -87,6 +134,21 @@ def board_random_initialization(
 
 
 def board_random_mutation(board: list, fixed_numbers_board: list) -> list:
+
+    """Board Random Mutation Function
+
+    This function mutates a board 2D array representation, the mutation that makes this functions consist
+    in select one random row first, after select the row the function select two random positions of the
+    selected row (columns) and exchange its positions, the positions that the function select in the row
+    have one restriction, the selected positions can not be filled with a fixed number.
+
+    Args:
+        board (list): A full filled 2D board array representation.
+        fixed_numbers_board (list): A 2D board array representation that includes just the fixed numbers.
+
+    Returns:
+        list: A full filled 2D board array representation with a mutation in one of its rows.
+    """
 
     row_index = random.randrange(len(board))
 

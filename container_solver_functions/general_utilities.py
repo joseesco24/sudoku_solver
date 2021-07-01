@@ -5,7 +5,7 @@ def print_log(message: str, script_firm: str = None) -> None:
 
     """Print Log Function
 
-    This functions is in charge of printing all the necessary logs of the application with the same format.
+    This function is in charge of printing all the necessary logs of the application with the same format.
 
     Args:
         message (str): Any message that needs to be printed with a log format.

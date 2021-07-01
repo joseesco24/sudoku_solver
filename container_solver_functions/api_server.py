@@ -18,8 +18,6 @@ script_firm = "api"
 
 async def check_request_mandatory_requirements(request: Request):
 
-    global script_firm
-
     print_log(r"starting request headers and body validations", script_firm)
 
     try:
