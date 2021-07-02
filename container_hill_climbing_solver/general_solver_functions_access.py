@@ -1,44 +1,10 @@
 from general_utilities import print_log
 
-import aiohttp
-import os
+from aiohttp import ClientSession
+from os import environ
 
-api_key = str(os.environ["SOLVER_FUNCTIONS_KEY"])
-
-
-async def calculate_and_print_board_fitness_report(
-    board: list, zone_height: int, zone_length: int, script_firm: str
-) -> None:
-
-    """Calculate And Print Board Fitness Report
-
-    This function uses the general solver functions api to calculate and print a report of all the different
-    collisions on a given board array 2D representation.
-
-    Args:
-        board (list): A full filled 2D board array representation.
-        zone_height (int): The zones height.
-        zone_length (int): The zones length.
-        script_firm (str): A script firm that is shown on the logs.
-    """
-
-    body = {"zone_height": zone_height, "zone_length": zone_length, "board": board}
-    url = str(os.environ["FITNESS_REPORT_SCORE_LINK"])
-    response_body = dict()
-
-    headers = {"Authorization": api_key}
-    async with aiohttp.ClientSession(headers=headers) as session:
-        async with session.get(url=url, json=body) as response:
-            response_body = await response.json()
-
-    print_log(f"Errors in board: {str(response_body['total_collisions'])}", script_firm)
-    print_log(f"Errors in rows: {str(response_body['row_collisions'])}", script_firm)
-    print_log(f"Errors in zones: {str(response_body['zone_collisions'])}", script_firm)
-    print_log(
-        f"Errors in columns: {str(response_body['column_collisions'])}", script_firm
-    )
-
-    return None
+api_key = str(environ["SOLVER_FUNCTIONS_KEY"])
+script_firm = "gfa"
 
 
 async def calculate_board_fitness_report(
@@ -47,11 +13,11 @@ async def calculate_board_fitness_report(
 
     """Calculate Board Fitness Report
 
-    This function uses the general solver functions api to calculate and return all the different collisions
-    on a given board array 2D representation.
+    This function uses the general solver functions api to calculate and return all the different collisions on a given board array
+    representation.
 
     Args:
-        board (list): A full filled 2D board array representation.
+        board (list): A full filled board representation.
         zone_height (int): The zones height.
         zone_length (int): The zones length.
 
@@ -63,12 +29,17 @@ async def calculate_board_fitness_report(
     """
 
     body = {"zone_height": zone_height, "zone_length": zone_length, "board": board}
-    url = str(os.environ["FITNESS_REPORT_SCORE_LINK"])
+    url = str(environ["FITNESS_REPORT_SCORE_LINK"])
     response_body = dict()
 
+    print_log(f"requesting a board fitness report to: {url}", script_firm)
+
     headers = {"Authorization": api_key}
-    async with aiohttp.ClientSession(headers=headers) as session:
+    async with ClientSession(headers=headers) as session:
         async with session.get(url=url, json=body) as response:
+            print_log(
+                f"response status code from: {url} is: {response.status}", script_firm
+            )
             response_body = await response.json()
 
     total_collisions = response_body["total_collisions"]
@@ -85,11 +56,11 @@ async def calculate_board_fitness_single(
 
     """Calculate Board Fitness Single
 
-    This function uses the general solver functions api to calculate and return the total of all the
-    collisions on a given board array 2D representation.
+    This function uses the general solver functions api to calculate and return the total of all the collisions on a given board
+    array representation.
 
     Args:
-        board (list): A full filled 2D board array representation.
+        board (list): A full filled board representation.
         zone_height (int): The zones height.
         zone_length (int): The zones length.
 
@@ -98,15 +69,20 @@ async def calculate_board_fitness_single(
     """
 
     body = {"zone_height": zone_height, "zone_length": zone_length, "board": board}
-    url = str(os.environ["FITNESS_SINGLE_SCORE_LINK"])
+    url = str(environ["FITNESS_SINGLE_SCORE_LINK"])
     response_body = dict()
 
+    print_log(f"requesting a board fitness score to: {url}", script_firm)
+
     headers = {"Authorization": api_key}
-    async with aiohttp.ClientSession(headers=headers) as session:
+    async with ClientSession(headers=headers) as session:
         async with session.get(url=url, json=body) as response:
+            print_log(
+                f"response status code from: {url} is: {response.status}", script_firm
+            )
             response_body = await response.json()
 
-    return int(response_body["fitness_score"])
+    return response_body["fitness_score"]
 
 
 async def board_random_initialization(
@@ -115,17 +91,17 @@ async def board_random_initialization(
 
     """Board Random Initialization
 
-    This function uses the general solver functions api to fill randomly a board based on its initial state,
-    where just the fixed numbers are on the board, the white spaces need to be represented with a 0 and just the
-    spaces with 0 are changed for random numbers that are not in the board untill the board is filled.
+    This function uses the general solver functions api to fill randomly a board based on its initial state, where just the fixed
+    numbers are on the board, the white spaces need to be represented with a 0 and just the spaces with zero are changed for random
+    numbers that are not in the board untill the board is filled.
 
     Args:
-        fixed_numbers_board (list): A 2D board array representation that includes just the fixed numbers.
+        fixed_numbers_board (list): A board representation that includes just the fixed numbers.
         zone_height (int): The zones height.
         zone_length (int): The zones length.
 
     Returns:
-        list: A full filled 2D board array representation.
+        list: A full filled board representation.
     """
 
     body = {
@@ -133,39 +109,49 @@ async def board_random_initialization(
         "zone_height": zone_height,
         "zone_length": zone_length,
     }
-    url = str(os.environ["RANDOM_INITIALIZATION_LINK"])
+    url = str(environ["RANDOM_INITIALIZATION_LINK"])
     response_body = dict()
 
+    print_log(f"requesting a board random initialization to: {url}", script_firm)
+
     headers = {"Authorization": api_key}
-    async with aiohttp.ClientSession(headers=headers) as session:
+    async with ClientSession(headers=headers) as session:
         async with session.get(url=url, json=body) as response:
+            print_log(
+                f"response status code from: {url} is: {response.status}", script_firm
+            )
             response_body = await response.json()
 
-    return list(response_body["board"])
+    return response_body["board"]
 
 
 async def board_random_mutation(board: list, fixed_numbers_board: list) -> list:
 
     """Board Random Mutation
 
-    This function uses the general solver functions api to mutate randomly a board based on its initial state, 
-    the mutation affect just the not fixed numbers on the board.
+    This function uses the general solver functions api to mutate randomly a board based on its initial state, the mutation affect
+    just the not fixed numbers on the board.
 
     Args:
-        fixed_numbers_board (list): A 2D board array representation that includes just the fixed numbers.
-        board (list): A full filled 2D board array representation..
+        fixed_numbers_board (list): A board representation that includes just the fixed numbers.
+        board (list): A full filled board representation.
 
     Returns:
-        list: A full filled 2D board array representation with a mutation in one of its rows.
+        list: A full filled board representation with a mutation in one of its rows.
     """
 
     body = {"fixed_numbers_board": fixed_numbers_board, "board": board}
-    url = str(os.environ["RANDOM_MUTATION_LINK"])
+    url = str(environ["RANDOM_MUTATION_LINK"])
     response_body = dict()
 
+    print_log(f"requesting a board random mutation to: {url}", script_firm)
+
     headers = {"Authorization": api_key}
-    async with aiohttp.ClientSession(headers=headers) as session:
+    async with ClientSession(headers=headers) as session:
         async with session.get(url=url, json=body) as response:
+            print_log(
+                f"response status code from: {url} is: {response.status}", script_firm
+            )
             response_body = await response.json()
 
-    return list(response_body["board"])
+    return response_body["board"]

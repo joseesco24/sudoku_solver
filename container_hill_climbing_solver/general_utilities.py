@@ -1,7 +1,7 @@
 from datetime import datetime
 
 
-def print_log(message: str, script_firm: str = None) -> None:
+def print_log(message: str, script_firm: str = "unk") -> None:
 
     """Print Log
 
@@ -9,16 +9,13 @@ def print_log(message: str, script_firm: str = None) -> None:
 
     Args:
         message (str): Any message that needs to be printed with a log format.
-        script_firm (str = None): The script firm that indicates where the message comes.
+        script_firm (str): The script firm that indicates where the message comes.
     """
 
     date_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     message = str(message).capitalize()
-    if script_firm is not None:
-        script_firm = script_firm.upper()
-        print(f"[{date_time}][{script_firm}] - {message}")
-    else:
-        print(f"[{date_time}] - {message}")
+    script_firm = script_firm.upper()
+    print(f"[{date_time}][{script_firm}] - {message}")
 
 
 def normalize_decimal(decimal: float) -> float:

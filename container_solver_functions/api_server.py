@@ -127,7 +127,7 @@ async def get_board_fitness_single(request: Request) -> web.Response:
 @api_routes.get(r"/calculate_board_fitness_report")
 async def get_board_fitness_report(request: Request) -> web.Response:
 
-    """Get Board Fitness Single
+    """Get Board Fitness Report
 
     This function calculates the count of all the collisions on the board separating them by the collision type an packages them
     in a json file on the response body.
@@ -193,7 +193,7 @@ async def get_board_fitness_report(request: Request) -> web.Response:
 @api_routes.get(r"/board_random_initialization")
 async def get_random_initialization(request: Request) -> web.Response:
 
-    """Get Board Fitness Single
+    """Get Random Initialization
 
     This function initializes a board with empty spaces and package the full filled board in the response body.
 
@@ -250,7 +250,7 @@ async def get_random_initialization(request: Request) -> web.Response:
 @api_routes.get(r"/board_random_mutation")
 async def get_random_mutation(request: Request) -> web.Response:
 
-    """Get Board Fitness Single
+    """Get Random Mutation
 
     This function mutate and package the mutated board in the response body.
 

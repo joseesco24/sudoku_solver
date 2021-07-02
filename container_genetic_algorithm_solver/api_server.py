@@ -20,7 +20,7 @@ error_firm = "err"
 @api_routes.get(r"/health_test")
 async def health_test(request: Request) -> web.Response:
 
-    """Health Test Path Function
+    """Health Test
 
     This function is incharge of response all the health check petitions that the middle proxy makes for
     checking if the requested solver is active before making a solver request.
@@ -60,7 +60,7 @@ async def health_test(request: Request) -> web.Response:
 @api_routes.get(r"/solver")
 async def solver(request: Request) -> web.Response:
 
-    """Solver Core Function
+    """Solver
 
     This function is in charge to expose the solver functionality, this function receives the board solve
     parameters and initial board in the body of a json http request and returns response with the board
