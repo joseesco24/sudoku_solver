@@ -6,10 +6,10 @@ from general_solvers_functions import board_random_mutation
 from general_utilities import print_log
 
 from aiohttp.web_request import Request
+from traceback import format_exc
 from aiohttp import web
-import traceback
-import json
-import os
+from json import dumps
+from os import environ
 
 api_routes = web.RouteTableDef()
 api = web.Application()
@@ -39,7 +39,7 @@ async def check_request_mandatory_requirements(request: Request) -> bool:
     try:
         await request.json()
         request_header_keys = [key for key in request.headers.keys()]
-        api_key = str(os.environ["ACCESS_KEY"])
+        api_key = str(environ["ACCESS_KEY"])
         request_headers = request.headers
         continue_process = True
         print_log(r"the request headers and body are correct", script_firm)
@@ -84,6 +84,10 @@ async def get_board_fitness_single(request: Request) -> web.Response:
 
     try:
 
+        print_log(
+            r"new request recived at: /calculate_board_fitness_single", script_firm
+        )
+
         continue_process = await check_request_mandatory_requirements(request)
 
         if continue_process is True:
@@ -103,7 +107,7 @@ async def get_board_fitness_single(request: Request) -> web.Response:
             headers = {"Content-Type": "application/json"}
 
             return web.Response(
-                body=json.dumps(obj=response_dict, indent=None),
+                body=dumps(obj=response_dict, indent=None),
                 headers=headers,
                 status=200,
             )
@@ -115,7 +119,7 @@ async def get_board_fitness_single(request: Request) -> web.Response:
 
     except:
 
-        error_stack = traceback.format_exc().split("\n")[:-1]
+        error_stack = format_exc().split("\n")[:-1]
         for error in error_stack:
             print_log(error.strip(), error_firm)
 
@@ -141,6 +145,10 @@ async def get_board_fitness_report(request: Request) -> web.Response:
     """
 
     try:
+
+        print_log(
+            r"new request recived at: /calculate_board_fitness_report", script_firm
+        )
 
         continue_process = await check_request_mandatory_requirements(request)
 
@@ -169,7 +177,7 @@ async def get_board_fitness_report(request: Request) -> web.Response:
             headers = {"Content-Type": "application/json"}
 
             return web.Response(
-                body=json.dumps(obj=response_dict, indent=None),
+                body=dumps(obj=response_dict, indent=None),
                 headers=headers,
                 status=200,
             )
@@ -181,7 +189,7 @@ async def get_board_fitness_report(request: Request) -> web.Response:
 
     except:
 
-        error_stack = traceback.format_exc().split("\n")[:-1]
+        error_stack = format_exc().split("\n")[:-1]
         for error in error_stack:
             print_log(error.strip(), error_firm)
 
@@ -207,6 +215,8 @@ async def get_random_initialization(request: Request) -> web.Response:
 
     try:
 
+        print_log(r"new request recived at: /board_random_initialization", script_firm)
+
         continue_process = await check_request_mandatory_requirements(request)
 
         if continue_process is True:
@@ -226,7 +236,7 @@ async def get_random_initialization(request: Request) -> web.Response:
             headers = {"Content-Type": "application/json"}
 
             return web.Response(
-                body=json.dumps(obj=response_dict, indent=None),
+                body=dumps(obj=response_dict, indent=None),
                 headers=headers,
                 status=200,
             )
@@ -238,7 +248,7 @@ async def get_random_initialization(request: Request) -> web.Response:
 
     except:
 
-        error_stack = traceback.format_exc().split("\n")[:-1]
+        error_stack = format_exc().split("\n")[:-1]
         for error in error_stack:
             print_log(error.strip(), error_firm)
 
@@ -264,6 +274,8 @@ async def get_random_mutation(request: Request) -> web.Response:
 
     try:
 
+        print_log(r"new request recived at: /board_random_mutation", script_firm)
+
         continue_process = await check_request_mandatory_requirements(request)
 
         if continue_process is True:
@@ -282,7 +294,7 @@ async def get_random_mutation(request: Request) -> web.Response:
             headers = {"Content-Type": "application/json"}
 
             return web.Response(
-                body=json.dumps(obj=response_dict, indent=None),
+                body=dumps(obj=response_dict, indent=None),
                 headers=headers,
                 status=200,
             )
@@ -294,7 +306,7 @@ async def get_random_mutation(request: Request) -> web.Response:
 
     except:
 
-        error_stack = traceback.format_exc().split("\n")[:-1]
+        error_stack = format_exc().split("\n")[:-1]
         for error in error_stack:
             print_log(error.strip(), error_firm)
 
@@ -304,4 +316,4 @@ async def get_random_mutation(request: Request) -> web.Response:
 
 
 api.add_routes(api_routes)
-web.run_app(app=api, port=int(os.environ["ACCESS_PORT"]))
+web.run_app(app=api, port=int(environ["ACCESS_PORT"]))

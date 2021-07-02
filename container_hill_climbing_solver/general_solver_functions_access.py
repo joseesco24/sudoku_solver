@@ -1,10 +1,7 @@
-from general_utilities import print_log
-
 from aiohttp import ClientSession
 from os import environ
 
 api_key = str(environ["SOLVER_FUNCTIONS_KEY"])
-script_firm = "gfa"
 
 
 async def calculate_board_fitness_report(
@@ -32,14 +29,9 @@ async def calculate_board_fitness_report(
     url = str(environ["FITNESS_REPORT_SCORE_LINK"])
     response_body = dict()
 
-    print_log(f"requesting a board fitness report to: {url}", script_firm)
-
     headers = {"Authorization": api_key}
     async with ClientSession(headers=headers) as session:
         async with session.get(url=url, json=body) as response:
-            print_log(
-                f"response status code from: {url} is: {response.status}", script_firm
-            )
             response_body = await response.json()
 
     return (
@@ -72,14 +64,9 @@ async def calculate_board_fitness_single(
     url = str(environ["FITNESS_SINGLE_SCORE_LINK"])
     response_body = dict()
 
-    print_log(f"requesting a board fitness score to: {url}", script_firm)
-
     headers = {"Authorization": api_key}
     async with ClientSession(headers=headers) as session:
         async with session.get(url=url, json=body) as response:
-            print_log(
-                f"response status code from: {url} is: {response.status}", script_firm
-            )
             response_body = await response.json()
 
     return response_body["fitness_score"]
@@ -112,14 +99,9 @@ async def board_random_initialization(
     url = str(environ["RANDOM_INITIALIZATION_LINK"])
     response_body = dict()
 
-    print_log(f"requesting a board random initialization to: {url}", script_firm)
-
     headers = {"Authorization": api_key}
     async with ClientSession(headers=headers) as session:
         async with session.get(url=url, json=body) as response:
-            print_log(
-                f"response status code from: {url} is: {response.status}", script_firm
-            )
             response_body = await response.json()
 
     return response_body["board"]
@@ -144,14 +126,9 @@ async def board_random_mutation(board: list, fixed_numbers_board: list) -> list:
     url = str(environ["RANDOM_MUTATION_LINK"])
     response_body = dict()
 
-    print_log(f"requesting a board random mutation to: {url}", script_firm)
-
     headers = {"Authorization": api_key}
     async with ClientSession(headers=headers) as session:
         async with session.get(url=url, json=body) as response:
-            print_log(
-                f"response status code from: {url} is: {response.status}", script_firm
-            )
             response_body = await response.json()
 
     return response_body["board"]

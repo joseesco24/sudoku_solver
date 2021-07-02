@@ -1,5 +1,5 @@
+from random import randrange
 from copy import deepcopy
-import random
 
 
 def calculate_board_fitness_single(
@@ -123,7 +123,7 @@ def board_random_initialization(
         for column_index in range(len(filled_board[row_index])):
             if filled_board[row_index][column_index] == 0:
                 while True:
-                    new_number = random.randrange(1, (zone_height * zone_length) + 1)
+                    new_number = randrange(1, (zone_height * zone_length) + 1)
                     if new_number not in filled_board[row_index]:
                         filled_board[row_index][column_index] = new_number
                         break
@@ -148,16 +148,16 @@ def board_random_mutation(board: list, fixed_numbers_board: list) -> list:
         list: A full filled board representation with a mutation in one of its rows.
     """
 
-    row_index = random.randrange(len(board))
+    row_index = randrange(len(board))
 
     while True:
-        column_index_1 = random.randrange(len(board[row_index]))
+        column_index_1 = randrange(len(board[row_index]))
         if fixed_numbers_board[row_index][column_index_1] == 0:
             number_1 = deepcopy(board[row_index][column_index_1])
             break
 
     while True:
-        column_index_2 = random.randrange(len(board[row_index]))
+        column_index_2 = randrange(len(board[row_index]))
         if fixed_numbers_board[row_index][column_index_2] == 0:
             number_2 = deepcopy(board[row_index][column_index_2])
             break
