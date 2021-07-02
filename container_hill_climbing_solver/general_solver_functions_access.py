@@ -42,12 +42,12 @@ async def calculate_board_fitness_report(
             )
             response_body = await response.json()
 
-    total_collisions = response_body["total_collisions"]
-    column_collisions = response_body["column_collisions"]
-    row_collisions = response_body["row_collisions"]
-    zone_collisions = response_body["zone_collisions"]
-
-    return total_collisions, column_collisions, row_collisions, zone_collisions
+    return (
+        response_body["total_collisions"],
+        response_body["column_collisions"],
+        response_body["row_collisions"],
+        response_body["zone_collisions"],
+    )
 
 
 async def calculate_board_fitness_single(
