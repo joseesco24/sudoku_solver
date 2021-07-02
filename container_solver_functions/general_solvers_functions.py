@@ -6,12 +6,12 @@ def calculate_board_fitness_single(
     board: list, zone_height: int, zone_length: int
 ) -> int:
 
-    """Calculate Board Fitness Single Function
+    """Calculate Board Fitness Single
 
-    This function calculates and returns all the collisions on a board and returns the summation of them.
+    This function calculates and returns the summation of all the collisions on a board.
 
     Args:
-        board (list): A full filled 2D board array representation.
+        board (list): A full filled board representation.
         zone_height (int): The zones height.
         zone_length (int): The zones length.
 
@@ -51,13 +51,12 @@ def calculate_board_fitness_report(
     board: list, zone_height: int, zone_length: int
 ) -> list:
 
-    """Calculate Board Fitness Report Function
+    """Calculate Board Fitness Report
 
-    This function calculates and returns all the collisions on a board and returns the count separated
-    by total, zone, row and column.
+    This function calculates all the collisions on a board and returns the count separated by total, zone, row and column.
 
     Args:
-        board (list): A full filled 2D board array representation.
+        board (list): A full filled board representation.
         zone_height (int): The zones height.
         zone_length (int): The zones length.
 
@@ -102,21 +101,20 @@ def board_random_initialization(
     fixed_numbers_board: list, zone_height: int, zone_length: int
 ) -> list:
 
-    """Board Random Initialization Function
+    """Board Random Initialization
 
-    This function initializes a board that is not full filled, it checks the number range of the rows, columns
-    and zones based on the product of the zone measure for filling the white positions with numbers on the
-    range that are not in the row, this function fill the board row by row, it does not care the columns, the
-    function just check when filling that the numbers in the rows are not repeated, in this way the collision
-    of the board rows are 0 since the board initialization.
+    This function initializes a board that is not full filled, it checks the number range of the rows, columns and zones based on
+    the product of the zone measure for filling the white positions with numbers on the range that are not in the row, this
+    function fill the board row by row, it does not care the columns, the function just check when filling that the numbers in the
+    rows are not repeated, in this way the collision of the board rows are zero since the board initialization.
 
     Args:
-        fixed_numbers_board (list): A 2D board array representation that includes just the fixed numbers.
+        fixed_numbers_board (list): A board representation that includes just the fixed numbers.
         zone_height (int): The zones height.
         zone_length (int): The zones length.
 
     Returns:
-        list: A full filled 2D board array representation.
+        list: A full filled board representation.
     """
 
     filled_board = deepcopy(fixed_numbers_board)
@@ -135,19 +133,19 @@ def board_random_initialization(
 
 def board_random_mutation(board: list, fixed_numbers_board: list) -> list:
 
-    """Board Random Mutation Function
+    """Board Random Mutation
 
-    This function mutates a board 2D array representation, the mutation that makes this functions consist
-    in select one random row first, after select the row the function select two random positions of the
-    selected row (columns) and exchange its positions, the positions that the function select in the row
-    have one restriction, the selected positions can not be filled with a fixed number.
+    This function mutates a board representation, the mutation that makes this functions consist in select one random row first,
+    after select the row the function select two random positions of the selected row (columns) and exchange its positions, the
+    positions that the function select in the row have one restriction, the selected positions can not be filled with a fixed
+    number.
 
     Args:
-        board (list): A full filled 2D board array representation.
-        fixed_numbers_board (list): A 2D board array representation that includes just the fixed numbers.
+        board (list): A full filled board representation.
+        fixed_numbers_board (list): A board representation that includes just the fixed numbers.
 
     Returns:
-        list: A full filled 2D board array representation with a mutation in one of its rows.
+        list: A full filled board representation with a mutation in one of its rows.
     """
 
     row_index = random.randrange(len(board))

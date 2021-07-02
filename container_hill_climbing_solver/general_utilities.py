@@ -3,7 +3,7 @@ from datetime import datetime
 
 def print_log(message: str, script_firm: str = None) -> None:
 
-    """Print Log Function
+    """Print Log
 
     This function is in charge of printing all the necessary logs of the application with the same format.
 
@@ -23,7 +23,7 @@ def print_log(message: str, script_firm: str = None) -> None:
 
 def normalize_decimal(decimal: float) -> float:
 
-    """Normalize Decimal Function
+    """Normalize Decimal
 
     This is a simple function that helps normalizing float numbers rounding it to just four decimals.
 
