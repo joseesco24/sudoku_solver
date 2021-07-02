@@ -3,9 +3,8 @@ import print_log from "./general_utilities.mjs";
 const script_firm = "hvl";
 
 /**
- * This function makes all the request header necessary validations, it returns 
- * a status message that indicates if the request header is accepted or rejected 
- * and why and a boolean that indicates if the request header is or not valid.
+ * This function makes all the request header necessary validations, it returns  a status message that indicates if the request 
+ * header is accepted or rejected and why and a boolean that indicates if the request header is or not valid.
  * 
  * @param request_header {object} the original request header.
  * @returns {array} a list with the status message from the validator and a boolean that indicates if the header is or not correct.

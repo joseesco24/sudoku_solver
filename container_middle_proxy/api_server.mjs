@@ -14,13 +14,11 @@ const api = express();
 api.use(express.json());
 
 /**
- * This function is the incharge of act as a proxy in the middle proxy container, 
- * it receives as inputs the mandatory parameters from the original request and 
- * uses them for making a new request to the correct solver, it also checks before 
- * that the required solver is working, if it's not working the function returns a 
- * 500 error code, if the solver solves the board correctly it returns a 200 status
- * code and the solved board data, in any other way it returns the response code 
- * and a status message from the respective solver.
+ * This function is the incharge of act as a proxy in the middle proxy container, it receives as inputs the mandatory parameters 
+ * from the original request and uses them for making a new request to the correct solver, it also checks before that the required 
+ * solver is working, if it's not working the function returns a 500 error code, if the solver solves the board correctly it 
+ * returns a 200 status code and the solved board data, in any other way it returns the response code and a status message from 
+ * the respective solver.
  * 
  * @param authorization {string} the needed authorization for use the respective solver.
  * @param body {object} the original request body.
@@ -108,11 +106,10 @@ async function proxy_redirect(authorization, body, destination_url, origin_url, 
 }
 
 /**
- * This function acts as an api gateway for the middle proxy, for this reason it 
- * receives request in multiple paths and it's only accessible using http request, 
- * this function uses functions from other modules and from this one to validate 
- * the request body and header and reject the request if something goes wrong in 
- * the validations or redirect the request if the validation ends correctly
+ * This function acts as an api gateway for the middle proxy, for this reason it receives request in multiple paths and it's only 
+ * accessible using http request, this function uses functions from other modules and from this one to validate the request body 
+ * and header and reject the request if something goes wrong in the validations or redirect the request if the validation ends 
+ * correctly.
  */
 api.get(["/hill_climbing", "/genetic_algorithm", "/simulated_annealing", "/neuronal_network"], async (request, response) => {
 

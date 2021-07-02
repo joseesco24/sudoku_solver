@@ -1,7 +1,6 @@
 /**
- * this functions is used for print all the logs of the application, using it 
- * makes easy to read the logs and find errors taking into account the hour 
- * and date of the log
+ * this functions is used for print all the logs of the application, using it makes easy to read the logs and find errors taking 
+ * into account the hour and date of the log.
  * 
  * @param message {string} the message that is going to be printed as a log.
  * @param script_firm {string} the firm of the file that generates the message.
