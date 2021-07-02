@@ -20,13 +20,13 @@ api.use(express.json());
  * returns a 200 status code and the solved board data, in any other way it returns the response code and a status message from 
  * the respective solver.
  * 
- * @param authorization {string} the needed authorization for use the respective solver.
- * @param body {object} the original request body.
- * @param destination_url {string} the solver url.
- * @param origin_url {string} the url that generates the original request.
- * @param response {express.response} the express response object.
- * @param health_test_url {string} the solver health test url.
- * @returns {express.response} the response from the solver or from the method if the solver fails.
+ * @param authorization {string} The needed authorization for use the respective solver.
+ * @param body {object} The original request body.
+ * @param destination_url {string} The solver url.
+ * @param origin_url {string} The url that generates the original request.
+ * @param response {express.response} The express response object.
+ * @param health_test_url {string} The solver health test url.
+ * @returns {express.response} The response from the solver or from the method if the solver fails.
  */
 async function proxy_redirect(authorization, body, destination_url, origin_url, response, health_test_url) {
 
@@ -110,6 +110,10 @@ async function proxy_redirect(authorization, body, destination_url, origin_url, 
  * accessible using http request, this function uses functions from other modules and from this one to validate the request body 
  * and header and reject the request if something goes wrong in the validations or redirect the request if the validation ends 
  * correctly.
+ * 
+ * @param request {express.request} The express request object.
+ * @param response {express.response} The express response object.
+ * @returns {express.response} The response from the solver or from the function if the solver fails.
  */
 api.get(["/hill_climbing", "/genetic_algorithm", "/simulated_annealing", "/neuronal_network"], async (request, response) => {
 

@@ -2,6 +2,13 @@ import print_log from "./general_utilities.mjs";
 
 const script_firm = "bvl";
 
+/**
+ * This function check that all the elements on the board are numbers and are in range.
+ *
+ * @param request_body {object} The original request body.
+ * @param board_dimensions {number} A number that indicates the length of the columns, rows an the product of the zones measures.
+ * @returns {bool} A boolean that indicates if the elements on the board are valid or not.
+ */
 function check_board_elements(request_body, board_dimensions) {
     let valid_request_body = true;
     for (
@@ -38,6 +45,12 @@ function check_board_elements(request_body, board_dimensions) {
     return valid_request_body;
 }
 
+/**
+ * A function that check if the columns of the board are or not correct.
+ *
+ * @param request_body {object} The original request body.
+ * @returns {bool} A boolean that indicates if the columns are valid or not.
+ */
 function check_board_columns(request_body) {
     let valid_request_body = true;
     for (
@@ -65,6 +78,12 @@ function check_board_columns(request_body) {
     return valid_request_body;
 }
 
+/**
+ * A function that check if the rows of the board are or not correct.
+ *
+ * @param request_body {object} The original request body.
+ * @returns {bool} A boolean that indicates if the rows are valid or not.
+ */
 function check_board_rows(request_body) {
     let valid_request_body = true;
     for (
@@ -96,8 +115,8 @@ function check_board_rows(request_body) {
  * This function makes all the request body necessary validations, it returns  a status message that indicates if the request body
  * is accepted or rejected and why and a boolean that indicates if the request body is or not valid.
  *
- * @param request_body {object} the original request body.
- * @returns {array} a list with the status message from the validator and a boolean that indicates if the body is or not correct.
+ * @param request_body {object} The original request body.
+ * @returns {array} A list with the status message from the validator and a boolean that indicates if the body is or not correct.
  */
 export default function check_body_request_mandatory_requirements(request_body) {
     print_log("starting request body validations", script_firm);

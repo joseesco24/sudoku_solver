@@ -1,11 +1,11 @@
 /**
- * this functions is used for print all the logs of the application, using it makes easy to read the logs and find errors taking 
+ * this functions is used for print all the logs of the application, using it makes easy to read the logs and find errors taking
  * into account the hour and date of the log.
- * 
- * @param message {string} the message that is going to be printed as a log.
- * @param script_firm {string} the firm of the file that generates the message.
+ *
+ * @param message {string} The message that is going to be printed as a log.
+ * @param script_firm {string} The firm of the file that generates the message.
  */
-export default function print_log(message, script_firm = null) {
+export default function print_log(message, script_firm = "unk") {
 
     message = message.trim().replace(/^\w/, (c) => c.toUpperCase());
     let date_obj = new Date();
@@ -22,11 +22,7 @@ export default function print_log(message, script_firm = null) {
 
     let current_datetime = `${current_date} ${current_time}`;
 
-    if (script_firm != null) {
-        script_firm = script_firm.toUpperCase();
-        console.log(`[${current_datetime}][${script_firm}] - ${message}`);
-    } else {
-        console.log(`[${current_datetime}] - ${message}`);
-    }
+    script_firm = script_firm.toUpperCase();
+    console.log(`[${current_datetime}][${script_firm}] - ${message}`);
 
 }
