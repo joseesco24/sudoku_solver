@@ -18,6 +18,21 @@ async def exchange_if_sudoku_board_improves(
     filled_board: list, fixed_numbers_board: list, zone_height: int, zone_length: int
 ) -> list:
 
+    """Exchange If Sudoku Board Improves
+
+    This function create a new board mutating the original board, if the mutated board have a lower fitness score than the original
+    it returns the mutated board, in other way it return the original board.
+
+    Args:
+        filled_board (list): A full filled board representation.
+        fixed_numbers_board (list): A board representation that includes just the fixed numbers.
+        zone_height (int): The zones height.
+        zone_length (int): The zones length.
+
+    Returns:
+        list: The board with the lower fitness score.
+    """
+
     initial_board = deepcopy(filled_board)
     current_board = deepcopy(filled_board)
 
@@ -47,6 +62,21 @@ async def solve_using_hill_climbing_algorithm(
     zone_length: int,
     board: list,
 ) -> list:
+
+    """Solve Using Hill Climbing Algorithm
+
+    This function is the base of the solver, it implements a hill climbing algorithm with restarts that is the heart of the solver.
+
+    Args:
+        hill_climbing_restarts (int): The number of restarts that the algorithm make.
+        hill_climbing_searchs (int): The number of searches that the algorithm make in all the restarts.
+        zone_height (int): The zones height.
+        zone_length (int): The zones length.
+        board (list): A full filled board representation.
+
+    Returns:
+        list: The best solution to the initial board that the algorithm could find.
+    """
 
     fixed_numbers_board = deepcopy(board)
 
