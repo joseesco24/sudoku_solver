@@ -11,6 +11,8 @@ const script_firm = "bvl";
  */
 function check_board_elements(request_body, board_dimensions) {
     let valid_request_body = true;
+    let message = null;
+
     for (
         let row_index = 0; row_index < request_body.board_array.length; row_index++
     ) {
@@ -42,7 +44,9 @@ function check_board_elements(request_body, board_dimensions) {
             break;
         }
     }
-    return valid_request_body;
+
+    return [valid_request_body, message];
+
 }
 
 /**
@@ -53,6 +57,8 @@ function check_board_elements(request_body, board_dimensions) {
  */
 function check_board_columns(request_body) {
     let valid_request_body = true;
+    let message = null;
+
     for (
         let row_index = 0; row_index < request_body.board_array.length; row_index++
     ) {
@@ -75,7 +81,9 @@ function check_board_columns(request_body) {
             break;
         }
     }
-    return valid_request_body;
+
+    return [valid_request_body, message];
+
 }
 
 /**
@@ -86,6 +94,8 @@ function check_board_columns(request_body) {
  */
 function check_board_rows(request_body) {
     let valid_request_body = true;
+    let message = null;
+
     for (
         let row_index = 0; row_index < request_body.board_array.length; row_index++
     ) {
@@ -108,7 +118,9 @@ function check_board_rows(request_body) {
             break;
         }
     }
-    return valid_request_body;
+
+    return [valid_request_body, message];
+
 }
 
 /**
@@ -272,7 +284,10 @@ export default function check_body_request_mandatory_requirements(request_body) 
     // Board elements validations.
 
     if (valid_request_body == true) {
-        valid_request_body = check_board_elements(request_body, board_dimensions);
+        [valid_request_body, message] = check_board_elements(
+            request_body,
+            board_dimensions
+        );
     }
     if (valid_request_body == true) {
         print_log("all the board dimensions are correct", script_firm);
@@ -281,10 +296,10 @@ export default function check_body_request_mandatory_requirements(request_body) 
     // Checking if the board can be solved.
 
     if (valid_request_body == true) {
-        valid_request_body = check_board_rows(request_body);
+        [valid_request_body, message] = check_board_rows(request_body);
     }
     if (valid_request_body == true) {
-        valid_request_body = check_board_columns(request_body);
+        [valid_request_body, message] = check_board_columns(request_body);
     }
     if (valid_request_body == true) {
         print_log("the board can be solved", script_firm);
