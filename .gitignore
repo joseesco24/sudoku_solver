@@ -22,6 +22,7 @@ package-lock.json
 # specific exceptions of vscode development files.
 !container_genetic_algorithm_solver/vscode/*
 !container_hill_climbing_solver/vscode/*
+!container_solver_functions_c/vscode/*
 !container_solver_functions/vscode/*
 !container_middle_proxy/vscode/*
 !vscode/*
