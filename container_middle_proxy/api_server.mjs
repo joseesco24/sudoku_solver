@@ -247,6 +247,10 @@ const server = api.listen(process.env.ACCESS_PORT);
 
 let connections = [];
 
+/**
+ * This function is the incharge of manage the connections array, the connections array need to be update for being able to make 
+ * a graceful shutdown.
+ */
 server.on("connection", (connection) => {
 
     connections.push(connection);
@@ -258,7 +262,7 @@ server.on("connection", (connection) => {
     connection.on("close", () => {
 
         connections = connections.filter(
-            (current_connections) => current_connections !== connection
+            (current_connection) => current_connection !== connection
         );
         print_log(
             `a connection was closed, count of active connections: ${connections.length}`,
@@ -269,12 +273,27 @@ server.on("connection", (connection) => {
 
 });
 
+/**
+ * This function is the incharge of make a graceful shutdown if the container is called to be down while some connections are 
+ * active.
+ */
 process.on("SIGTERM", () => {
 
-    print_log("sigterm signal received: closing http server", end_firm);
+    print_log("sigterm signal received, closing http server gracefully", end_firm);
 
     server.close(() => {
         print_log("http server is closing out remaining connections", end_firm);
+        process.exit(0);
     });
+
+    setTimeout(() => {
+        print_log(
+            "http server could't close remaining connections in time, forcefully shutting down", end_firm
+        );
+        process.exit(1);
+    }, 5000);
+
+    connections.forEach((current_connection) => current_connection.end());
+    setTimeout(() => connections.forEach((current_connection) => current_connection.destroy()), 1000);
 
 });
