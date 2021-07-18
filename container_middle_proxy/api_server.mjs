@@ -7,8 +7,11 @@ import print_log from "./general_utilities.mjs";
 import express from "express";
 import axios from "axios";
 
+const connection_event_firm = "con";
 const script_firm = "api";
 const error_firm = "err";
+const end_firm = "end";
+
 const api = express();
 
 api.use(express.json());
@@ -240,4 +243,41 @@ api.get(["/hill_climbing", "/genetic_algorithm", "/simulated_annealing", "/neuro
 
 });
 
-api.listen(process.env.ACCESS_PORT);
+const server = api.listen(process.env.ACCESS_PORT);
+
+let connections = [];
+
+server.on("connection", (connection) => {
+
+    connections.push(connection);
+    print_log(
+        `a new connection was started, count of active connections: ${connections.length}`,
+        connection_event_firm
+    );
+
+    connection.on("close", () => {
+
+        connections = connections.filter(
+            (current_connections) => current_connections !== connection
+        );
+        print_log(
+            `a connection was closed, count of active connections: ${connections.length}`,
+            connection_event_firm
+        );
+
+    });
+
+});
+
+function server_shutdown() {
+
+    print_log("sigterm signal received: closing http server", end_firm);
+
+    server.close(() => {
+        print_log("http server is closing out remaining connections", end_firm);
+    });
+
+}
+
+//server.on('connection', connections_gestor);
+process.on("SIGTERM", server_shutdown);
