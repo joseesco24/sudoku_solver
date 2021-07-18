@@ -232,6 +232,11 @@ networks:
     external: false
     driver: bridge
 
+  clients_database_network:
+    name: clients_database_network
+    external: false
+    driver: bridge
+
   middle_proxy_network:
     name: middle_proxy_network
     external: false
