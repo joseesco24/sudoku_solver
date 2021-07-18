@@ -269,7 +269,7 @@ server.on("connection", (connection) => {
 
 });
 
-function server_shutdown() {
+process.on("SIGTERM", () => {
 
     print_log("sigterm signal received: closing http server", end_firm);
 
@@ -277,7 +277,4 @@ function server_shutdown() {
         print_log("http server is closing out remaining connections", end_firm);
     });
 
-}
-
-//server.on('connection', connections_gestor);
-process.on("SIGTERM", server_shutdown);
+});
