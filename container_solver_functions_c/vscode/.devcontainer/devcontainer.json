@@ -7,8 +7,6 @@
     "coenraads.bracket-pair-colorizer-2",
     "jeff-hykin.better-cpp-syntax",
     "aaron-bond.better-comments",
-    "oderwat.indent-rainbow",
-    "esbenp.prettier-vscode",
     "jbenden.c-cpp-flylint",
     "ms-vscode.cpptools"
   ]
