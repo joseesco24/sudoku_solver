@@ -22,7 +22,7 @@ async def health_test(request: Request) -> web.Response:
 
     """Health Test
 
-    This function is incharge of response all the health check petitions that the middle proxy makes for checking if the requested 
+    This function is incharge of response all the health check petitions that the middle proxy makes for checking if the requested
     solver is active before making a solver request.
 
     Args:
@@ -62,16 +62,16 @@ async def solver(request: Request) -> web.Response:
 
     """Solver
 
-    This function is in charge to expose the solver functionality, this function receives the board solve parameters and initial 
-    board in the body of a json http request and returns response with the board best solution that this solver could find using a 
+    This function is in charge to expose the solver functionality, this function receives the board solve parameters and initial
+    board in the body of a json http request and returns response with the board best solution that this solver could find using a
     genetic algorithm in the response body also using json format.
 
     Args:
-        request (aiohttp.web_request.Request): An http request verified for the middle proxy that contains in the body the solve 
+        request (aiohttp.web_request.Request): An http request verified for the middle proxy that contains in the body the solve
         parameters and the initial board.
 
     Returns:
-        web.Response: A 200 status code and a json body with the board solution if everything goes right, 500 if something goes 
+        web.Response: A 200 status code and a json body with the board solution if everything goes right, 500 if something goes
         wrong with an error message or a 401 code if the api key used by the middle proxy is wrong for some reason.
     """
 
@@ -84,7 +84,10 @@ async def solver(request: Request) -> web.Response:
             and request.headers["Authorization"] == os.environ["ACCESS_KEY"]
         ):
 
-            restarts, searchs = 10, 10
+            generations, population = 10, 10
+            mutation, crossover = 0.2, 0.8
+            generations_validator, population_validator = True, True
+            mutation_validator, crossover_validator = True, True
 
             request_body = await request.json()
             request_body_keys = [key for key in request_body.keys()]
@@ -95,32 +98,79 @@ async def solver(request: Request) -> web.Response:
 
             # Validation and search of specific solver parameters.
 
-            if "restarts" in request_body_keys:
-                if type(request_body["restarts"]) is int:
+            if "generations" in request_body_keys:
+                if not type(request_body["generations"]) is int:
                     print_log(
-                        r"the variable restarts has the correct data type", script_firm
-                    )
-                    restarts = request_body["restarts"]
-                else:
-                    print_log(
-                        r"the variable restarts hasn't the correct data type, using default value",
+                        r"the variable generations hasn't the correct data type, using default value",
                         script_firm,
                     )
-            if "searchs" in request_body_keys:
-                if type(request_body["searchs"]) is int:
+                    generations_validator = False
+                if not request_body["generations"] > 0:
                     print_log(
-                        r"the variable searchs has the correct data type", script_firm
-                    )
-                    searchs = request_body["searchs"]
-                else:
-                    print_log(
-                        r"the variable searchs hasn't the correct data type, using default value",
+                        r"the variable generations hasn't the correct value range, using default value",
                         script_firm,
                     )
+                    generations_validator = False
+
+                if generations_validator is True:
+                    generations = request_body["generations"]
+
+            if "population" in request_body_keys:
+                if not type(request_body["population"]) is int:
+                    print_log(
+                        r"the variable population hasn't the correct data type, using default value",
+                        script_firm,
+                    )
+                    population_validator = False
+                if not request_body["population"] > 0:
+                    print_log(
+                        r"the variable population hasn't the correct value range, using default value",
+                        script_firm,
+                    )
+                    population_validator = False
+
+                if population_validator is True:
+                    population = request_body["population"]
+
+            if "mutation" in request_body_keys:
+                if not type(request_body["mutation"]) is float:
+                    print_log(
+                        r"the variable mutation hasn't the correct data type, using default value",
+                        script_firm,
+                    )
+                    mutation_validator = False
+                if not 0 > request_body["mutation"] >= 1:
+                    print_log(
+                        r"the variable mutation hasn't the correct value range, using default value",
+                        script_firm,
+                    )
+                    mutation_validator = False
+
+                if mutation_validator is True:
+                    mutation = request_body["mutation"]
+
+            if "crossover" in request_body_keys:
+                if not type(request_body["crossover"]) is int:
+                    print_log(
+                        r"the variable crossover hasn't the correct data type, using default value",
+                        script_firm,
+                    )
+                    crossover_validator = False
+                if not 0 > request_body["crossover"] >= 1:
+                    print_log(
+                        r"the variable crossover hasn't the correct value range, using default value",
+                        script_firm,
+                    )
+                    crossover_validator = False
+
+                if crossover_validator is True:
+                    crossover = request_body["crossover"]
 
             solution_board = await solve_using_genetic_algorithm(
-                hill_climbing_restarts=restarts,
-                hill_climbing_searchs=searchs,
+                genetic_algorithm_generations=generations,
+                genetic_algorithm_population=population,
+                genetic_algorithm_crossover=crossover,
+                genetic_algorithm_mutation=mutation,
                 zone_height=sudoku_zone_height,
                 zone_length=sudoku_zone_length,
                 board=sudoku_initial_board,

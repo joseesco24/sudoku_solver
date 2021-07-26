@@ -85,6 +85,7 @@ async def solver(request: Request) -> web.Response:
         ):
 
             restarts, searchs = 10, 10
+            restarts_validator, searches_validator = True, True
 
             request_body = await request.json()
             request_body_keys = [key for key in request_body.keys()]
@@ -96,27 +97,38 @@ async def solver(request: Request) -> web.Response:
             # Validation and search of specific solver parameters.
 
             if "restarts" in request_body_keys:
-                if type(request_body["restarts"]) is int:
-                    print_log(
-                        r"the variable restarts has the correct data type", script_firm
-                    )
-                    restarts = request_body["restarts"]
-                else:
+                if not type(request_body["restarts"]) is int:
                     print_log(
                         r"the variable restarts hasn't the correct data type, using default value",
                         script_firm,
                     )
-            if "searchs" in request_body_keys:
-                if type(request_body["searchs"]) is int:
+                    restarts_validator = False
+                if not request_body["restarts"] > 0:
                     print_log(
-                        r"the variable searchs has the correct data type", script_firm
+                        r"the variable restarts hasn't the correct value range, using default value",
+                        script_firm,
                     )
-                    searchs = request_body["searchs"]
-                else:
+                    restarts_validator = False
+
+                if restarts_validator is True:
+                    restarts = request_body["restarts"]
+
+            if "searchs" in request_body_keys:
+                if not type(request_body["searchs"]) is int:
                     print_log(
                         r"the variable searchs hasn't the correct data type, using default value",
                         script_firm,
                     )
+                    searches_validator = False
+                if not request_body["searchs"] > 0:
+                    print_log(
+                        r"the variable searchs hasn't the correct value range, using default value",
+                        script_firm,
+                    )
+                    searches_validator = False
+
+                if searches_validator is True:
+                    searchs = request_body["searchs"]
 
             solution_board = await solve_using_hill_climbing_algorithm(
                 hill_climbing_restarts=restarts,

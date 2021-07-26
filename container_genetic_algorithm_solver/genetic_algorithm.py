@@ -14,7 +14,7 @@ import random
 script_firm = "gas"
 
 
-async def exchange_if_sudoku_board_improves(
+async def mutate_if_sudoku_board_improves(
     filled_board: list, fixed_numbers_board: list, zone_height: int, zone_length: int
 ) -> list:
 
@@ -41,12 +41,18 @@ async def exchange_if_sudoku_board_improves(
 
 
 async def solve_using_genetic_algorithm(
-    hill_climbing_restarts: int,
-    hill_climbing_searchs: int,
+    genetic_algorithm_crossover: float,
+    genetic_algorithm_generations: int,
+    genetic_algorithm_population: int,
+    genetic_algorithm_mutation: float,
     zone_height: int,
     zone_length: int,
     board: list,
 ) -> list:
+
+    print_log(
+        f"{genetic_algorithm_crossover}, {genetic_algorithm_mutation}", script_firm
+    )
 
     fixed_numbers_board = deepcopy(board)
 
@@ -56,7 +62,7 @@ async def solve_using_genetic_algorithm(
     boards_list = list()
     start_time = time()
 
-    for _ in itertools.repeat(None, hill_climbing_restarts):
+    for _ in itertools.repeat(None, genetic_algorithm_generations):
         restarts_counter += 1
         filled_board = await board_random_initialization(
             fixed_numbers_board=fixed_numbers_board,
@@ -64,9 +70,9 @@ async def solve_using_genetic_algorithm(
             zone_length=zone_length,
         )
 
-        for _ in itertools.repeat(None, hill_climbing_searchs):
+        for _ in itertools.repeat(None, genetic_algorithm_population):
             searches_counter += 1
-            filled_board = await exchange_if_sudoku_board_improves(
+            filled_board = await mutate_if_sudoku_board_improves(
                 fixed_numbers_board=fixed_numbers_board,
                 filled_board=filled_board,
                 zone_height=zone_height,
