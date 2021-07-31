@@ -3,6 +3,9 @@ from general_solver_functions_access_custom import calculate_board_fitness_singl
 from general_solver_functions_access import board_random_initialization
 from general_solver_functions_access import board_random_mutation
 
+from genetic_algorithm_functions import exchange_random_row
+from genetic_algorithm_functions import roulette_selection
+
 from general_utilities import normalize_decimal
 from general_utilities import print_log
 
@@ -37,13 +40,42 @@ async def random_decision(probability: float) -> bool:
         return True
 
 
+async def crossover(
+    filled_board: list, population: list, crossover_probability: float
+) -> list:
+
+    """Crossover
+
+    This function create two new boards exchanging one of their rows depending on it's crossover probability.
+
+    Args:
+        filled_board (list): A full filled board representation.
+        population (list): All the current population.
+        crossover_probability (float): The crossover probability of the individual.
+
+    Returns:
+        list: The crossover board or a None if the board dosn't mutate.
+    """
+
+    occurrence = await random_decision(probability=crossover_probability)
+
+    if occurrence is True:
+
+        crossover_individual = await roulette_selection(population=population)
+        return await exchange_random_row(filled_board, crossover_individual[1])
+
+    else:
+
+        return None
+
+
 async def mutate(
     filled_board: list, fixed_numbers_board: list, mutation_probability: float
 ) -> list:
 
     """Mutate
 
-    This function create a new board mutating the original board based on its mutation probability.
+    This function create a new board mutating the original board based on it's mutation probability.
 
     Args:
         filled_board (list): A full filled board representation.
@@ -166,8 +198,47 @@ async def solve_using_genetic_algorithm(
             ]
         )
 
+        # Craeting crossover population.
+
+        population_copy = deepcopy(population)
+
+        crossover_population = await gather(
+            *[
+                crossover(
+                    crossover_probability=genetic_algorithm_crossover,
+                    population=population_copy,
+                    filled_board=individual[1],
+                )
+                for individual in population
+            ]
+        )
+
+        # Filtering the crossover population.
+
+        crossover_population = [
+            crossover
+            for crossover in filter(
+                lambda mutated_individual: mutated_individual is not None,
+                crossover_population,
+            )
+        ]
+
+        # Ranking the crossover population.
+
+        crossover_population = await gather(
+            *[
+                calculate_board_fitness_single(
+                    zone_height=zone_height,
+                    zone_length=zone_length,
+                    board=individual,
+                )
+                for individual in crossover_population
+            ]
+        )
+
         # Extending and sorting population by individuals rank.
 
+        population.extend(crossover_population)
         population.extend(mutated_population)
 
         population = sorted(population, key=lambda individual: individual[0])
@@ -195,5 +266,8 @@ async def solve_using_genetic_algorithm(
         f"time spent searching a solution: {normalize_decimal(elapsed_time)}s",
         script_firm,
     )
+
+    population = sorted(population, key=lambda individual: individual[0])
+    population = population[:genetic_algorithm_population]
 
     return population[0][1]
