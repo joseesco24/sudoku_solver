@@ -14,45 +14,56 @@ import random
 script_firm = "gas"
 
 
-async def mutate_if_sudoku_board_improves(
-    filled_board: list, fixed_numbers_board: list, zone_height: int, zone_length: int
+async def random_decision(probability: float) -> bool:
+
+    """Random Decision
+
+    This function is used to decide if a random event based on a probability should or not occur.
+
+    Args:
+        probability (float): The probability of the event occurrence.
+
+    Returns:
+        bool: Indicates if the random event based on the probability should or not occur.
+    """
+
+    occurrence = random.uniform(0, 1)
+
+    if occurrence > probability:
+        return False
+
+    else:
+        return True
+
+
+async def mutate(
+    filled_board: list, fixed_numbers_board: list, mutation_probability: float
 ) -> list:
 
-    """Mutate If Sudoku Board Improves
+    """Mutate
 
-    This function create a new board mutating the original board, if the mutated board have a lower fitness score than the original
-    it returns the mutated board, in other way it return the original board.
+    This function create a new board mutating the original board based on its mutation probability.
 
     Args:
         filled_board (list): A full filled board representation.
         fixed_numbers_board (list): A board representation that includes just the fixed numbers.
-        zone_height (int): The zones height.
-        zone_length (int): The zones length.
+        mutation_probability (float): The mutation probability of the individual.
 
     Returns:
-        list: The board with the lower fitness score.
+        list: The mutated board or a None if the board dosn't mutate.
     """
 
-    initial_board = deepcopy(filled_board)
-    current_board = deepcopy(filled_board)
+    occurrence = await random_decision(probability=mutation_probability)
 
-    current_board = await board_random_mutation(
-        board=current_board, fixed_numbers_board=fixed_numbers_board
-    )
+    if occurrence is True:
 
-    current_board_fitness, initial_board_fitness = await gather(
-        calculate_board_fitness_single(
-            board=current_board, zone_height=zone_height, zone_length=zone_length
-        ),
-        calculate_board_fitness_single(
-            board=initial_board, zone_height=zone_height, zone_length=zone_length
-        ),
-    )
+        return await board_random_mutation(
+            board=filled_board, fixed_numbers_board=fixed_numbers_board
+        )
 
-    if current_board_fitness <= initial_board_fitness:
-        return current_board
     else:
-        return initial_board
+
+        return None
 
 
 async def solve_using_genetic_algorithm(
@@ -69,10 +80,10 @@ async def solve_using_genetic_algorithm(
 
     print_log(r"starting to solve with genetic algorithm", script_firm)
 
-    restarts_counter, searches_counter = 0, 0
+    generations_counter = 0
     start_time = time()
 
-    # Creating the first generation.
+    print_log(r"creating first generation", script_firm)
 
     population = await gather(
         *[
@@ -85,34 +96,82 @@ async def solve_using_genetic_algorithm(
         ]
     )
 
-    for i in population:
-        print(i)
+    print_log(r"ranking first generation", script_firm)
+
+    population = [
+        (
+            await calculate_board_fitness_single(
+                board=individual, zone_height=zone_height, zone_length=zone_length
+            ),
+            individual,
+        )
+        for individual in population
+    ]
+
+    print_log(r"starting to evolve population", script_firm)
+
+    for _ in itertools.repeat(None, genetic_algorithm_generations):
+
+        # Creating mutated individuals.
+
+        mutated_population = await gather(
+            *[
+                mutate(
+                    filled_board=individual[1],
+                    fixed_numbers_board=fixed_numbers_board,
+                    mutation_probability=genetic_algorithm_mutation,
+                )
+                for individual in population
+            ]
+        )
+
+        # Filtering the mutated population.
+
+        mutated_population = [
+            mutation
+            for mutation in filter(
+                lambda mutated_individual: mutated_individual is not None,
+                mutated_population,
+            )
+        ]
+
+        # Ranking the mutated population.
+
+        mutated_population = [
+            (
+                await calculate_board_fitness_single(
+                    board=individual, zone_height=zone_height, zone_length=zone_length
+                ),
+                individual,
+            )
+            for individual in mutated_population
+        ]
+
+        # Extending and sorting population by individuals rank.
+
+        population.extend(mutated_population)
+
+        population = sorted(population, key=lambda individual: individual[0])
+
+        # Removing the not apt individuals.
+
+        population = population[:genetic_algorithm_population]
+
+        # Increasing generations counter.
+
+        generations_counter += 1
 
     end_time = time()
     elapsed_time = end_time - start_time
 
     print_log(r"finishing to solve with genetic algorithm", script_firm)
 
-    print_log(f"total generations: {restarts_counter}", script_firm)
-    print_log(f"total population: {searches_counter}", script_firm)
+    print_log(f"total generations: {generations_counter}", script_firm)
+    print_log(f"total population: {len(population)}", script_firm)
 
     print_log(
         f"time spent searching a solution: {normalize_decimal(elapsed_time)}s",
         script_firm,
     )
 
-    best_board = random.choice(population)
-
-    for current_board in population:
-        best_board_fitness, current_board_fitness = await gather(
-            calculate_board_fitness_single(
-                board=best_board, zone_height=zone_height, zone_length=zone_length
-            ),
-            calculate_board_fitness_single(
-                board=current_board, zone_height=zone_height, zone_length=zone_length
-            ),
-        )
-        if current_board_fitness < best_board_fitness:
-            best_board = current_board
-
-    return best_board
+    return population[0][1]

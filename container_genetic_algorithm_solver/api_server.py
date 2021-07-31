@@ -150,7 +150,7 @@ async def solver(request: Request) -> web.Response:
                     mutation = request_body["mutation"]
 
             if "crossover" in request_body_keys:
-                if not type(request_body["crossover"]) is int:
+                if not type(request_body["crossover"]) is float:
                     print_log(
                         r"the variable crossover hasn't the correct data type, using default value",
                         script_firm,
