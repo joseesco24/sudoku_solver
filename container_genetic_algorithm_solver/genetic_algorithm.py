@@ -3,8 +3,8 @@ from general_solver_functions_access_custom import calculate_board_fitness_singl
 from general_solver_functions_access import board_random_initialization
 from general_solver_functions_access import board_random_mutation
 
+from genetic_algorithm_functions import tournament_selection
 from genetic_algorithm_functions import exchange_random_row
-from genetic_algorithm_functions import roulette_selection
 
 from general_utilities import normalize_decimal
 from general_utilities import print_log
@@ -61,7 +61,7 @@ async def crossover(
 
     if occurrence is True:
 
-        crossover_individual = await roulette_selection(population=population)
+        crossover_individual = await tournament_selection(population=population)
         return await exchange_random_row(filled_board, crossover_individual[1])
 
     else:
@@ -266,8 +266,5 @@ async def solve_using_genetic_algorithm(
         f"time spent searching a solution: {normalize_decimal(elapsed_time)}s",
         script_firm,
     )
-
-    population = sorted(population, key=lambda individual: individual[0])
-    population = population[:genetic_algorithm_population]
 
     return population[0][1]

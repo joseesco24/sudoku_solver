@@ -1,10 +1,8 @@
 from copy import deepcopy
-import itertools
 import random
-import math
 
 
-async def roulette_selection(population: list) -> tuple:
+async def tournament_selection(population: list) -> tuple:
 
     """Roulette Selection
 
@@ -17,24 +15,16 @@ async def roulette_selection(population: list) -> tuple:
         tuple: An individual chromosome representation for the crossover.
     """
 
-    roulette = list()
+    tournament_size = len(population) // 2
 
-    for individual in population:
+    if tournament_size == 0:
+        tournament_size = 2
 
-        fitness_score = int(individual[0])
+    population = sorted(population, key=lambda individual: individual[0])
 
-        if fitness_score == 0:
-            probability = len(population)
+    tournament_members = population[:tournament_size]
 
-        if fitness_score != 0:
-            probability = int(math.ceil(len(population) / fitness_score))
-
-        for _ in itertools.repeat(None, probability):
-            roulette.append(individual)
-
-    random.shuffle(roulette)
-
-    return random.choice(roulette)
+    return random.choice(tournament_members)
 
 
 async def exchange_random_row(individual_1: list, individual_2: list) -> list:
