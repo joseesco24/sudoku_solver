@@ -48,7 +48,7 @@ async function proxy_redirect(authorization, body, destination_url, origin_url, 
         const health_test_response = await axios({
             url: health_test_url,
             method: "get",
-            timeout: 1000,
+            timeout: 0,
         });
         print_log(`reciving response from: ${health_test_url}`, script_firm);
         print_log(`health test code: ${health_test_response.status}`, script_firm);
