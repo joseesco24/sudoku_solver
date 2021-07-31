@@ -18,6 +18,21 @@ async def mutate_if_sudoku_board_improves(
     filled_board: list, fixed_numbers_board: list, zone_height: int, zone_length: int
 ) -> list:
 
+    """Mutate If Sudoku Board Improves
+
+    This function create a new board mutating the original board, if the mutated board have a lower fitness score than the original
+    it returns the mutated board, in other way it return the original board.
+
+    Args:
+        filled_board (list): A full filled board representation.
+        fixed_numbers_board (list): A board representation that includes just the fixed numbers.
+        zone_height (int): The zones height.
+        zone_length (int): The zones length.
+
+    Returns:
+        list: The board with the lower fitness score.
+    """
+
     initial_board = deepcopy(filled_board)
     current_board = deepcopy(filled_board)
 
@@ -50,52 +65,45 @@ async def solve_using_genetic_algorithm(
     board: list,
 ) -> list:
 
-    print_log(
-        f"{genetic_algorithm_crossover}, {genetic_algorithm_mutation}", script_firm
-    )
-
     fixed_numbers_board = deepcopy(board)
 
-    print_log(r"starting to solve with hill climbing algorithm", script_firm)
+    print_log(r"starting to solve with genetic algorithm", script_firm)
 
     restarts_counter, searches_counter = 0, 0
-    boards_list = list()
     start_time = time()
 
-    for _ in itertools.repeat(None, genetic_algorithm_generations):
-        restarts_counter += 1
-        filled_board = await board_random_initialization(
-            fixed_numbers_board=fixed_numbers_board,
-            zone_height=zone_height,
-            zone_length=zone_length,
-        )
+    # Creating the first generation.
 
-        for _ in itertools.repeat(None, genetic_algorithm_population):
-            searches_counter += 1
-            filled_board = await mutate_if_sudoku_board_improves(
+    population = await gather(
+        *[
+            board_random_initialization(
                 fixed_numbers_board=fixed_numbers_board,
-                filled_board=filled_board,
                 zone_height=zone_height,
                 zone_length=zone_length,
             )
-            boards_list.append(filled_board)
+            for _ in itertools.repeat(None, genetic_algorithm_population)
+        ]
+    )
+
+    for i in population:
+        print(i)
 
     end_time = time()
     elapsed_time = end_time - start_time
 
-    print_log(r"finishing to solve with hill climbing algorithm", script_firm)
+    print_log(r"finishing to solve with genetic algorithm", script_firm)
 
-    print_log(f"total restarts: {restarts_counter}", script_firm)
-    print_log(f"total searches: {searches_counter}", script_firm)
+    print_log(f"total generations: {restarts_counter}", script_firm)
+    print_log(f"total population: {searches_counter}", script_firm)
 
     print_log(
         f"time spent searching a solution: {normalize_decimal(elapsed_time)}s",
         script_firm,
     )
 
-    best_board = random.choice(boards_list)
+    best_board = random.choice(population)
 
-    for current_board in boards_list:
+    for current_board in population:
         best_board_fitness, current_board_fitness = await gather(
             calculate_board_fitness_single(
                 board=best_board, zone_height=zone_height, zone_length=zone_length
