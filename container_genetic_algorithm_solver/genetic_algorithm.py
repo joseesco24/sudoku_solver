@@ -77,6 +77,24 @@ async def solve_using_genetic_algorithm(
     board: list,
 ) -> list:
 
+    """Solve Using Genetic Algorithm
+
+    This function uses a genetic algorithm to solve sudoku boards, its based on chromosomes and threading for solving the board as
+    fast as possible avoiding local highs as much as possible.
+
+    Args:
+        genetic_algorithm_crossover (float): The crossover probability.
+        genetic_algorithm_generations (int): The generations number.
+        genetic_algorithm_population (int): The population number.
+        genetic_algorithm_mutation (float): The mutation probability.
+        zone_height (int): The zones height.
+        zone_length (int): The zones length.
+        board (list): A full filled board representation.
+
+    Returns:
+        list: The best finded board.
+    """
+
     fixed_numbers_board = deepcopy(board)
 
     print_log(r"starting to solve with genetic algorithm", script_firm)
@@ -161,6 +179,8 @@ async def solve_using_genetic_algorithm(
         # Increasing generations counter.
 
         generations_counter += 1
+
+        print_log(f"generations count {generations_counter}", script_firm)
 
     end_time = time()
     elapsed_time = end_time - start_time
