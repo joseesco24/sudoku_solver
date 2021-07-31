@@ -1,4 +1,5 @@
-from general_solver_functions_access import calculate_board_fitness_single
+from general_solver_functions_access_custom import calculate_board_fitness_single
+
 from general_solver_functions_access import board_random_initialization
 from general_solver_functions_access import board_random_mutation
 
@@ -98,28 +99,27 @@ async def solve_using_genetic_algorithm(
 
     print_log(r"ranking first generation", script_firm)
 
-    population = [
-        (
-            await calculate_board_fitness_single(
+    population = await gather(
+        *[
+            calculate_board_fitness_single(
                 board=individual, zone_height=zone_height, zone_length=zone_length
-            ),
-            individual,
-        )
-        for individual in population
-    ]
+            )
+            for individual in population
+        ]
+    )
 
     print_log(r"starting to evolve population", script_firm)
 
     for _ in itertools.repeat(None, genetic_algorithm_generations):
 
-        # Creating mutated individuals.
+        # Creating mutated population.
 
         mutated_population = await gather(
             *[
                 mutate(
-                    filled_board=individual[1],
-                    fixed_numbers_board=fixed_numbers_board,
                     mutation_probability=genetic_algorithm_mutation,
+                    fixed_numbers_board=fixed_numbers_board,
+                    filled_board=individual[1],
                 )
                 for individual in population
             ]
@@ -137,15 +137,16 @@ async def solve_using_genetic_algorithm(
 
         # Ranking the mutated population.
 
-        mutated_population = [
-            (
-                await calculate_board_fitness_single(
-                    board=individual, zone_height=zone_height, zone_length=zone_length
-                ),
-                individual,
-            )
-            for individual in mutated_population
-        ]
+        mutated_population = await gather(
+            *[
+                calculate_board_fitness_single(
+                    zone_height=zone_height,
+                    zone_length=zone_length,
+                    board=individual,
+                )
+                for individual in mutated_population
+            ]
+        )
 
         # Extending and sorting population by individuals rank.
 
