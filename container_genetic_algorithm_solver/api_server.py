@@ -139,7 +139,7 @@ async def solver(request: Request) -> web.Response:
                         script_firm,
                     )
                     mutation_validator = False
-                if not 0 > request_body["mutation"] >= 1:
+                if not 0 < request_body["mutation"] <= 1:
                     print_log(
                         r"the variable mutation hasn't the correct value range, using default value",
                         script_firm,
@@ -156,7 +156,7 @@ async def solver(request: Request) -> web.Response:
                         script_firm,
                     )
                     crossover_validator = False
-                if not 0 > request_body["crossover"] >= 1:
+                if not 0 < request_body["crossover"] <= 1:
                     print_log(
                         r"the variable crossover hasn't the correct value range, using default value",
                         script_firm,
