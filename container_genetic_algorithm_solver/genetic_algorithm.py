@@ -180,7 +180,8 @@ async def solve_using_genetic_algorithm(
 
         generations_counter += 1
 
-        print_log(f"generations count {generations_counter}", script_firm)
+        print_log(f"generations count: {generations_counter}", script_firm)
+        print_log(f"generation best fitness: {population[0][0]}", script_firm)
 
     end_time = time()
     elapsed_time = end_time - start_time
