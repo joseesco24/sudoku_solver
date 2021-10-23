@@ -1,34 +1,8 @@
 # python cache folder.
 __pycache__
 
-# all dependencies file.
-container_genetic_algorithm_solver/requirements/all.txt
-container_hill_climbing_solver/requirements/all.txt
-container_solver_functions/requirements/all.txt
-
-# vscode workspace file.
-*.code-workspace
-
-# vscode devcontainer and general setups.
-*.devcontainer
-*.vscode
-
 # nodejs modules.
 node_modules
 
-# nodejs unnecessary files
+# nodejs unnecessary files.
 package-lock.json
-
-# specific exceptions of vscode development files.
-!container_genetic_algorithm_solver/vscode/*
-!container_hill_climbing_solver/vscode/*
-!container_solver_functions_c/vscode/*
-!container_solver_functions/vscode/*
-!container_middle_proxy/vscode/*
-!vscode/*
-
-# env files.
-*.env
-
-# specific env files needed in repository.
-!env_files/*
