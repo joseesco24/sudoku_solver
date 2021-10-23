@@ -1,8 +1,11 @@
 {
-  "name": "Existing Dockerfile",
+  "name": "node dev container",
   "context": "..",
   "dockerFile": "../development.Dockerfile",
   "forwardPorts": [],
+  "workspaceMount": "source=${localWorkspaceFolder},target=/home/node_dev/workspace,type=bind,consistency=delegated",
+  "workspaceFolder": "/home/node_dev/workspace",
+  "postCreateCommand": "npm install -g npm@latest && npm install --production=false",
   "extensions": [
     "coenraads.bracket-pair-colorizer-2",
     "mgmcdermott.vscode-language-babel",
@@ -10,6 +13,9 @@
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
     "eg2.vscode-npm-script",
-    "hookyqr.beautify"
+    "alefragnani.bookmarks",
+    "redhat.vscode-yaml",
+    "ryu1kn.text-marker",
+    "hookyqr.beautify",
   ]
 }
