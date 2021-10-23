@@ -1,7 +1,7 @@
 {
   "client": "Thunder Client",
   "collectionName": "sudoku solver requests",
-  "dateExported": "2021-07-31T21:09:53.061Z",
+  "dateExported": "2021-10-23T13:31:16.567Z",
   "version": "1.1",
   "folders": [],
   "requests": [
@@ -16,13 +16,13 @@
         },
         { "name": "Authorization", "value": "cDb4F9118b1F1d33227115F09f97BB7a" }
       ],
-      "colId": "582bc7ac-27c6-40da-a5b4-3b6893c04ace",
-      "name": "sudoku solver hill climbing example request",
+      "colId": "788bad16-0842-49cd-9167-aff89e1a34b7",
+      "name": "hill climbing request",
       "url": "http://localhost:3000/hill_climbing",
       "method": "GET",
-      "modified": "2021-07-26T20:33:56.141Z",
-      "created": "2021-07-26T17:37:49.959Z",
-      "_id": "9794b6c5-9c6d-4fd6-83b5-b0bc36254455",
+      "modified": "2021-10-23T13:30:27.170Z",
+      "created": "2021-10-23T13:30:27.170Z",
+      "_id": "bb88e57b-05d3-4a2b-a5fd-e36e465343c4",
       "params": [],
       "body": {
         "type": "json",
@@ -42,13 +42,13 @@
         },
         { "name": "Authorization", "value": "cDb4F9118b1F1d33227115F09f97BB7a" }
       ],
-      "colId": "582bc7ac-27c6-40da-a5b4-3b6893c04ace",
-      "name": "sudoku solver genetic algorithm example request",
+      "colId": "788bad16-0842-49cd-9167-aff89e1a34b7",
+      "name": "genetic algorithm request",
       "url": "http://localhost:3000/genetic_algorithm",
       "method": "GET",
-      "modified": "2021-07-31T21:09:44.555Z",
-      "created": "2021-07-26T17:37:49.959Z",
-      "_id": "86847c6d-ba5e-48e7-baa0-d3cabfc697a2",
+      "modified": "2021-10-23T13:30:27.170Z",
+      "created": "2021-10-23T13:30:27.170Z",
+      "_id": "a436565b-fbad-40d2-8405-ac6f04e4a9d9",
       "params": [],
       "body": {
         "type": "json",
