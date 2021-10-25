@@ -1,13 +1,16 @@
-requirements/readme.md
-requirements/all.txt
+# Black list.
 
+# Uneeded specific files.
+requirements/development.txt
+requirements/flv_all.txt
+requirements/raw_all.txt
+
+# Unneeded directories.
+.devcontainer
+.vscode
+
+# Unneeded files.
 *.code-workspace
 *.dockerignore
-*.devcontainer
 *.Dockerfile
-*.gitignore
-*.vscode
-*.git
 *.md
-
-vscode
