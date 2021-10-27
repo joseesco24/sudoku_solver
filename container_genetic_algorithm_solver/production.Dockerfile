@@ -7,7 +7,7 @@ FROM python:3.7.10-alpine
 ARG USERNAME=production
 ARG WORKDIR=/home/$USERNAME
 
-# Creating the user on bash and their home directory.
+# Creating the user on ash and their home directory.
 
 RUN adduser --home $WORKDIR --shell /bin/ash $USERNAME --disabled-password
 

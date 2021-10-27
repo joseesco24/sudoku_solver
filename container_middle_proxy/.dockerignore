@@ -1,13 +1,16 @@
+# Black list.
+
+# Uneeded specific files.
 package-lock.json
-node_modules
 
 *.code-workspace
-*.dockerignore
-*.devcontainer
-*.Dockerfile
-*.gitignore
-*.vscode
-*.git
-*.md
+# Unneeded directories.
+.devcontainer
+node_modules
+.vscode
 
-vscode
+# Unneeded files.
+*.code-workspace
+*.dockerignore
+*.Dockerfile
+*.md
