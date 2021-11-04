@@ -145,6 +145,7 @@ services:
       - solved_boards_database_network
       - solvers_network
     environment:
+      BUFFER_SIZE: ${GENETIC_ALGORITHM_BUFFER_SIZE}
       SOLVER_FUNCTIONS_KEY: ${SOLVER_FUNCTIONS_KEY}
       RANDOM_INITIALIZATION_LINK: ${RANDOM_INITIALIZATION_LINK}
       FITNESS_SINGLE_SCORE_LINK: ${FITNESS_SINGLE_SCORE_LINK}

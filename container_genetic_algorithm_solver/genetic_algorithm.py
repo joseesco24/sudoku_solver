@@ -6,6 +6,8 @@ from general_solver_functions_access import board_random_mutation
 from genetic_algorithm_functions import tournament_selection
 from genetic_algorithm_functions import exchange_random_row
 
+from buffered_gather import buffered_gather
+
 from general_utilities import normalize_decimal
 from general_utilities import print_log
 
@@ -136,8 +138,8 @@ async def solve_using_genetic_algorithm(
 
     print_log(r"creating first generation", script_firm)
 
-    population = await gather(
-        *[
+    population = await buffered_gather(
+        [
             board_random_initialization(
                 fixed_numbers_board=fixed_numbers_board,
                 zone_height=zone_height,
@@ -149,8 +151,8 @@ async def solve_using_genetic_algorithm(
 
     print_log(r"ranking first generation", script_firm)
 
-    population = await gather(
-        *[
+    population = await buffered_gather(
+        [
             calculate_board_fitness_single(
                 board=individual, zone_height=zone_height, zone_length=zone_length
             )
@@ -164,8 +166,8 @@ async def solve_using_genetic_algorithm(
 
         # Creating mutated population.
 
-        mutated_population = await gather(
-            *[
+        mutated_population = await buffered_gather(
+            [
                 mutate(
                     mutation_probability=genetic_algorithm_mutation,
                     fixed_numbers_board=fixed_numbers_board,
@@ -187,8 +189,8 @@ async def solve_using_genetic_algorithm(
 
         # Ranking the mutated population.
 
-        mutated_population = await gather(
-            *[
+        mutated_population = await buffered_gather(
+            [
                 calculate_board_fitness_single(
                     zone_height=zone_height,
                     zone_length=zone_length,
@@ -202,8 +204,8 @@ async def solve_using_genetic_algorithm(
 
         population_copy = deepcopy(population)
 
-        crossover_population = await gather(
-            *[
+        crossover_population = await buffered_gather(
+            [
                 crossover(
                     crossover_probability=genetic_algorithm_crossover,
                     population=population_copy,
@@ -225,8 +227,8 @@ async def solve_using_genetic_algorithm(
 
         # Ranking the crossover population.
 
-        crossover_population = await gather(
-            *[
+        crossover_population = await buffered_gather(
+            [
                 calculate_board_fitness_single(
                     zone_height=zone_height,
                     zone_length=zone_length,
@@ -241,7 +243,7 @@ async def solve_using_genetic_algorithm(
         population.extend(crossover_population)
         population.extend(mutated_population)
 
-        population = sorted(population, key=lambda individual: individual[0])
+        population = sorted(population, key=lambda individual: individual[0], reverse=False)
 
         # Removing the not apt individuals.
 
@@ -253,6 +255,7 @@ async def solve_using_genetic_algorithm(
 
         print_log(f"generations count: {generations_counter}", script_firm)
         print_log(f"generation best fitness: {population[0][0]}", script_firm)
+        print_log(f"generation worst fitness: {population[-1][0]}", script_firm)
 
     end_time = time()
     elapsed_time = end_time - start_time
