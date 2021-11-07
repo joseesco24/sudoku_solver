@@ -1,10 +1,34 @@
-# Declaration of the Golang compiling version.
+# Stage 1 --- Declaration of the Golang building image version.
 
 FROM golang:1.17rc2 AS build
 
+# Declaration of the project file system inside the building image.
+
+ARG WORKDIR=golang_prod
+
+# Creating the directories for the file system.
+
+RUN mkdir -p $WORKDIR
+
+# Establishing the default work directory.
+
+WORKDIR $WORKDIR
+
+# Copying the source code to the building image and building the api.
+
+COPY ["go.mod", "go.sum", "$WORKDIR/"]
+
+RUN go mod download
+
+COPY [".", "$WORKDIR/"]
+
+RUN go build -o api_server
+
+# Stage 2 --- Declaration of the Alpine version.
+
 FROM alpine:3.13.6
 
-# Declaration of the project file system and username inside the development container.
+# Declaration of the project file system and username inside the deployment image.
 
 ARG USERNAME=production
 ARG WORKDIR=/home/$USERNAME
@@ -27,6 +51,6 @@ RUN chmod 755 $WORKDIR
 WORKDIR $WORKDIR
 USER $USERNAME
 
-# Copying the source code of the api.
+# Copying the builded api from the building image to the deployment image.
 
-COPY --from=build api_server $WORKDIR
+COPY --from=build ["golang_prod/api_server", "$WORKDIR/"]
