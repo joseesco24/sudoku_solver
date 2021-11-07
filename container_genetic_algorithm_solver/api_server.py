@@ -2,6 +2,8 @@ from general_solver_functions_access import calculate_board_fitness_report
 
 from genetic_algorithm import solve_using_genetic_algorithm
 
+from logger import setup_logger
+
 from aiohttp.web_request import Request
 from http import HTTPStatus
 from aiohttp import web
@@ -10,6 +12,8 @@ import os
 
 api_routes = web.RouteTableDef()
 api = web.Application()
+
+logger = setup_logger(logger_name=os.path.basename(__file__).split(".")[0])
 
 
 @api_routes.get(r"/health_test")
@@ -24,7 +28,10 @@ async def health_test(_: Request) -> web.Response:
         web.Response: A 200 status code.
     """
 
+    logger.info(r"health test request received")
+
     return web.Response(
+        reason=r"ok",
         status=HTTPStatus.OK,
     )
 
@@ -49,12 +56,16 @@ async def solver(request: Request) -> web.Response:
 
     try:
 
+        logger.info(msg=r"validating middle proxy authorization")
+
         request_header_keys = [key for key in request.headers.keys()]
 
         if (
             "Authorization" in request_header_keys
             and request.headers["Authorization"] == os.environ["ACCESS_KEY"]
         ):
+
+            logger.info(msg=r"middle proxy authorization validated")
 
             generations_validator, population_validator = True, True
             mutation_validator, crossover_validator = True, True
@@ -145,18 +156,26 @@ async def solver(request: Request) -> web.Response:
                 "board array": solution_board,
             }
 
+            logger.info(msg=r"sending solution to the middle proxy")
+
             return web.Response(
+                reason=r"ok",
                 body=json.dumps(obj=response_dict, indent=None),
                 status=HTTPStatus.OK,
             )
 
         else:
+
+            logger.warn(msg=r"middle proxy authorization invalid or not found")
+
             return web.Response(
                 reason=r"you aren't authorized to use this api",
                 status=HTTPStatus.UNAUTHORIZED,
             )
 
     except:
+
+        logger.exception(msg=r"exception in the solver api")
 
         return web.Response(
             reason=r"internal error inside the solver server",

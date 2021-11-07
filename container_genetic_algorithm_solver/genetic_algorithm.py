@@ -8,9 +8,14 @@ from genetic_algorithm_functions import exchange_random_row
 
 from buffered_gather import buffered_gather
 
+from logger import setup_logger
+
 from copy import deepcopy
 import itertools
 import random
+import os
+
+logger = setup_logger(logger_name=os.path.basename(__file__).split(".")[0])
 
 
 async def random_decision(probability: float) -> bool:
@@ -121,6 +126,8 @@ async def solve_using_genetic_algorithm(
     Returns:
         list: The best finded board.
     """
+
+    logger.info(msg=r"starting to solve using genetic algorithm")
 
     fixed_numbers_board = deepcopy(board)
 
@@ -234,5 +241,7 @@ async def solve_using_genetic_algorithm(
         population = population[:genetic_algorithm_population]
 
         # Increasing generations counter.
+
+    logger.info(msg=r"ending to solve using genetic algorithm")
 
     return population[0][1]
