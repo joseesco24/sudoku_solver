@@ -1,0 +1,19 @@
+# Black list.
+
+# Uneeded specific files.
+package-lock.json
+
+# Unneeded directories.
+node_modules
+bin
+pkg
+
+.devcontainer
+.vscode
+
+# Unneeded files.
+*.code-workspace
+*.dockerignore
+*.Dockerfile
+*.sum
+*.md

@@ -3,6 +3,8 @@ __pycache__
 
 # nodejs modules.
 node_modules
+bin
+pkg
 
 # nodejs unnecessary files.
 package-lock.json

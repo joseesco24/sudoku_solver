@@ -1,0 +1,17 @@
+{
+    "name": "golang dev container",
+    "context": "..",
+    "dockerFile": "../development.Dockerfile",
+    "forwardPorts": [],
+    "workspaceMount": "source=${localWorkspaceFolder},target=/home/golang_dev/workspace,type=bind,consistency=delegated",
+    "workspaceFolder": "/home/golang_dev/workspace",
+    "postCreateCommand": "mkdir -p /home/golang_dev/workspace/bin && mkdir -p /home/golang_dev/workspace/pkg",
+    "extensions": [
+      "coenraads.bracket-pair-colorizer-2",
+      "aaron-bond.better-comments",
+      "alefragnani.bookmarks",
+      "redhat.vscode-yaml",
+      "ryu1kn.text-marker",
+      "golang.go",
+    ]
+  }
