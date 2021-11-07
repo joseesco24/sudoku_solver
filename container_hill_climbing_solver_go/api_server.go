@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -12,17 +10,13 @@ func main() {
 
 	e := echo.New()
 
-	e.POST("/webhooks/gupshup/events/:destinationPhoneNumberCode/:destinationPhoneNumber", func(context echo.Context) error {
+	e.GET("/health_test", func(context echo.Context) error {
 
-		defer func(context echo.Context) {
+		return context.NoContent(http.StatusOK)
 
-			body, _ := ioutil.ReadAll(context.Request().Body)
+	})
 
-			fmt.Println()
-			fmt.Println(string(body))
-			fmt.Println()
-
-		}(context)
+	e.GET("/solver", func(context echo.Context) error {
 
 		return context.NoContent(http.StatusOK)
 
