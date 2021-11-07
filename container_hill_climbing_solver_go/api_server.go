@@ -1,9 +1,13 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
+
+	"github.com/joseesco24/sudoku_solver/container_hill_climbing_solver_go/model"
 
 	"github.com/ansel1/merry"
 	"github.com/labstack/echo/v4"
@@ -35,6 +39,32 @@ func main() {
 				WithValue("authorization", authorization).
 				WithUserMessage("authorization not valid").
 				WithHTTPCode(http.StatusUnauthorized)
+		}
+
+		var requestBody model.Request
+
+		body, err := ioutil.ReadAll(context.Request().Body)
+		if err != nil {
+			return merry.Wrap(err).
+				WithValue("requestBody", string(body)).
+				WithUserMessage("error while reading request body").
+				WithHTTPCode(http.StatusInternalServerError)
+		}
+
+		err = json.Unmarshal(body, &requestBody)
+		if err != nil {
+			return merry.Wrap(err).
+				WithValue("requestBody", string(body)).
+				WithUserMessage("error while parsing the request body to struct").
+				WithHTTPCode(http.StatusInternalServerError)
+		}
+
+		if requestBody.Restarts == 0 {
+			requestBody.Restarts = 10
+		}
+
+		if requestBody.Searchs == 0 {
+			requestBody.Searchs = 10
 		}
 
 		return context.NoContent(http.StatusOK)
