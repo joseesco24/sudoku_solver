@@ -8,16 +8,9 @@ from genetic_algorithm_functions import exchange_random_row
 
 from buffered_gather import buffered_gather
 
-from general_utilities import normalize_decimal
-from general_utilities import print_log
-
-from asyncio import gather
 from copy import deepcopy
-from time import time
 import itertools
 import random
-
-script_firm = "gas"
 
 
 async def random_decision(probability: float) -> bool:
@@ -131,13 +124,6 @@ async def solve_using_genetic_algorithm(
 
     fixed_numbers_board = deepcopy(board)
 
-    print_log(r"starting to solve with genetic algorithm", script_firm)
-
-    generations_counter = 0
-    start_time = time()
-
-    print_log(r"creating first generation", script_firm)
-
     population = await buffered_gather(
         [
             board_random_initialization(
@@ -149,8 +135,6 @@ async def solve_using_genetic_algorithm(
         ]
     )
 
-    print_log(r"ranking first generation", script_firm)
-
     population = await buffered_gather(
         [
             calculate_board_fitness_single(
@@ -159,8 +143,6 @@ async def solve_using_genetic_algorithm(
             for individual in population
         ]
     )
-
-    print_log(r"starting to evolve population", script_firm)
 
     for _ in itertools.repeat(None, genetic_algorithm_generations):
 
@@ -243,31 +225,14 @@ async def solve_using_genetic_algorithm(
         population.extend(crossover_population)
         population.extend(mutated_population)
 
-        population = sorted(population, key=lambda individual: individual[0], reverse=False)
+        population = sorted(
+            population, key=lambda individual: individual[0], reverse=False
+        )
 
         # Removing the not apt individuals.
 
         population = population[:genetic_algorithm_population]
 
         # Increasing generations counter.
-
-        generations_counter += 1
-
-        print_log(f"generations count: {generations_counter}", script_firm)
-        print_log(f"generation best fitness: {population[0][0]}", script_firm)
-        print_log(f"generation worst fitness: {population[-1][0]}", script_firm)
-
-    end_time = time()
-    elapsed_time = end_time - start_time
-
-    print_log(r"finishing to solve with genetic algorithm", script_firm)
-
-    print_log(f"total generations: {generations_counter}", script_firm)
-    print_log(f"total population: {len(population)}", script_firm)
-
-    print_log(
-        f"time spent searching a solution: {normalize_decimal(elapsed_time)}s",
-        script_firm,
-    )
 
     return population[0][1]

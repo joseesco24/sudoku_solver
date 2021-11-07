@@ -2,59 +2,31 @@ from general_solver_functions_access import calculate_board_fitness_report
 
 from genetic_algorithm import solve_using_genetic_algorithm
 
-from general_utilities import print_log
-
 from aiohttp.web_request import Request
+from http import HTTPStatus
 from aiohttp import web
-import traceback
 import json
 import os
 
 api_routes = web.RouteTableDef()
 api = web.Application()
 
-script_firm = "api"
-error_firm = "err"
-
 
 @api_routes.get(r"/health_test")
-async def health_test(request: Request) -> web.Response:
+async def health_test(_: Request) -> web.Response:
 
     """Health Test
 
     This function is incharge of response all the health check petitions that the middle proxy makes for checking if the requested
     solver is active before making a solver request.
 
-    Args:
-        request (aiohttp.web_request.Request): The health test request made from the middle proxy.
-
     Returns:
-        web.Response: A 200 status code if everything goes wright, 500 if something goes wrong.
+        web.Response: A 200 status code.
     """
 
-    try:
-
-        origin_url = f"{request.scheme}://{request.remote}{request.rel_url}"
-
-        print_log(f"incoming health test request form {origin_url}", script_firm)
-        print_log(
-            f"responding health test request from {origin_url} with status code 200",
-            script_firm,
-        )
-
-        return web.Response(
-            status=200,
-        )
-
-    except:
-
-        error_stack = traceback.format_exc().split("\n")[:-1]
-        for error in error_stack:
-            print_log(error.strip(), error_firm)
-
-        return web.Response(
-            status=500,
-        )
+    return web.Response(
+        status=HTTPStatus.OK,
+    )
 
 
 @api_routes.get(r"/solver")
@@ -84,83 +56,61 @@ async def solver(request: Request) -> web.Response:
             and request.headers["Authorization"] == os.environ["ACCESS_KEY"]
         ):
 
-            generations, population = 10, 10
-            mutation, crossover = 0.2, 0.8
             generations_validator, population_validator = True, True
             mutation_validator, crossover_validator = True, True
 
+            generations, population = 10, 10
+            mutation, crossover = 0.2, 0.8
+
             request_body = await request.json()
-            request_body_keys = [key for key in request_body.keys()]
 
             sudoku_initial_board = request_body["board_array"]
             sudoku_zone_height = request_body["zone_height"]
             sudoku_zone_length = request_body["zone_length"]
 
+            request_body_keys = [key for key in request_body.keys()]
+
             # Validation and search of specific solver parameters.
 
             if "generations" in request_body_keys:
+
                 if not type(request_body["generations"]) is int:
-                    print_log(
-                        r"the variable generations hasn't the correct data type, using default value",
-                        script_firm,
-                    )
                     generations_validator = False
+
                 if not request_body["generations"] > 0:
-                    print_log(
-                        r"the variable generations hasn't the correct value range, using default value",
-                        script_firm,
-                    )
                     generations_validator = False
 
                 if generations_validator is True:
                     generations = request_body["generations"]
 
             if "population" in request_body_keys:
+
                 if not type(request_body["population"]) is int:
-                    print_log(
-                        r"the variable population hasn't the correct data type, using default value",
-                        script_firm,
-                    )
                     population_validator = False
+
                 if not request_body["population"] > 0:
-                    print_log(
-                        r"the variable population hasn't the correct value range, using default value",
-                        script_firm,
-                    )
                     population_validator = False
 
                 if population_validator is True:
                     population = request_body["population"]
 
             if "mutation" in request_body_keys:
+
                 if not type(request_body["mutation"]) is float:
-                    print_log(
-                        r"the variable mutation hasn't the correct data type, using default value",
-                        script_firm,
-                    )
                     mutation_validator = False
+
                 if not 0 < request_body["mutation"] <= 1:
-                    print_log(
-                        r"the variable mutation hasn't the correct value range, using default value",
-                        script_firm,
-                    )
                     mutation_validator = False
 
                 if mutation_validator is True:
                     mutation = request_body["mutation"]
 
             if "crossover" in request_body_keys:
+
                 if not type(request_body["crossover"]) is float:
-                    print_log(
-                        r"the variable crossover hasn't the correct data type, using default value",
-                        script_firm,
-                    )
+
                     crossover_validator = False
                 if not 0 < request_body["crossover"] <= 1:
-                    print_log(
-                        r"the variable crossover hasn't the correct value range, using default value",
-                        script_firm,
-                    )
                     crossover_validator = False
 
                 if crossover_validator is True:
@@ -197,25 +147,20 @@ async def solver(request: Request) -> web.Response:
 
             return web.Response(
                 body=json.dumps(obj=response_dict, indent=None),
-                status=200,
+                status=HTTPStatus.OK,
             )
 
         else:
-            print_log(r"the authorization wasn't found or isn't correct", script_firm)
             return web.Response(
                 reason=r"you aren't authorized to use this api",
-                status=401,
+                status=HTTPStatus.UNAUTHORIZED,
             )
 
     except:
 
-        error_stack = traceback.format_exc().split("\n")[:-1]
-        for error in error_stack:
-            print_log(error.strip(), error_firm)
-
         return web.Response(
             reason=r"internal error inside the solver server",
-            status=500,
+            status=HTTPStatus.INTERNAL_SERVER_ERROR,
         )
 
 
