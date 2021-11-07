@@ -41,30 +41,30 @@ func main() {
 				WithHTTPCode(http.StatusUnauthorized)
 		}
 
-		var requestBody model.Request
+		var middleProxyRequestBody model.MiddleProxyRequest
 
 		body, err := ioutil.ReadAll(context.Request().Body)
 		if err != nil {
 			return merry.Wrap(err).
-				WithValue("requestBody", string(body)).
+				WithValue("middleProxyRequestBody", string(body)).
 				WithUserMessage("error while reading request body").
 				WithHTTPCode(http.StatusInternalServerError)
 		}
 
-		err = json.Unmarshal(body, &requestBody)
+		err = json.Unmarshal(body, &middleProxyRequestBody)
 		if err != nil {
 			return merry.Wrap(err).
-				WithValue("requestBody", string(body)).
+				WithValue("middleProxyRequestBody", string(body)).
 				WithUserMessage("error while parsing the request body to struct").
 				WithHTTPCode(http.StatusInternalServerError)
 		}
 
-		if requestBody.Restarts == 0 {
-			requestBody.Restarts = 10
+		if middleProxyRequestBody.Restarts == 0 {
+			middleProxyRequestBody.Restarts = 10
 		}
 
-		if requestBody.Searchs == 0 {
-			requestBody.Searchs = 10
+		if middleProxyRequestBody.Searchs == 0 {
+			middleProxyRequestBody.Searchs = 10
 		}
 
 		return context.NoContent(http.StatusOK)

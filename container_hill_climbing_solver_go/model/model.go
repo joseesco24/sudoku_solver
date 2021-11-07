@@ -1,6 +1,6 @@
 package model
 
-type Request struct {
+type MiddleProxyRequest struct {
 	BoardArray [][]uint8 `json:"board_array"`
 	ZoneLength uint16    `json:"zone_length"`
 	ZoneHeight uint16    `json:"zone_height"`
