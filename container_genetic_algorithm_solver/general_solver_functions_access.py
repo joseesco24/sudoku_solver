@@ -29,7 +29,7 @@ async def calculate_board_fitness_report(
     url = str(environ["FITNESS_REPORT_SCORE_LINK"])
     response_body = dict()
 
-    headers = {"Authorization": api_key}
+    headers = {"Authorization": api_key, "Content-Type": "application/json"}
     async with ClientSession(headers=headers) as session:
         async with session.get(url=url, json=body) as response:
             response_body = await response.json()
@@ -64,7 +64,7 @@ async def calculate_board_fitness_single(
     url = str(environ["FITNESS_SINGLE_SCORE_LINK"])
     response_body = dict()
 
-    headers = {"Authorization": api_key}
+    headers = {"Authorization": api_key, "Content-Type": "application/json"}
     async with ClientSession(headers=headers) as session:
         async with session.get(url=url, json=body) as response:
             response_body = await response.json()
@@ -99,7 +99,7 @@ async def board_random_initialization(
     url = str(environ["RANDOM_INITIALIZATION_LINK"])
     response_body = dict()
 
-    headers = {"Authorization": api_key}
+    headers = {"Authorization": api_key, "Content-Type": "application/json"}
     async with ClientSession(headers=headers) as session:
         async with session.get(url=url, json=body) as response:
             response_body = await response.json()
@@ -126,7 +126,7 @@ async def board_random_mutation(board: list, fixed_numbers_board: list) -> list:
     url = str(environ["RANDOM_MUTATION_LINK"])
     response_body = dict()
 
-    headers = {"Authorization": api_key}
+    headers = {"Authorization": api_key, "Content-Type": "application/json"}
     async with ClientSession(headers=headers) as session:
         async with session.get(url=url, json=body) as response:
             response_body = await response.json()
