@@ -38,7 +38,7 @@ func main() {
 			return merry.New("authorization not found").
 				WithValue("middleProxyAuthorization", authorization).
 				WithUserMessage("authorization not found").
-				WithHTTPCode(http.StatusUnauthorized)
+				WithHTTPCode(http.StatusBadRequest)
 		}
 
 		if authorization != os.Getenv("ACCESS_KEY") {

@@ -32,15 +32,15 @@ func CalculateBoardFitnessReport(board [][]uint8, zoneHeight, zoneLength uint16)
 
 	if err != nil {
 		return 0, 0, 0, 0, merry.Wrap(err).Append("unable to get the board fitness report").
-			WithValue("response code", boardFitnessReportResponse.Status()).
-			WithValue("request body", boardFitnessReportRequest).
+			WithValue("responseCode", boardFitnessReportResponse.Status()).
+			WithValue("requestBody", boardFitnessReportRequest).
 			WithHTTPCode(http.StatusInternalServerError)
 	}
 
 	if !boardFitnessReportResponse.IsSuccess() {
 		return 0, 0, 0, 0, merry.New("error while getting the board fitness report").
-			WithValue("response code", boardFitnessReportResponse.Status()).
-			WithValue("request body", boardFitnessReportRequest).
+			WithValue("responseCode", boardFitnessReportResponse.Status()).
+			WithValue("requestBody", boardFitnessReportRequest).
 			WithHTTPCode(http.StatusInternalServerError)
 	}
 
@@ -50,7 +50,7 @@ func CalculateBoardFitnessReport(board [][]uint8, zoneHeight, zoneLength uint16)
 	err = json.Unmarshal(boardFitnessReportResponseRawBody, &boardFitnessReportResponseBody)
 	if err != nil {
 		return 0, 0, 0, 0, merry.New("error while unmarshalling the board fitness response body").
-			WithValue("response body", string(boardFitnessReportResponseRawBody)).
+			WithValue("responseBody", string(boardFitnessReportResponseRawBody)).
 			WithHTTPCode(http.StatusInternalServerError)
 	}
 
@@ -83,15 +83,15 @@ func CalculateBoardFitnessSingle(board [][]uint8, zoneHeight, zoneLength uint16)
 
 	if err != nil {
 		return 0, merry.Wrap(err).Append("unable to get the board fitness score").
-			WithValue("response code", boardFitnessSingleResponse.Status()).
-			WithValue("request body", boardFitnessReportRequest).
+			WithValue("responseCode", boardFitnessSingleResponse.Status()).
+			WithValue("requestBody", boardFitnessReportRequest).
 			WithHTTPCode(http.StatusInternalServerError)
 	}
 
 	if !boardFitnessSingleResponse.IsSuccess() {
 		return 0, merry.New("error while getting the board fitness score").
-			WithValue("response code", boardFitnessSingleResponse.Status()).
-			WithValue("request body", boardFitnessReportRequest).
+			WithValue("responseCode", boardFitnessSingleResponse.Status()).
+			WithValue("requestBody", boardFitnessReportRequest).
 			WithHTTPCode(http.StatusInternalServerError)
 	}
 
@@ -101,10 +101,104 @@ func CalculateBoardFitnessSingle(board [][]uint8, zoneHeight, zoneLength uint16)
 	err = json.Unmarshal(boardFitnessSingleResponseRawBody, &boardFitnessSingleResponseBody)
 	if err != nil {
 		return 0, merry.New("error while unmarshalling the board fitness response body").
-			WithValue("response body", string(boardFitnessSingleResponseRawBody)).
+			WithValue("responseBody", string(boardFitnessSingleResponseRawBody)).
 			WithHTTPCode(http.StatusInternalServerError)
 	}
 
 	return boardFitnessSingleResponseBody.FitnessScore, nil
+
+}
+
+/*
+   This function uses the general solver functions api to fill randomly a board based on its initial state, where just the fixed
+   numbers are on the board, the white spaces need to be represented with a 0 and just the spaces with zero are changed for random
+   numbers that are not in the board untill the board is filled.
+*/
+func BoardRandomInitialization(fixedNumbersBoard [][]uint8, zoneHeight, zoneLength uint16) (initializedBoard [][]uint8, err error) {
+
+	var boardRandomInitializationApiUrl string = os.Getenv("RANDOM_INITIALIZATION_LINK")
+	boardRandomInitializationRequest := &BoardRandomInitializationRequest{
+		FixedNumbersBoard: fixedNumbersBoard,
+		ZoneHeight:        zoneHeight,
+		ZoneLength:        zoneLength,
+	}
+
+	boardRandomInitializationResponse, err := resty.New().R().
+		SetHeader("Content-Type", "application/json").
+		SetHeader("Authorization", apiKey).
+		SetBody(boardRandomInitializationRequest).
+		Get(boardRandomInitializationApiUrl)
+
+	if err != nil {
+		return nil, merry.Wrap(err).Append("unable to initialize the board").
+			WithValue("responseCode", boardRandomInitializationResponse.Status()).
+			WithValue("requestBody", boardRandomInitializationRequest).
+			WithHTTPCode(http.StatusInternalServerError)
+	}
+
+	if !boardRandomInitializationResponse.IsSuccess() {
+		return nil, merry.New("error while initializing the board").
+			WithValue("responseCode", boardRandomInitializationResponse.Status()).
+			WithValue("requestBody", boardRandomInitializationRequest).
+			WithHTTPCode(http.StatusInternalServerError)
+	}
+
+	var boardRandomInitializationResponseRawBody []byte = boardRandomInitializationResponse.Body()
+	var boardRandomInitializationResponseBody BoardRandomInitializationResponse
+
+	err = json.Unmarshal(boardRandomInitializationResponseRawBody, &boardRandomInitializationResponseBody)
+	if err != nil {
+		return nil, merry.New("error while unmarshalling the board fitness response body").
+			WithValue("responseBody", string(boardRandomInitializationResponseRawBody)).
+			WithHTTPCode(http.StatusInternalServerError)
+	}
+
+	return boardRandomInitializationResponseBody.Board, nil
+
+}
+
+/*
+   This function uses the general solver functions api to mutate randomly a board based on its initial state, the mutation affect
+   just the not fixed numbers on the board.
+*/
+func BoardRandomMutation(board [][]uint8, fixedNumbersBoard [][]uint8) (mutatedBoard [][]uint8, err error) {
+
+	var boardRandomMutationApiUrl string = os.Getenv("RANDOM_MUTATION_LINK")
+	boardRandomMutationRequest := &BoardRandomMutationRequest{
+		FixedNumbersBoard: fixedNumbersBoard,
+		BoardArray:        board,
+	}
+
+	boardRandomMutationResponse, err := resty.New().R().
+		SetHeader("Content-Type", "application/json").
+		SetHeader("Authorization", apiKey).
+		SetBody(boardRandomMutationRequest).
+		Get(boardRandomMutationApiUrl)
+
+	if err != nil {
+		return nil, merry.Wrap(err).Append("unable to mutate the board").
+			WithValue("responseCode", boardRandomMutationResponse.Status()).
+			WithValue("requestBody", boardRandomMutationRequest).
+			WithHTTPCode(http.StatusInternalServerError)
+	}
+
+	if !boardRandomMutationResponse.IsSuccess() {
+		return nil, merry.New("error while mutating the board").
+			WithValue("responseCode", boardRandomMutationResponse.Status()).
+			WithValue("requestBody", boardRandomMutationRequest).
+			WithHTTPCode(http.StatusInternalServerError)
+	}
+
+	var boardRandomMutationResponseRawBody []byte = boardRandomMutationResponse.Body()
+	var boardRandomMutationResponseBody BoardRandomInitializationResponse
+
+	err = json.Unmarshal(boardRandomMutationResponseRawBody, &boardRandomMutationResponseBody)
+	if err != nil {
+		return nil, merry.New("error while unmarshalling the board fitness response body").
+			WithValue("responseBody", string(boardRandomMutationResponseRawBody)).
+			WithHTTPCode(http.StatusInternalServerError)
+	}
+
+	return boardRandomMutationResponseBody.Board, nil
 
 }
