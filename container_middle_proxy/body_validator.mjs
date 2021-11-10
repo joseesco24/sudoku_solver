@@ -14,13 +14,13 @@ function check_board_elements(request_body, board_dimensions) {
     let message = null;
 
     for (
-        let row_index = 0; row_index < request_body.board_array.length; row_index++
+        let row_index = 0; row_index < request_body.initial_board.length; row_index++
     ) {
         if (valid_request_body == true) {
             for (
-                let column_index = 0; column_index < request_body.board_array.length; column_index++
+                let column_index = 0; column_index < request_body.initial_board.length; column_index++
             ) {
-                let board_element = request_body.board_array[row_index][column_index];
+                let board_element = request_body.initial_board[row_index][column_index];
                 if (valid_request_body == true) {
                     if (Number.isInteger(board_element) == false) {
                         message = `the board have an element that isn't a number: ${board_element} isn't a number, data type ${typeof board_element}`;
@@ -60,14 +60,14 @@ function check_board_columns(request_body) {
     let message = null;
 
     for (
-        let row_index = 0; row_index < request_body.board_array.length; row_index++
+        let row_index = 0; row_index < request_body.initial_board.length; row_index++
     ) {
         if (valid_request_body == true) {
             let col_dict = new Object();
             for (
-                let column_index = 0; column_index < request_body.board_array.length; column_index++
+                let column_index = 0; column_index < request_body.initial_board.length; column_index++
             ) {
-                let current_number = request_body.board_array[column_index][row_index];
+                let current_number = request_body.initial_board[column_index][row_index];
                 if (current_number != 0 && !(current_number in col_dict)) {
                     col_dict[current_number] = [row_index, column_index];
                 } else if (current_number != 0 && current_number in col_dict) {
@@ -97,14 +97,14 @@ function check_board_rows(request_body) {
     let message = null;
 
     for (
-        let row_index = 0; row_index < request_body.board_array.length; row_index++
+        let row_index = 0; row_index < request_body.initial_board.length; row_index++
     ) {
         if (valid_request_body == true) {
             let row_dict = new Object();
             for (
-                let column_index = 0; column_index < request_body.board_array.length; column_index++
+                let column_index = 0; column_index < request_body.initial_board.length; column_index++
             ) {
-                let current_number = request_body.board_array[row_index][column_index];
+                let current_number = request_body.initial_board[row_index][column_index];
                 if (current_number != 0 && !(current_number in row_dict)) {
                     row_dict[current_number] = [row_index, column_index];
                 } else if (current_number != 0 && current_number in row_dict) {
@@ -142,7 +142,7 @@ export default function check_body_request_mandatory_requirements(request_body) 
     try {
         var request_body_keys = Object.keys(request_body);
         var necessary_fields_in_request = [
-            "board_array",
+            "initial_board",
             "zone_length",
             "zone_height",
         ];
@@ -176,13 +176,13 @@ export default function check_body_request_mandatory_requirements(request_body) 
     // Mandatory parameters type validations.
 
     if (valid_request_body == true) {
-        if (Array.isArray(request_body.board_array) == true) {
+        if (Array.isArray(request_body.initial_board) == true) {
             print_log(
-                "the variable board_array has the correct data type",
+                "the variable initial_board has the correct data type",
                 script_firm
             );
         } else {
-            message = "the variable board_array hasn't the correct data type";
+            message = "the variable initial_board hasn't the correct data type";
             print_log(message, script_firm);
             valid_request_body = false;
         }
@@ -259,7 +259,7 @@ export default function check_body_request_mandatory_requirements(request_body) 
         }
     }
     if (valid_request_body == true) {
-        if (request_body.board_array.length == board_dimensions) {
+        if (request_body.initial_board.length == board_dimensions) {
             print_log("the board columns dimensions are correct", script_firm);
         } else {
             message = "the board columns dimensions aren't correct";
@@ -269,7 +269,7 @@ export default function check_body_request_mandatory_requirements(request_body) 
     }
     if (valid_request_body == true) {
         let board_lenght_summation = 0;
-        request_body.board_array.forEach(function (board_row) {
+        request_body.initial_board.forEach(function (board_row) {
             board_lenght_summation += board_row.length;
         });
         if (board_lenght_summation / board_dimensions == board_dimensions) {

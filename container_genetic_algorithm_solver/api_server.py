@@ -75,9 +75,9 @@ async def solver(request: Request) -> web.Response:
 
             request_body = await request.json()
 
-            sudoku_initial_board = request_body["initialBoard"]
-            sudoku_zone_height = request_body["zoneHeight"]
-            sudoku_zone_length = request_body["zoneLength"]
+            sudoku_initial_board = request_body["initial_board"]
+            sudoku_zone_height = request_body["zone_height"]
+            sudoku_zone_length = request_body["zone_length"]
 
             request_body_keys = [key for key in request_body.keys()]
 
@@ -149,11 +149,11 @@ async def solver(request: Request) -> web.Response:
             )
 
             response_dict = {
-                "totalCollisions": total_collisions,
-                "columnCollisions": column_collisions,
-                "rowCollisions": row_collisions,
-                "zoneCollisions": zone_collisions,
-                "solutionBoard": solution_board,
+                "total_collisions": total_collisions,
+                "column_collisions": column_collisions,
+                "row_collisions": row_collisions,
+                "zone_collisions": zone_collisions,
+                "solution_board": solution_board,
             }
 
             logger.info(msg=r"sending solution to the middle proxy")

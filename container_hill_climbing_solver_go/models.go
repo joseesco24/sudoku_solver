@@ -1,19 +1,19 @@
 package main
 
 type MiddleProxyRequest struct {
-	InitialBoard [][]uint8 `json:"initialBoard"`
-	ZoneLength   uint16    `json:"zoneLength"`
-	ZoneHeight   uint16    `json:"zoneHeight"`
+	InitialBoard [][]uint8 `json:"initial_board"`
+	ZoneLength   uint16    `json:"zone_length"`
+	ZoneHeight   uint16    `json:"zone_height"`
 	Restarts     uint16    `json:"restarts"`
 	Searchs      uint16    `json:"searchs"`
 }
 
 type MiddleProxyResponse struct {
-	ColumnCollisions uint16    `json:"columnCollisions"`
-	TotalCollisions  uint16    `json:"totalCollisions"`
-	ZoneCollisions   uint16    `json:"zoneCollisions"`
-	RowCollisions    uint16    `json:"rowCollisions"`
-	SolutionBoard    [][]uint8 `json:"solutionBoard"`
+	ColumnCollisions uint16    `json:"column_collisions"`
+	TotalCollisions  uint16    `json:"total_collisions"`
+	ZoneCollisions   uint16    `json:"zone_collisions"`
+	RowCollisions    uint16    `json:"row_collisions"`
+	SolutionBoard    [][]uint8 `json:"solution_board"`
 }
 
 type BoardFitnessReportRequest struct {
