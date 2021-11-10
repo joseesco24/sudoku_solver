@@ -1,4 +1,4 @@
-package model
+package main
 
 type MiddleProxyRequest struct {
 	BoardArray [][]uint8 `json:"board_array"`

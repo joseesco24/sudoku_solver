@@ -7,8 +7,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/joseesco24/sudoku_solver/container_hill_climbing_solver_go/model"
-
 	"github.com/ansel1/merry"
 	"github.com/labstack/echo/v4"
 )
@@ -50,7 +48,7 @@ func main() {
 				WithHTTPCode(http.StatusUnauthorized)
 		}
 
-		var middleProxyRequestBody model.MiddleProxyRequest
+		var middleProxyRequestBody MiddleProxyRequest
 
 		body, err := ioutil.ReadAll(context.Request().Body)
 		if err != nil {

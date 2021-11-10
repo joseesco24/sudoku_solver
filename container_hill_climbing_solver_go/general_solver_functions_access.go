@@ -1,11 +1,9 @@
-package service
+package main
 
 import (
 	"encoding/json"
 	"net/http"
 	"os"
-
-	"github.com/joseesco24/sudoku_solver/container_hill_climbing_solver_go/model"
 
 	"github.com/ansel1/merry"
 	"github.com/go-resty/resty/v2"
@@ -20,7 +18,7 @@ var apiKey string = os.Getenv("SOLVER_FUNCTIONS_KEY")
 func CalculateBoardFitnessReport(board [][]uint8, zoneHeight, zoneLength uint16) (totalCollisions, columnCollisions, rowCollisions, zoneCollisions uint16, err error) {
 
 	var boardFitnessReportApiUrl string = os.Getenv("FITNESS_REPORT_SCORE_LINK")
-	boardFitnessReportRequest := &model.BoardFitnessReportRequest{
+	boardFitnessReportRequest := &BoardFitnessReportRequest{
 		ZoneHeight: zoneHeight,
 		ZoneLength: zoneLength,
 		BoardArray: board,
@@ -47,7 +45,7 @@ func CalculateBoardFitnessReport(board [][]uint8, zoneHeight, zoneLength uint16)
 	}
 
 	var boardFitnessReportResponseRawBody []byte = boardFitnessReportResponse.Body()
-	var boardFitnessReportResponseBody model.BoardFitnessReportResponse
+	var boardFitnessReportResponseBody BoardFitnessReportResponse
 
 	err = json.Unmarshal(boardFitnessReportResponseRawBody, &boardFitnessReportResponseBody)
 	if err != nil {
@@ -71,7 +69,7 @@ func CalculateBoardFitnessReport(board [][]uint8, zoneHeight, zoneLength uint16)
 func CalculateBoardFitnessSingle(board [][]uint8, zoneHeight, zoneLength uint16) (fitnessScore uint16, err error) {
 
 	var boardFitnessSingleApiUrl string = os.Getenv("FITNESS_SINGLE_SCORE_LINK")
-	boardFitnessReportRequest := &model.BoardFitnessSingleRequest{
+	boardFitnessReportRequest := &BoardFitnessSingleRequest{
 		ZoneHeight: zoneHeight,
 		ZoneLength: zoneLength,
 		BoardArray: board,
@@ -98,7 +96,7 @@ func CalculateBoardFitnessSingle(board [][]uint8, zoneHeight, zoneLength uint16)
 	}
 
 	var boardFitnessSingleResponseRawBody []byte = boardFitnessSingleResponse.Body()
-	var boardFitnessSingleResponseBody model.BoardFitnessSingleResponse
+	var boardFitnessSingleResponseBody BoardFitnessSingleResponse
 
 	err = json.Unmarshal(boardFitnessSingleResponseRawBody, &boardFitnessSingleResponseBody)
 	if err != nil {
