@@ -32,8 +32,11 @@ func main() {
 	*/
 	e.GET("/solver", func(context echo.Context) error {
 
+		var totalCollisions, columnCollisions, rowCollisions, zoneCollisions uint16
 		var authorization string = context.Request().Header.Get("Authorization")
+		var middleProxyResponseBody MiddleProxyResponse
 		var middleProxyRequestBody MiddleProxyRequest
+		var solutionBoard [][]uint8
 		var body []byte
 		var err error
 
@@ -73,7 +76,36 @@ func main() {
 			middleProxyRequestBody.Searchs = 10
 		}
 
-		return context.NoContent(http.StatusOK)
+		solutionBoard, err = SolveUsingHillClimbingAlgorithm(
+			middleProxyRequestBody.Restarts,
+			middleProxyRequestBody.Searchs,
+			middleProxyRequestBody.ZoneHeight,
+			middleProxyRequestBody.ZoneLength,
+			middleProxyRequestBody.InitialBoard,
+		)
+		if err != nil {
+			return merry.Wrap(err).WithValue("initialBoard", middleProxyRequestBody.InitialBoard).
+				WithHTTPCode(http.StatusInternalServerError)
+		}
+
+		middleProxyResponseBody.SolutionBoard = solutionBoard
+
+		totalCollisions, columnCollisions, rowCollisions, zoneCollisions, err = CalculateBoardFitnessReport(
+			solutionBoard,
+			middleProxyRequestBody.ZoneHeight,
+			middleProxyRequestBody.ZoneLength,
+		)
+		if err != nil {
+			return merry.Wrap(err).WithValue("solutionBoard", solutionBoard).
+				WithHTTPCode(http.StatusInternalServerError)
+		}
+
+		middleProxyResponseBody.ColumnCollisions = columnCollisions
+		middleProxyResponseBody.TotalCollisions = totalCollisions
+		middleProxyResponseBody.ZoneCollisions = zoneCollisions
+		middleProxyResponseBody.RowCollisions = rowCollisions
+
+		return context.JSON(http.StatusOK, middleProxyResponseBody)
 
 	})
 
