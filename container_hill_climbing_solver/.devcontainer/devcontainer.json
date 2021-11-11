@@ -1,22 +1,17 @@
 {
-  "name": "python dev container",
-  "context": "..",
-  "dockerFile": "../development.Dockerfile",
-  "forwardPorts": [],
-  "workspaceMount": "source=${localWorkspaceFolder},target=/home/python_dev/workspace,type=bind,consistency=delegated",
-  "workspaceFolder": "/home/python_dev/workspace",
-  "postCreateCommand": "pip install --upgrade pip && pip install -r /home/python_dev/workspace/requirements/commons.txt -r /home/python_dev/workspace/requirements/development.txt",
-  "extensions": [
-    "coenraads.bracket-pair-colorizer-2",
-    "aaron-bond.better-comments",
-    "ms-python.vscode-pylance",
-    "njpwerner.autodocstring",
-    "oderwat.indent-rainbow",
-    "esbenp.prettier-vscode",
-    "alefragnani.bookmarks",
-    "redhat.vscode-yaml",
-    "ms-toolsai.jupyter",
-    "ryu1kn.text-marker",
-    "ms-python.python",
-  ]
-}
+    "name": "golang dev container",
+    "context": "..",
+    "dockerFile": "../development.Dockerfile",
+    "forwardPorts": [],
+    "workspaceMount": "source=${localWorkspaceFolder},target=/home/golang_dev/workspace,type=bind,consistency=delegated",
+    "workspaceFolder": "/home/golang_dev/workspace",
+    "postCreateCommand": "mkdir -p /home/golang_dev/workspace/bin && mkdir -p /home/golang_dev/workspace/pkg",
+    "extensions": [
+      "coenraads.bracket-pair-colorizer-2",
+      "aaron-bond.better-comments",
+      "alefragnani.bookmarks",
+      "redhat.vscode-yaml",
+      "ryu1kn.text-marker",
+      "golang.go",
+    ]
+  }

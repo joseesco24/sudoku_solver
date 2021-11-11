@@ -1,6 +1,6 @@
-# Declaration of the Python version.
+# Declaration of the Golang version.
 
-FROM python:3.7.10
+FROM golang:1.17rc2
 
 # Installing tree and openssh-client.
 
@@ -10,21 +10,26 @@ RUN apt-get install -y tree
 
 # Declaration of the project file system and username inside the development container.
 
-ARG WORKDIR=/home/python_dev/workspace
-ARG WORKDIR_ROOT=/home/python_dev
-ARG USERNAME=python_dev
+ARG WORKDIR=/home/golang_dev/workspace
+ARG WORKDIR_ROOT=/home/golang_dev
+ARG USERNAME=golang_dev
+
+# Declaration of Golang environment variables.
+
+ENV GOROOT=/usr/local/go
+ENV GOBIN=$WORKDIR/bin
 
 # Creating the user on bash and their home directory.
 
 RUN useradd --create-home --shell /bin/bash $USERNAME
 
-# Creating the directories for the file system.
+# Creating the directories for the file system an go modules.
 
 RUN mkdir -p $WORKDIR
 
-# Adding to the container path the Python dependencies directory.
+# Adding to the container path the Golang dependencies directory.
 
-ENV PATH="/home/$USERNAME/.local/bin:$PATH"
+ENV PATH="$GOROOT/bin:$GOBIN:$PATH"
 
 # Changing the premises of the file system.
 

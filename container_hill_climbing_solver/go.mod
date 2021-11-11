@@ -1,4 +1,4 @@
-module github.com/joseesco24/sudoku_solver/container_hill_climbing_solver_go
+module github.com/joseesco24/sudoku_solver/container_hill_climbing_solver
 
 go 1.17
 

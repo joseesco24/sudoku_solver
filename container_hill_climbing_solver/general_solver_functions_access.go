@@ -18,13 +18,15 @@ var apiKey string = os.Getenv("SOLVER_FUNCTIONS_KEY")
 func CalculateBoardFitnessReport(board [][]uint8, zoneHeight, zoneLength uint16) (totalCollisions, columnCollisions, rowCollisions, zoneCollisions uint16, err error) {
 
 	var boardFitnessReportApiUrl string = os.Getenv("FITNESS_REPORT_SCORE_LINK")
+	var boardFitnessReportResponse *resty.Response
+
 	boardFitnessReportRequest := &BoardFitnessReportRequest{
 		ZoneHeight: zoneHeight,
 		ZoneLength: zoneLength,
 		BoardArray: board,
 	}
 
-	boardFitnessReportResponse, err := resty.New().R().
+	boardFitnessReportResponse, err = resty.New().R().
 		SetHeader("Content-Type", "application/json").
 		SetHeader("Authorization", apiKey).
 		SetBody(boardFitnessReportRequest).
@@ -69,13 +71,15 @@ func CalculateBoardFitnessReport(board [][]uint8, zoneHeight, zoneLength uint16)
 func CalculateBoardFitnessSingle(board [][]uint8, zoneHeight, zoneLength uint16) (fitnessScore uint16, err error) {
 
 	var boardFitnessSingleApiUrl string = os.Getenv("FITNESS_SINGLE_SCORE_LINK")
+	var boardFitnessSingleResponse *resty.Response
+
 	boardFitnessReportRequest := &BoardFitnessSingleRequest{
 		ZoneHeight: zoneHeight,
 		ZoneLength: zoneLength,
 		BoardArray: board,
 	}
 
-	boardFitnessSingleResponse, err := resty.New().R().
+	boardFitnessSingleResponse, err = resty.New().R().
 		SetHeader("Content-Type", "application/json").
 		SetHeader("Authorization", apiKey).
 		SetBody(boardFitnessReportRequest).
@@ -117,13 +121,15 @@ func CalculateBoardFitnessSingle(board [][]uint8, zoneHeight, zoneLength uint16)
 func BoardRandomInitialization(fixedNumbersBoard [][]uint8, zoneHeight, zoneLength uint16) (initializedBoard [][]uint8, err error) {
 
 	var boardRandomInitializationApiUrl string = os.Getenv("RANDOM_INITIALIZATION_LINK")
+	var boardRandomInitializationResponse *resty.Response
+
 	boardRandomInitializationRequest := &BoardRandomInitializationRequest{
 		FixedNumbersBoard: fixedNumbersBoard,
 		ZoneHeight:        zoneHeight,
 		ZoneLength:        zoneLength,
 	}
 
-	boardRandomInitializationResponse, err := resty.New().R().
+	boardRandomInitializationResponse, err = resty.New().R().
 		SetHeader("Content-Type", "application/json").
 		SetHeader("Authorization", apiKey).
 		SetBody(boardRandomInitializationRequest).
@@ -164,12 +170,14 @@ func BoardRandomInitialization(fixedNumbersBoard [][]uint8, zoneHeight, zoneLeng
 func BoardRandomMutation(board [][]uint8, fixedNumbersBoard [][]uint8) (mutatedBoard [][]uint8, err error) {
 
 	var boardRandomMutationApiUrl string = os.Getenv("RANDOM_MUTATION_LINK")
+	var boardRandomMutationResponse *resty.Response
+
 	boardRandomMutationRequest := &BoardRandomMutationRequest{
 		FixedNumbersBoard: fixedNumbersBoard,
 		BoardArray:        board,
 	}
 
-	boardRandomMutationResponse, err := resty.New().R().
+	boardRandomMutationResponse, err = resty.New().R().
 		SetHeader("Content-Type", "application/json").
 		SetHeader("Authorization", apiKey).
 		SetBody(boardRandomMutationRequest).

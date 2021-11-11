@@ -1,5 +1,10 @@
 package main
 
+type Genome struct {
+	Board [][]uint8
+	Score uint16
+}
+
 type MiddleProxyRequest struct {
 	InitialBoard [][]uint8 `json:"initial_board"`
 	ZoneLength   uint16    `json:"zone_length"`

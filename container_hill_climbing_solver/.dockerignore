@@ -1,15 +1,14 @@
 # Black list.
 
-# Uneeded specific files.
-requirements/development.txt
-requirements/flv_all.txt
-requirements/raw_all.txt
-
 # Unneeded directories.
+
 .devcontainer
-.vscode
+
+bin
+pkg
 
 # Unneeded files.
+
 *.code-workspace
 *.dockerignore
 *.Dockerfile

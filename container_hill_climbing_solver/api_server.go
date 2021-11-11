@@ -33,6 +33,9 @@ func main() {
 	e.GET("/solver", func(context echo.Context) error {
 
 		var authorization string = context.Request().Header.Get("Authorization")
+		var middleProxyRequestBody MiddleProxyRequest
+		var body []byte
+		var err error
 
 		if authorization == "" {
 			return merry.New("authorization not found").
@@ -48,9 +51,7 @@ func main() {
 				WithHTTPCode(http.StatusUnauthorized)
 		}
 
-		var middleProxyRequestBody MiddleProxyRequest
-
-		body, err := ioutil.ReadAll(context.Request().Body)
+		body, err = ioutil.ReadAll(context.Request().Body)
 		if err != nil {
 			return merry.Wrap(err).Append("error while loading the middle proxy request body").
 				WithValue("middleProxyRequestBody", string(body)).
