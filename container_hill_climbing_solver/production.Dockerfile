@@ -4,7 +4,7 @@ FROM golang:1.17rc2-alpine AS build
 
 # Declaration of the project file system inside the building image.
 
-ARG WORKDIR=golang_prod
+ARG WORKDIR=/home/golang_prod
 
 # Creating the directories for the file system.
 
@@ -18,7 +18,7 @@ WORKDIR $WORKDIR
 
 COPY ["go.mod", "go.sum", "$WORKDIR/"]
 
-RUN go mod download
+RUN go mod download -x
 
 COPY [".", "$WORKDIR/"]
 
@@ -53,4 +53,4 @@ USER $USERNAME
 
 # Copying the builded api from the building image to the deployment image.
 
-COPY --from=build ["golang_prod/api_server", "$WORKDIR/"]
+COPY --from=build ["/home/golang_prod/api_server", "$WORKDIR/"]
