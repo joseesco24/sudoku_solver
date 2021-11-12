@@ -20,7 +20,7 @@ COPY ["go.mod", "go.sum", "$WORKDIR/"]
 
 RUN go mod download -x
 
-COPY [".", "$WORKDIR/"]
+COPY [".", "$WORKDIR"]
 
 RUN go build -o api_server
 
@@ -53,4 +53,4 @@ USER $USERNAME
 
 # Copying the builded api from the building image to the deployment image.
 
-COPY --from=build ["/home/golang_prod/api_server", "$WORKDIR/"]
+COPY --from=build ["/home/golang_prod/api_server", "$WORKDIR"]
