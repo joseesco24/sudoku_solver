@@ -9,11 +9,16 @@ import (
 
 	"github.com/ansel1/merry"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
 
 	e := echo.New()
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format:           "[${time_rfc3339}]:: - ${error}\n",
+		CustomTimeFormat: "2006-01-02 15:04:05",
+	}))
 
 	/*
 		This function is incharge of response all the health check petitions that the middle proxy makes for checking if the requested
@@ -56,6 +61,7 @@ func main() {
 
 		body, err = ioutil.ReadAll(context.Request().Body)
 		if err != nil {
+			fmt.Println(err)
 			return merry.Wrap(err).Append("error while loading the middle proxy request body").
 				WithValue("middleProxyRequestBody", string(body)).
 				WithHTTPCode(http.StatusInternalServerError)
@@ -63,6 +69,7 @@ func main() {
 
 		err = json.Unmarshal(body, &middleProxyRequestBody)
 		if err != nil {
+			fmt.Println(err)
 			return merry.Wrap(err).Append("error while unmarshalling the middle proxy request body").
 				WithValue("middleProxyRequestBody", string(body)).
 				WithHTTPCode(http.StatusInternalServerError)
@@ -84,6 +91,7 @@ func main() {
 			middleProxyRequestBody.InitialBoard,
 		)
 		if err != nil {
+			fmt.Println(err)
 			return merry.Wrap(err).WithValue("initialBoard", middleProxyRequestBody.InitialBoard).
 				WithHTTPCode(http.StatusInternalServerError)
 		}
@@ -96,6 +104,7 @@ func main() {
 			middleProxyRequestBody.ZoneLength,
 		)
 		if err != nil {
+			fmt.Println(err)
 			return merry.Wrap(err).WithValue("solutionBoard", solutionBoard).
 				WithHTTPCode(http.StatusInternalServerError)
 		}

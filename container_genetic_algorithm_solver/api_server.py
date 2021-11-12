@@ -28,7 +28,7 @@ async def health_test(_: Request) -> web.Response:
         web.Response: A 200 status code.
     """
 
-    logger.info(r"health test request received")
+    logger.debug(r"health test request received")
 
     return web.Response(
         reason=r"ok",
@@ -56,7 +56,7 @@ async def solver(request: Request) -> web.Response:
 
     try:
 
-        logger.info(msg=r"validating middle proxy authorization")
+        logger.debug(msg=r"validating middle proxy authorization")
 
         request_header_keys = [key for key in request.headers.keys()]
 
@@ -65,7 +65,7 @@ async def solver(request: Request) -> web.Response:
             and request.headers["Authorization"] == os.environ["ACCESS_KEY"]
         ):
 
-            logger.info(msg=r"middle proxy authorization validated")
+            logger.debug(msg=r"middle proxy authorization validated")
 
             generations_validator, population_validator = True, True
             mutation_validator, crossover_validator = True, True

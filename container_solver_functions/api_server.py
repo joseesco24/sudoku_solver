@@ -3,19 +3,18 @@ from general_solvers_functions import calculate_board_fitness_single
 from general_solvers_functions import board_random_initialization
 from general_solvers_functions import board_random_mutation
 
-from general_utilities import print_log
+from logger import setup_logger
 
 from aiohttp.web_request import Request
-from traceback import format_exc
 from aiohttp import web
 from json import dumps
 from os import environ
+import os
 
 api_routes = web.RouteTableDef()
 api = web.Application()
 
-script_firm = "api"
-error_firm = "err"
+logger = setup_logger(logger_name=os.path.basename(__file__).split(".")[0])
 
 
 async def check_request_mandatory_requirements(request: Request) -> bool:
@@ -32,7 +31,7 @@ async def check_request_mandatory_requirements(request: Request) -> bool:
         bool: A boolean that indicates if the request is valid or not.
     """
 
-    print_log(r"starting request headers and body validations", script_firm)
+    logger.debug(msg=r"starting request headers and body validations")
 
     # Request general validations.
 
@@ -42,26 +41,26 @@ async def check_request_mandatory_requirements(request: Request) -> bool:
         api_key = str(environ["ACCESS_KEY"])
         request_headers = request.headers
         continue_process = True
-        print_log(r"the request headers and body are correct", script_firm)
+        logger.debug(msg=r"the request headers and body are correct")
 
     except:
         continue_process = False
-        print_log(r"the request headers and body are not correct", error_firm)
+        logger.exception(msg=r"the request headers and body are not correct")
 
     # Authorization header validations.
 
     if continue_process is True:
         if "Authorization" in request_header_keys:
-            print_log(r"the authorization header exists", script_firm)
+            logger.debug(msg=r"the authorization header exists")
         else:
-            print_log(r"the authorization header dosn't exists", error_firm)
+            logger.warn(msg=r"the authorization header dosn't exists")
             continue_process = False
 
     if continue_process is True:
         if api_key == request_headers["Authorization"]:
-            print_log(r"the authorization header is valid", script_firm)
+            logger.debug(msg=r"the authorization header is valid")
         else:
-            print_log(r"the authorization header isn't valid", error_firm)
+            logger.warn(msg=r"the authorization header isn't valid")
             continue_process = False
 
     return continue_process
@@ -84,9 +83,7 @@ async def get_board_fitness_single(request: Request) -> web.Response:
 
     try:
 
-        print_log(
-            r"new request recived at: /calculate_board_fitness_single", script_firm
-        )
+        logger.debug(msg=r"new request recived at: /calculate_board_fitness_single")
 
         continue_process = await check_request_mandatory_requirements(request)
 
@@ -119,9 +116,7 @@ async def get_board_fitness_single(request: Request) -> web.Response:
 
     except:
 
-        error_stack = format_exc().split("\n")[:-1]
-        for error in error_stack:
-            print_log(error.strip(), error_firm)
+        logger.exception(msg=r"exception in the calculate_board_fitness_single api")
 
         return web.Response(
             status=500,
@@ -146,9 +141,7 @@ async def get_board_fitness_report(request: Request) -> web.Response:
 
     try:
 
-        print_log(
-            r"new request recived at: /calculate_board_fitness_report", script_firm
-        )
+        logger.debug(msg=r"new request recived at: /calculate_board_fitness_report")
 
         continue_process = await check_request_mandatory_requirements(request)
 
@@ -189,9 +182,7 @@ async def get_board_fitness_report(request: Request) -> web.Response:
 
     except:
 
-        error_stack = format_exc().split("\n")[:-1]
-        for error in error_stack:
-            print_log(error.strip(), error_firm)
+        logger.exception(msg=r"exception in the calculate_board_fitness_report api")
 
         return web.Response(
             status=500,
@@ -215,7 +206,7 @@ async def get_random_initialization(request: Request) -> web.Response:
 
     try:
 
-        print_log(r"new request recived at: /board_random_initialization", script_firm)
+        logger.debug(msg=r"new request recived at: /board_random_initialization")
 
         continue_process = await check_request_mandatory_requirements(request)
 
@@ -248,9 +239,7 @@ async def get_random_initialization(request: Request) -> web.Response:
 
     except:
 
-        error_stack = format_exc().split("\n")[:-1]
-        for error in error_stack:
-            print_log(error.strip(), error_firm)
+        logger.exception(msg=r"exception in the board_random_initialization api")
 
         return web.Response(
             status=500,
@@ -274,7 +263,7 @@ async def get_random_mutation(request: Request) -> web.Response:
 
     try:
 
-        print_log(r"new request recived at: /board_random_mutation", script_firm)
+        logger.debug(msg=r"new request recived at: /board_random_mutation")
 
         continue_process = await check_request_mandatory_requirements(request)
 
@@ -306,9 +295,7 @@ async def get_random_mutation(request: Request) -> web.Response:
 
     except:
 
-        error_stack = format_exc().split("\n")[:-1]
-        for error in error_stack:
-            print_log(error.strip(), error_firm)
+        logger.exception(msg=r"exception in the board_random_mutation api")
 
         return web.Response(
             status=500,

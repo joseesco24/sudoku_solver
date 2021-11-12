@@ -127,7 +127,7 @@ async def solve_using_genetic_algorithm(
         list: The best finded board.
     """
 
-    logger.info(msg=r"starting to solve using genetic algorithm")
+    logger.debug(msg=r"starting to solve using genetic algorithm")
 
     fixed_numbers_board = deepcopy(board)
 
@@ -242,6 +242,6 @@ async def solve_using_genetic_algorithm(
 
         # Increasing generations counter.
 
-    logger.info(msg=r"ending to solve using genetic algorithm")
+    logger.debug(msg=r"ending to solve using genetic algorithm")
 
     return population[0][1]
