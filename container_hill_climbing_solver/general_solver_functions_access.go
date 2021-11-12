@@ -30,7 +30,7 @@ func CalculateBoardFitnessReport(board [][]uint8, zoneHeight, zoneLength uint16)
 		SetHeader("Content-Type", "application/json").
 		SetHeader("Authorization", apiKey).
 		SetBody(boardFitnessReportRequest).
-		Get(boardFitnessReportApiUrl)
+		Post(boardFitnessReportApiUrl)
 
 	if err != nil {
 		return 0, 0, 0, 0, merry.Wrap(err).Append("unable to get the board fitness report").
@@ -83,7 +83,7 @@ func CalculateBoardFitnessSingle(board [][]uint8, zoneHeight, zoneLength uint16)
 		SetHeader("Content-Type", "application/json").
 		SetHeader("Authorization", apiKey).
 		SetBody(boardFitnessReportRequest).
-		Get(boardFitnessSingleApiUrl)
+		Post(boardFitnessSingleApiUrl)
 
 	if err != nil {
 		return 0, merry.Wrap(err).Append("unable to get the board fitness score").
@@ -133,7 +133,7 @@ func BoardRandomInitialization(fixedNumbersBoard [][]uint8, zoneHeight, zoneLeng
 		SetHeader("Content-Type", "application/json").
 		SetHeader("Authorization", apiKey).
 		SetBody(boardRandomInitializationRequest).
-		Get(boardRandomInitializationApiUrl)
+		Post(boardRandomInitializationApiUrl)
 
 	if err != nil {
 		return nil, merry.Wrap(err).Append("unable to initialize the board").
@@ -181,7 +181,7 @@ func BoardRandomMutation(board [][]uint8, fixedNumbersBoard [][]uint8) (mutatedB
 		SetHeader("Content-Type", "application/json").
 		SetHeader("Authorization", apiKey).
 		SetBody(boardRandomMutationRequest).
-		Get(boardRandomMutationApiUrl)
+		Post(boardRandomMutationApiUrl)
 
 	if err != nil {
 		return nil, merry.Wrap(err).Append("unable to mutate the board").

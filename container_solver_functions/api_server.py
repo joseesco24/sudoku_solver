@@ -66,7 +66,18 @@ async def check_request_mandatory_requirements(request: Request) -> bool:
     return continue_process
 
 
-@api_routes.get(r"/calculate_board_fitness_single")
+def get_board_stamp(board: list) -> str:
+
+    board_stamp = ""
+
+    for row in board:
+        for element in row:
+            board_stamp += str(element)
+
+    return "|" + board_stamp + "|"
+
+
+@api_routes.post(r"/calculate_board_fitness_single")
 async def get_board_fitness_single(request: Request) -> web.Response:
 
     """Get Board Fitness Single
@@ -91,14 +102,16 @@ async def get_board_fitness_single(request: Request) -> web.Response:
 
             request_body = await request.json()
 
+            logger.info(msg=f'board stamp: {get_board_stamp(request_body["board"])}')
+
             fitness_score = calculate_board_fitness_single(
-                zone_height=request_body["zone_height"],
-                zone_length=request_body["zone_length"],
+                zone_height=request_body["zoneHeight"],
+                zone_length=request_body["zoneLength"],
                 board=request_body["board"],
             )
 
             response_dict = {
-                "fitness_score": fitness_score,
+                "fitnessScore": fitness_score,
             }
 
             headers = {"Content-Type": "application/json"}
@@ -123,7 +136,7 @@ async def get_board_fitness_single(request: Request) -> web.Response:
         )
 
 
-@api_routes.get(r"/calculate_board_fitness_report")
+@api_routes.post(r"/calculate_board_fitness_report")
 async def get_board_fitness_report(request: Request) -> web.Response:
 
     """Get Board Fitness Report
@@ -149,22 +162,24 @@ async def get_board_fitness_report(request: Request) -> web.Response:
 
             request_body = await request.json()
 
+            logger.info(msg=f'board stamp: {get_board_stamp(request_body["board"])}')
+
             (
                 total_collisions,
                 zone_collisions,
                 row_collisions,
                 column_collisions,
             ) = calculate_board_fitness_report(
-                zone_height=request_body["zone_height"],
-                zone_length=request_body["zone_length"],
+                zone_height=request_body["zoneHeight"],
+                zone_length=request_body["zoneLength"],
                 board=request_body["board"],
             )
 
             response_dict = {
-                "column_collisions": column_collisions,
-                "total_collisions": total_collisions,
-                "zone_collisions": zone_collisions,
-                "row_collisions": row_collisions,
+                "columnCollisions": column_collisions,
+                "totalCollisions": total_collisions,
+                "zoneCollisions": zone_collisions,
+                "rowCollisions": row_collisions,
             }
 
             headers = {"Content-Type": "application/json"}
@@ -189,7 +204,7 @@ async def get_board_fitness_report(request: Request) -> web.Response:
         )
 
 
-@api_routes.get(r"/board_random_initialization")
+@api_routes.post(r"/board_random_initialization")
 async def get_random_initialization(request: Request) -> web.Response:
 
     """Get Random Initialization
@@ -214,10 +229,14 @@ async def get_random_initialization(request: Request) -> web.Response:
 
             request_body = await request.json()
 
+            logger.info(
+                msg=f'fixed board stamp: {get_board_stamp(request_body["fixedNumbersBoard"])}'
+            )
+
             board = board_random_initialization(
-                fixed_numbers_board=request_body["fixed_numbers_board"],
-                zone_height=request_body["zone_height"],
-                zone_length=request_body["zone_length"],
+                fixed_numbers_board=request_body["fixedNumbersBoard"],
+                zone_height=request_body["zoneHeight"],
+                zone_length=request_body["zoneLength"],
             )
 
             response_dict = {
@@ -246,7 +265,7 @@ async def get_random_initialization(request: Request) -> web.Response:
         )
 
 
-@api_routes.get(r"/board_random_mutation")
+@api_routes.post(r"/board_random_mutation")
 async def get_random_mutation(request: Request) -> web.Response:
 
     """Get Random Mutation
@@ -271,8 +290,13 @@ async def get_random_mutation(request: Request) -> web.Response:
 
             request_body = await request.json()
 
+            logger.info(msg=f'board stamp: {get_board_stamp(request_body["board"])}')
+            logger.info(
+                msg=f'fixed board stamp: {get_board_stamp(request_body["fixedNumbersBoard"])}'
+            )
+
             board = board_random_mutation(
-                fixed_numbers_board=request_body["fixed_numbers_board"],
+                fixed_numbers_board=request_body["fixedNumbersBoard"],
                 board=request_body["board"],
             )
 

@@ -149,11 +149,11 @@ async def solver(request: Request) -> web.Response:
             )
 
             response_dict = {
-                "total_collisions": total_collisions,
-                "column_collisions": column_collisions,
-                "row_collisions": row_collisions,
-                "zone_collisions": zone_collisions,
-                "solution_board": solution_board,
+                "totalCollisions": total_collisions,
+                "columnCollisions": column_collisions,
+                "rowCollisions": row_collisions,
+                "zoneCollisions": zone_collisions,
+                "solutionBoard": solution_board,
             }
 
             logger.info(msg=r"sending solution to the middle proxy")

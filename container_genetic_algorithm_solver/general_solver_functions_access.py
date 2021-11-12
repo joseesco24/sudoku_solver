@@ -25,20 +25,20 @@ async def calculate_board_fitness_report(
         int: Total collisions on the board zones.
     """
 
-    body = {"zone_height": zone_height, "zone_length": zone_length, "board": board}
+    body = {"zoneHeight": zone_height, "zoneLength": zone_length, "board": board}
     url = str(environ["FITNESS_REPORT_SCORE_LINK"])
     response_body = dict()
 
     headers = {"Authorization": api_key, "Content-Type": "application/json"}
     async with ClientSession(headers=headers) as session:
-        async with session.get(url=url, json=body) as response:
+        async with session.post(url=url, json=body) as response:
             response_body = await response.json()
 
     return (
-        response_body["total_collisions"],
-        response_body["column_collisions"],
-        response_body["row_collisions"],
-        response_body["zone_collisions"],
+        response_body["totalCollisions"],
+        response_body["columnCollisions"],
+        response_body["rowCollisions"],
+        response_body["zoneCollisions"],
     )
 
 
@@ -60,16 +60,16 @@ async def calculate_board_fitness_single(
         int: Total collisions on the board.
     """
 
-    body = {"zone_height": zone_height, "zone_length": zone_length, "board": board}
+    body = {"zoneHeight": zone_height, "zoneLength": zone_length, "board": board}
     url = str(environ["FITNESS_SINGLE_SCORE_LINK"])
     response_body = dict()
 
     headers = {"Authorization": api_key, "Content-Type": "application/json"}
     async with ClientSession(headers=headers) as session:
-        async with session.get(url=url, json=body) as response:
+        async with session.post(url=url, json=body) as response:
             response_body = await response.json()
 
-    return response_body["fitness_score"]
+    return response_body["fitnessScore"]
 
 
 async def board_random_initialization(
@@ -92,16 +92,16 @@ async def board_random_initialization(
     """
 
     body = {
-        "fixed_numbers_board": fixed_numbers_board,
-        "zone_height": zone_height,
-        "zone_length": zone_length,
+        "fixedNumbersBoard": fixed_numbers_board,
+        "zoneHeight": zone_height,
+        "zoneLength": zone_length,
     }
     url = str(environ["RANDOM_INITIALIZATION_LINK"])
     response_body = dict()
 
     headers = {"Authorization": api_key, "Content-Type": "application/json"}
     async with ClientSession(headers=headers) as session:
-        async with session.get(url=url, json=body) as response:
+        async with session.post(url=url, json=body) as response:
             response_body = await response.json()
 
     return response_body["board"]
@@ -122,13 +122,13 @@ async def board_random_mutation(board: list, fixed_numbers_board: list) -> list:
         list: A full filled board representation with a mutation in one of its rows.
     """
 
-    body = {"fixed_numbers_board": fixed_numbers_board, "board": board}
+    body = {"fixedNumbersBoard": fixed_numbers_board, "board": board}
     url = str(environ["RANDOM_MUTATION_LINK"])
     response_body = dict()
 
     headers = {"Authorization": api_key, "Content-Type": "application/json"}
     async with ClientSession(headers=headers) as session:
-        async with session.get(url=url, json=body) as response:
+        async with session.post(url=url, json=body) as response:
             response_body = await response.json()
 
     return response_body["board"]

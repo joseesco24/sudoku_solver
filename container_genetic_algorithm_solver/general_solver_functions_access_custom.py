@@ -23,13 +23,13 @@ async def calculate_board_fitness_single(
         list: The original board.
     """
 
-    body = {"zone_height": zone_height, "zone_length": zone_length, "board": board}
+    body = {"zoneHeight": zone_height, "zoneLength": zone_length, "board": board}
     url = str(environ["FITNESS_SINGLE_SCORE_LINK"])
     response_body = dict()
 
     headers = {"Authorization": api_key}
     async with ClientSession(headers=headers) as session:
-        async with session.get(url=url, json=body) as response:
+        async with session.post(url=url, json=body) as response:
             response_body = await response.json()
 
-    return (response_body["fitness_score"], board)
+    return (response_body["fitnessScore"], board)
