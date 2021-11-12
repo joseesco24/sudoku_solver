@@ -132,7 +132,7 @@ services:
       - ${HILL_CLIMBING_SOLVER_PORT}
     depends_on:
       - solver_functions_load_balancer
-    entrypoint: ["api_server"]
+    entrypoint: ["./api_server"]
 
   genetic_algorithm_solver:
     container_name: genetic_algorithm_solver
