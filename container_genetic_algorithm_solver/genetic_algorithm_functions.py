@@ -20,6 +20,8 @@ async def tournament_selection(population: list) -> tuple:
         tuple: An individual chromosome representation for the crossover.
     """
 
+    logger.debug(msg=r"calculating tournament selection")
+
     tournament_size = len(population) // 2
 
     if tournament_size == 0:
@@ -28,6 +30,8 @@ async def tournament_selection(population: list) -> tuple:
     population = sorted(population, key=lambda individual: individual[0])
 
     tournament_members = population[:tournament_size]
+
+    logger.debug(msg=r"tournament selection calculation ended")
 
     return random.choice(tournament_members)
 
@@ -47,11 +51,15 @@ async def exchange_random_row(individual_1: list, individual_2: list) -> list:
         tuple: one of the individuals after making the rows exchange.
     """
 
+    logger.debug(msg=r"calculating crossover")
+
     exchange_index = random.randrange(len(individual_1))
 
     individual_1[exchange_index], individual_2[exchange_index] = (
         deepcopy(individual_2[exchange_index]),
         deepcopy(individual_1[exchange_index]),
     )
+
+    logger.debug(msg=r"crossover calculation ended")
 
     return random.choice([individual_1, individual_2])

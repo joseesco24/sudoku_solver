@@ -24,10 +24,14 @@ async def buffered_gather(promises_array: list) -> list:
     buffered_promises_array = list()
     responses = list()
 
+    logger.debug(msg=f"starting buffer of {buffer_size} parallel tasks")
+
     for index in range(0, len(promises_array), buffer_size):
         buffered_promises_array.append(promises_array[index : index + buffer_size])
 
     for promises_array in buffered_promises_array:
         responses.extend(await gather(*promises_array))
+
+    logger.debug(msg=r"parallel tasks ended")
 
     return responses

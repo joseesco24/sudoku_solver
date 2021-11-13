@@ -72,58 +72,94 @@ async def solver(request: Request) -> web.Response:
             generations, population = 10, 10
             mutation, crossover = 0.2, 0.8
 
+            logger.debug(
+                msg=r"parsing the request body and extracting mandatory parameters"
+            )
+
             request_body = await request.json()
 
             sudoku_initial_board = request_body["initial_board"]
             sudoku_zone_height = request_body["zone_height"]
             sudoku_zone_length = request_body["zone_length"]
 
+            logger.debug(
+                msg=r"request body successfully parsed and mandatory parameters successfully extracted"
+            )
+
+            logger.debug(
+                msg=r"request body successfully parsed and mandatory parameters successfully extracted"
+            )
+
+            logger.debug(msg=r"generating body keys array")
+
             request_body_keys = [key for key in request_body.keys()]
+
+            logger.debug(msg=r"searching optional solver parameters")
 
             # Validation and search of specific solver parameters.
 
             if "generations" in request_body_keys:
 
+                logger.info(msg=r"generations key found")
+
                 if not type(request_body["generations"]) is int:
+                    logger.info(msg=r"generations value not valid, using default")
                     generations_validator = False
 
                 if not request_body["generations"] > 0:
+                    logger.info(msg=r"generations value not valid, using default")
                     generations_validator = False
 
                 if generations_validator is True:
+                    logger.info(msg=r"generations value valid, establishing generations value")
                     generations = request_body["generations"]
 
             if "population" in request_body_keys:
 
+                logger.info(msg=r"population key found")
+
                 if not type(request_body["population"]) is int:
+                    logger.info(msg=r"population value not valid, using default")
                     population_validator = False
 
                 if not request_body["population"] > 0:
+                    logger.info(msg=r"population value not valid, using default")
                     population_validator = False
 
                 if population_validator is True:
+                    logger.info(msg=r"population value valid, establishing population value")
                     population = request_body["population"]
 
             if "mutation" in request_body_keys:
 
+                logger.info(msg=r"mutation key found")
+
                 if not type(request_body["mutation"]) is float:
+                    logger.info(msg=r"mutation value not valid, using default")
                     mutation_validator = False
 
                 if not 0 < request_body["mutation"] <= 1:
+                    logger.info(msg=r"mutation value not valid, using default")
                     mutation_validator = False
 
                 if mutation_validator is True:
+                    logger.info(msg=r"mutation value valid, establishing mutation value")
                     mutation = request_body["mutation"]
 
             if "crossover" in request_body_keys:
 
-                if not type(request_body["crossover"]) is float:
+                logger.info(msg=r"crossover key found")
 
+                if not type(request_body["crossover"]) is float:
+                    logger.info(msg=r"crossover value not valid, using default")
                     crossover_validator = False
+
                 if not 0 < request_body["crossover"] <= 1:
+                    logger.info(msg=r"crossover value not valid, using default")
                     crossover_validator = False
 
                 if crossover_validator is True:
+                    logger.info(msg=r"crossover value valid, establishing crossover value")
                     crossover = request_body["crossover"]
 
             solution_board = await solve_using_genetic_algorithm(
@@ -165,7 +201,7 @@ async def solver(request: Request) -> web.Response:
 
         else:
 
-            logger.warn(msg=r"middle proxy authorization invalid or not found")
+            logger.error(msg=r"middle proxy authorization invalid or not found")
 
             return web.Response(
                 reason=r"you aren't authorized to use this api",
