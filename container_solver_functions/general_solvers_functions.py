@@ -1,5 +1,11 @@
+from logger import setup_logger
+
 from random import randrange
 from copy import deepcopy
+import os
+
+
+logger = setup_logger(logger_name=os.path.basename(__file__).split(".")[0])
 
 
 def calculate_board_fitness_single(
@@ -18,6 +24,8 @@ def calculate_board_fitness_single(
     Returns:
         int: Total collisions on the board.
     """
+
+    logger.debug(msg=r"calculating board fitness single score")
 
     collisions = 0
 
@@ -44,6 +52,8 @@ def calculate_board_fitness_single(
             zone_repetitions = abs((zone_length * zone_height) - len(zone_set))
             collisions += zone_repetitions
 
+    logger.debug(msg=r"fitness single score calculated")
+
     return collisions
 
 
@@ -66,6 +76,8 @@ def calculate_board_fitness_report(
         int: Total collisions on the board rows.
         int: Total collisions on the board columns.
     """
+
+    logger.debug(msg=r"calculating board fitness report scores")
 
     row_collisions, column_collisions, zone_collisions = 0, 0, 0
 
@@ -94,6 +106,8 @@ def calculate_board_fitness_report(
 
     total_collisions = zone_collisions + row_collisions + column_collisions
 
+    logger.debug(msg=r"fitness report scores calculated")
+
     return total_collisions, zone_collisions, row_collisions, column_collisions
 
 
@@ -117,6 +131,8 @@ def board_random_initialization(
         list: A full filled board representation.
     """
 
+    logger.debug(msg=r"calculating board random initialization")
+
     filled_board = deepcopy(fixed_numbers_board)
 
     for row_index in range(len(filled_board)):
@@ -127,6 +143,8 @@ def board_random_initialization(
                     if new_number not in filled_board[row_index]:
                         filled_board[row_index][column_index] = new_number
                         break
+
+    logger.debug(msg=r"board random initialization calculated")
 
     return filled_board
 
@@ -148,6 +166,8 @@ def board_random_mutation(board: list, fixed_numbers_board: list) -> list:
         list: A full filled board representation with a mutation in one of its rows.
     """
 
+    logger.debug(msg=r"calculating board random mutation")
+
     row_index = randrange(len(board))
 
     while True:
@@ -164,5 +184,7 @@ def board_random_mutation(board: list, fixed_numbers_board: list) -> list:
 
     board[row_index][column_index_1] = number_2
     board[row_index][column_index_2] = number_1
+
+    logger.debug(msg=r"board random mutation calculated")
 
     return board

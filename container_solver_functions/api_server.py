@@ -112,6 +112,7 @@ async def get_board_fitness_single(request: Request) -> web.Response:
 
             headers = {"Content-Type": "application/json"}
 
+            logger.debug(msg=r"request body successfully processed, sending response to the solver")
             return web.Response(
                 body=dumps(obj=response_dict, indent=None),
                 headers=headers,
@@ -183,6 +184,7 @@ async def get_board_fitness_report(request: Request) -> web.Response:
 
             headers = {"Content-Type": "application/json"}
 
+            logger.debug(msg=r"request body successfully processed, sending response to the solver")
             return web.Response(
                 body=dumps(obj=response_dict, indent=None),
                 headers=headers,
@@ -245,6 +247,7 @@ async def get_random_initialization(request: Request) -> web.Response:
 
             headers = {"Content-Type": "application/json"}
 
+            logger.debug(msg=r"request body successfully processed, sending response to the solver")
             return web.Response(
                 body=dumps(obj=response_dict, indent=None),
                 headers=headers,
@@ -307,6 +310,7 @@ async def get_random_mutation(request: Request) -> web.Response:
 
             headers = {"Content-Type": "application/json"}
 
+            logger.debug(msg=r"request body successfully processed, sending response to the solver")
             return web.Response(
                 body=dumps(obj=response_dict, indent=None),
                 headers=headers,

@@ -10,10 +10,9 @@ from aiohttp import web
 import json
 import os
 
+logger = setup_logger(logger_name=os.path.basename(__file__).split(".")[0])
 api_routes = web.RouteTableDef()
 api = web.Application()
-
-logger = setup_logger(logger_name=os.path.basename(__file__).split(".")[0])
 
 
 @api_routes.get(r"/health_test")

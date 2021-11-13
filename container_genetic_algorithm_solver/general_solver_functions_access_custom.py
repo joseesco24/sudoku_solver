@@ -1,6 +1,10 @@
+from logger import setup_logger
+
 from aiohttp import ClientSession
 from os import environ
+import os
 
+logger = setup_logger(logger_name=os.path.basename(__file__).split(".")[0])
 api_key = str(environ["SOLVER_FUNCTIONS_KEY"])
 
 

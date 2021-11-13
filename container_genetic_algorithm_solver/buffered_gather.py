@@ -1,5 +1,9 @@
+from logger import setup_logger
+
 from asyncio.tasks import gather
 import os
+
+logger = setup_logger(logger_name=os.path.basename(__file__).split(".")[0])
 
 
 async def buffered_gather(promises_array: list) -> list:

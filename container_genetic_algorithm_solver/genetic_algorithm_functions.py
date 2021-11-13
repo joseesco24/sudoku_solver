@@ -1,5 +1,10 @@
+from logger import setup_logger
+
 from copy import deepcopy
 import random
+import os
+
+logger = setup_logger(logger_name=os.path.basename(__file__).split(".")[0])
 
 
 async def tournament_selection(population: list) -> tuple:
