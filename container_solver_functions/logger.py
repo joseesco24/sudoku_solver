@@ -30,3 +30,14 @@ def setup_logger(logger_name: str) -> logging:
     logger.addHandler(console_handler)
 
     return logger
+
+
+def get_board_stamp(board: list) -> str:
+
+    board_stamp = ""
+
+    for row in board:
+        for element in row:
+            board_stamp += str(element)
+
+    return "|" + board_stamp + "|"

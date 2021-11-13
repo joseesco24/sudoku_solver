@@ -3,9 +3,11 @@ from general_solvers_functions import calculate_board_fitness_single
 from general_solvers_functions import board_random_initialization
 from general_solvers_functions import board_random_mutation
 
+from logger import get_board_stamp
 from logger import setup_logger
 
 from aiohttp.web_request import Request
+from http import HTTPStatus
 from aiohttp import web
 from json import dumps
 from os import environ
@@ -53,28 +55,19 @@ async def check_request_mandatory_requirements(request: Request) -> bool:
         if "Authorization" in request_header_keys:
             logger.debug(msg=r"the authorization header exists")
         else:
-            logger.warn(msg=r"the authorization header dosn't exists")
+            logger.error(msg=r"the authorization header dosn't exists")
             continue_process = False
 
     if continue_process is True:
         if api_key == request_headers["Authorization"]:
             logger.debug(msg=r"the authorization header is valid")
         else:
-            logger.warn(msg=r"the authorization header isn't valid")
+            logger.error(msg=r"the authorization header isn't valid")
             continue_process = False
 
+    logger.debug(msg=r"headers and body validation ended successfully")
+
     return continue_process
-
-
-def get_board_stamp(board: list) -> str:
-
-    board_stamp = ""
-
-    for row in board:
-        for element in row:
-            board_stamp += str(element)
-
-    return "|" + board_stamp + "|"
 
 
 @api_routes.post(r"/calculate_board_fitness_single")
@@ -94,14 +87,17 @@ async def get_board_fitness_single(request: Request) -> web.Response:
 
     try:
 
-        logger.debug(msg=r"new request recived at: /calculate_board_fitness_single")
+        logger.debug(
+            msg=r"new request recived at: /calculate_board_fitness_single path"
+        )
 
         continue_process = await check_request_mandatory_requirements(request)
 
         if continue_process is True:
 
+            logger.debug(msg=r"parsing request body to json")
             request_body = await request.json()
-
+            logger.debug(msg=r"request body successfully parsed to json")
             logger.info(msg=f'board stamp: {get_board_stamp(request_body["board"])}')
 
             fitness_score = calculate_board_fitness_single(
@@ -119,12 +115,12 @@ async def get_board_fitness_single(request: Request) -> web.Response:
             return web.Response(
                 body=dumps(obj=response_dict, indent=None),
                 headers=headers,
-                status=200,
+                status=HTTPStatus.OK,
             )
 
         else:
             return web.Response(
-                status=400,
+                status=HTTPStatus.BAD_REQUEST,
             )
 
     except:
@@ -132,7 +128,7 @@ async def get_board_fitness_single(request: Request) -> web.Response:
         logger.exception(msg=r"exception in the calculate_board_fitness_single api")
 
         return web.Response(
-            status=500,
+            status=HTTPStatus.INTERNAL_SERVER_ERROR,
         )
 
 
@@ -154,14 +150,17 @@ async def get_board_fitness_report(request: Request) -> web.Response:
 
     try:
 
-        logger.debug(msg=r"new request recived at: /calculate_board_fitness_report")
+        logger.debug(
+            msg=r"new request recived at: /calculate_board_fitness_report path"
+        )
 
         continue_process = await check_request_mandatory_requirements(request)
 
         if continue_process is True:
 
+            logger.debug(msg=r"parsing request body to json")
             request_body = await request.json()
-
+            logger.debug(msg=r"request body successfully parsed to json")
             logger.info(msg=f'board stamp: {get_board_stamp(request_body["board"])}')
 
             (
@@ -187,12 +186,12 @@ async def get_board_fitness_report(request: Request) -> web.Response:
             return web.Response(
                 body=dumps(obj=response_dict, indent=None),
                 headers=headers,
-                status=200,
+                status=HTTPStatus.OK,
             )
 
         else:
             return web.Response(
-                status=400,
+                status=HTTPStatus.BAD_REQUEST,
             )
 
     except:
@@ -200,7 +199,7 @@ async def get_board_fitness_report(request: Request) -> web.Response:
         logger.exception(msg=r"exception in the calculate_board_fitness_report api")
 
         return web.Response(
-            status=500,
+            status=HTTPStatus.INTERNAL_SERVER_ERROR,
         )
 
 
@@ -221,14 +220,15 @@ async def get_random_initialization(request: Request) -> web.Response:
 
     try:
 
-        logger.debug(msg=r"new request recived at: /board_random_initialization")
+        logger.debug(msg=r"new request recived at: /board_random_initialization path")
 
         continue_process = await check_request_mandatory_requirements(request)
 
         if continue_process is True:
 
+            logger.debug(msg=r"parsing request body to json")
             request_body = await request.json()
-
+            logger.debug(msg=r"request body successfully parsed to json")
             logger.info(
                 msg=f'fixed board stamp: {get_board_stamp(request_body["fixedNumbersBoard"])}'
             )
@@ -248,12 +248,12 @@ async def get_random_initialization(request: Request) -> web.Response:
             return web.Response(
                 body=dumps(obj=response_dict, indent=None),
                 headers=headers,
-                status=200,
+                status=HTTPStatus.OK,
             )
 
         else:
             return web.Response(
-                status=400,
+                status=HTTPStatus.BAD_REQUEST,
             )
 
     except:
@@ -261,7 +261,7 @@ async def get_random_initialization(request: Request) -> web.Response:
         logger.exception(msg=r"exception in the board_random_initialization api")
 
         return web.Response(
-            status=500,
+            status=HTTPStatus.INTERNAL_SERVER_ERROR,
         )
 
 
@@ -282,14 +282,15 @@ async def get_random_mutation(request: Request) -> web.Response:
 
     try:
 
-        logger.debug(msg=r"new request recived at: /board_random_mutation")
+        logger.debug(msg=r"new request recived at: /board_random_mutation path")
 
         continue_process = await check_request_mandatory_requirements(request)
 
         if continue_process is True:
 
+            logger.debug(msg=r"parsing request body to json")
             request_body = await request.json()
-
+            logger.debug(msg=r"request body successfully parsed to json")
             logger.info(msg=f'board stamp: {get_board_stamp(request_body["board"])}')
             logger.info(
                 msg=f'fixed board stamp: {get_board_stamp(request_body["fixedNumbersBoard"])}'
@@ -309,12 +310,12 @@ async def get_random_mutation(request: Request) -> web.Response:
             return web.Response(
                 body=dumps(obj=response_dict, indent=None),
                 headers=headers,
-                status=200,
+                status=HTTPStatus.OK,
             )
 
         else:
             return web.Response(
-                status=400,
+                status=HTTPStatus.BAD_REQUEST,
             )
 
     except:
@@ -322,7 +323,7 @@ async def get_random_mutation(request: Request) -> web.Response:
         logger.exception(msg=r"exception in the board_random_mutation api")
 
         return web.Response(
-            status=500,
+            status=HTTPStatus.INTERNAL_SERVER_ERROR,
         )
 
 
