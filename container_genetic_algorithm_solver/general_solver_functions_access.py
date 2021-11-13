@@ -1,10 +1,6 @@
-from logger import setup_logger
-
 from aiohttp import ClientSession
 from os import environ
-import os
 
-logger = setup_logger(logger_name=os.path.basename(__file__).split(".")[0])
 api_key = str(environ["SOLVER_FUNCTIONS_KEY"])
 
 
@@ -33,14 +29,10 @@ async def calculate_board_fitness_report(
     url = str(environ["FITNESS_REPORT_SCORE_LINK"])
     response_body = dict()
 
-    logger.debug(msg=f"making fitness report calculation request to {url}")
-
     headers = {"Authorization": api_key, "Content-Type": "application/json"}
     async with ClientSession(headers=headers) as session:
         async with session.post(url=url, json=body) as response:
             response_body = await response.json()
-
-    logger.debug(msg=r"returning fitness report calculation results")
 
     return (
         response_body["totalCollisions"],
@@ -72,14 +64,10 @@ async def calculate_board_fitness_single(
     url = str(environ["FITNESS_SINGLE_SCORE_LINK"])
     response_body = dict()
 
-    logger.debug(msg=f"making fitness single score calculation request to {url}")
-
     headers = {"Authorization": api_key, "Content-Type": "application/json"}
     async with ClientSession(headers=headers) as session:
         async with session.post(url=url, json=body) as response:
             response_body = await response.json()
-
-    logger.debug(msg=r"returning fitness single score calculation results")
 
     return response_body["fitnessScore"]
 
@@ -111,14 +99,10 @@ async def board_random_initialization(
     url = str(environ["RANDOM_INITIALIZATION_LINK"])
     response_body = dict()
 
-    logger.debug(msg=f"making board initialization calculation request to {url}")
-
     headers = {"Authorization": api_key, "Content-Type": "application/json"}
     async with ClientSession(headers=headers) as session:
         async with session.post(url=url, json=body) as response:
             response_body = await response.json()
-
-    logger.debug(msg=r"returning board initialization calculation results")
 
     return response_body["board"]
 
@@ -142,13 +126,9 @@ async def board_random_mutation(board: list, fixed_numbers_board: list) -> list:
     url = str(environ["RANDOM_MUTATION_LINK"])
     response_body = dict()
 
-    logger.debug(msg=f"making board random mutation calculation request to {url}")
-
     headers = {"Authorization": api_key, "Content-Type": "application/json"}
     async with ClientSession(headers=headers) as session:
         async with session.post(url=url, json=body) as response:
             response_body = await response.json()
-
-    logger.debug(msg=r"returning random mutation calculation results")
 
     return response_body["board"]

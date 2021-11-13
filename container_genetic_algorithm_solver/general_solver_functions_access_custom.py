@@ -1,10 +1,6 @@
-from logger import setup_logger
-
 from aiohttp import ClientSession
 from os import environ
-import os
 
-logger = setup_logger(logger_name=os.path.basename(__file__).split(".")[0])
 api_key = str(environ["SOLVER_FUNCTIONS_KEY"])
 
 
@@ -31,13 +27,9 @@ async def calculate_board_fitness_single(
     url = str(environ["FITNESS_SINGLE_SCORE_LINK"])
     response_body = dict()
 
-    logger.debug(msg=f"making custom fitness single score calculation request to {url}")
-
     headers = {"Authorization": api_key}
     async with ClientSession(headers=headers) as session:
         async with session.post(url=url, json=body) as response:
             response_body = await response.json()
-
-    logger.debug(msg=r"returning custom fitness single calculation results")
 
     return (response_body["fitnessScore"], board)
