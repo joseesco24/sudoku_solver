@@ -75,7 +75,7 @@ async function proxy_redirect(authorization, body, destination_url, origin_url, 
                 "Authorization": authorization,
             },
             url: destination_url,
-            method: "get",
+            method: "post",
             data: body,
         }).catch(function (error) {
             print_log(
@@ -118,7 +118,7 @@ async function proxy_redirect(authorization, body, destination_url, origin_url, 
  * @param response {express.response} The express response object.
  * @returns {express.response} The response from the solver or from the function if the solver fails.
  */
-api.get(["/hill_climbing", "/genetic_algorithm", "/simulated_annealing", "/neuronal_network"], async (request, response) => {
+api.post(["/hill_climbing", "/genetic_algorithm", "/simulated_annealing", "/neuronal_network"], async (request, response) => {
 
     // Try catch for keep the api running even if something goes wrong.
 

@@ -35,7 +35,7 @@ async def health_test(_: Request) -> web.Response:
     )
 
 
-@api_routes.get(r"/solver")
+@api_routes.post(r"/solver")
 async def solver(request: Request) -> web.Response:
 
     """Solver

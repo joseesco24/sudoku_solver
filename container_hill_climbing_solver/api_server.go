@@ -34,7 +34,7 @@ func main() {
 		board in the body of a json http request and returns response with the board best solution that this solver could find using
 		the hill climbing algorithm in the response body also using json format.
 	*/
-	e.GET("/solver", func(context echo.Context) error {
+	e.POST("/solver", func(context echo.Context) error {
 
 		var totalCollisions, columnCollisions, rowCollisions, zoneCollisions uint16
 		var authorization string = context.Request().Header.Get("Authorization")
