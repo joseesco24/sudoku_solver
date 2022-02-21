@@ -8,9 +8,12 @@
     "postCreateCommand": "mkdir -p /home/golang_dev/workspace/bin && mkdir -p /home/golang_dev/workspace/pkg",
     "extensions": [
       "coenraads.bracket-pair-colorizer-2",
+      "SonarSource.sonarlint-vscode",
       "aaron-bond.better-comments",
-      "alefragnani.bookmarks",
-      "redhat.vscode-yaml",
+      "shardulm94.trailing-spaces",
+      "EditorConfig.EditorConfig",
+      "formulahendry.code-runner",
+      "alefragnani.Bookmarks",
       "ryu1kn.text-marker",
       "golang.go",
     ]

@@ -1,0 +1,14 @@
+{
+  "context": "..",
+  "dockerFile": "../development.Dockerfile",
+  "extensions": [
+    "coenraads.bracket-pair-colorizer-2",
+    "SonarSource.sonarlint-vscode",
+    "aaron-bond.better-comments",
+    "shardulm94.trailing-spaces",
+    "EditorConfig.EditorConfig",
+    "formulahendry.code-runner",
+    "alefragnani.Bookmarks",
+    "ryu1kn.text-marker"
+  ]
+}

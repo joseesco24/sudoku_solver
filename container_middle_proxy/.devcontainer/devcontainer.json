@@ -9,13 +9,17 @@
   "extensions": [
     "coenraads.bracket-pair-colorizer-2",
     "mgmcdermott.vscode-language-babel",
+    "christian-kohler.npm-intellisense",
+    "ms-vscode.vscode-typescript-next",
+    "SonarSource.sonarlint-vscode",
     "aaron-bond.better-comments",
+    "shardulm94.trailing-spaces",
+    "EditorConfig.EditorConfig",
+    "formulahendry.code-runner",
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
+    "alefragnani.Bookmarks",
     "eg2.vscode-npm-script",
-    "alefragnani.bookmarks",
-    "redhat.vscode-yaml",
     "ryu1kn.text-marker",
-    "hookyqr.beautify",
   ]
 }
